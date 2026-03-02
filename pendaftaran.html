@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran Mualaf - Langkah Rasmi</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-md);
+            background: var(--bg-alt);
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px var(--primary-light);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9" />
+                    <path d="M20 3v4" />
+                    <path d="M22 5h-4" />
+                </svg>
+                PortalMualaf
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Utama</a>
+                <a href="fardhu-ain.html" class="nav-link">Fardhu Ain</a>
+                <a href="doa-adab.html" class="nav-link">Doa & Adab</a>
+                <a href="muamalat.html" class="nav-link">Muamalat</a>
+                <a href="zakat.html" class="nav-link">Zakat</a>
+                <a href="pendaftaran.html" class="nav-link btn btn-primary">Daftar</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero" style="padding: 8rem 0 4rem;">
+        <div class="container text-center" style="max-width: 800px;">
+            <h2>Pendaftaran Pengislaman</h2>
+            <p class="text-muted">Mulakan proses rasmi pengiktirafan saudara baru anda.</p>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container" style="max-width: 800px;">
+            <div class="glass-card">
+                <form id="regForm"
+                    onsubmit="event.preventDefault(); alert('Terima kasih! Kami akan menghubungi anda segera.');">
+                    <div class="form-group">
+                        <label class="form-label">Nama Penuh (Mengikut IC/Pasport)</label>
+                        <input type="text" class="form-input" placeholder="Masukkan nama penuh" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nombor Kad Pengenalan / Pasport</label>
+                        <input type="text" class="form-input" placeholder="000000-00-0000" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Alamat E-mel</label>
+                        <input type="email" class="form-input" placeholder="contoh@emel.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nombor Telefon</label>
+                        <input type="tel" class="form-input" placeholder="+60 12-345 6789" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Muat Naik Sijil Syahadah (Jika ada)</label>
+                        <input type="file" class="form-input">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem;">Hantar
+                        Pendaftaran</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                &copy; 2026 Portal Mualaf. Hak Cipta Terpelihara.
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

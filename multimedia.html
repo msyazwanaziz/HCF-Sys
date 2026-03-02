@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multimedia - Video & PDF Panduan</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .video-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .video-thumb {
+            background: #000;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+        }
+
+        .play-btn {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .video-info {
+            padding: 1.5rem;
+        }
+
+        .pdf-list {
+            list-style: none;
+            margin-top: 2rem;
+        }
+
+        .pdf-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: var(--bg-alt);
+            margin-bottom: 0.5rem;
+            border-radius: var(--radius-md);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9" />
+                    <path d="M20 3v4" />
+                    <path d="M22 5h-4" />
+                </svg>
+                PortalMualaf
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Utama</a>
+                <a href="fardhu-ain.html" class="nav-link">Fardhu Ain</a>
+                <a href="doa-adab.html" class="nav-link">Doa & Adab</a>
+                <a href="muamalat.html" class="nav-link">Muamalat</a>
+                <a href="zakat.html" class="nav-link">Zakat</a>
+                <a href="multimedia.html" class="nav-link active">Multimedia</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero" style="padding: 8rem 0 4rem;">
+        <div class="container text-center">
+            <h2>Sumber Multimedia</h2>
+            <p class="text-muted">Pelajari Islam melalui video, audio dan e-book.</p>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container">
+            <h3 class="mb-4">Video Pilihan</h3>
+            <div class="media-grid">
+                <div class="video-card">
+                    <div class="video-thumb">
+                        <div class="play-btn">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <h4>Asas Syahadah</h4>
+                        <p class="text-muted">Memahami makna 2 kalimah syahadah dengan mendalam.</p>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <div class="video-thumb">
+                        <div class="play-btn">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <h4>Wuduk Sempurna</h4>
+                        <p class="text-muted">Panduan visual cara berwuduk mengikut sunnah.</p>
+                    </div>
+                </div>
+                <div class="video-card">
+                    <div class="video-thumb">
+                        <div class="play-btn">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <h4>Solat Khusyuk</h4>
+                        <p class="text-muted">Tips untuk mendapatkan ketenangan dalam solat.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 4rem; margin-bottom: 2rem;">E-Book & PDF Panduan</h3>
+            <ul class="pdf-list">
+                <li class="pdf-item">
+                    <span>Panduan Solat Lengkap (BM)</span>
+                    <a href="#" class="btn btn-outline" style="padding: 0.5rem 1rem;">Muat Turun</a>
+                </li>
+                <li class="pdf-item">
+                    <span>Sejarah Ringkas Islam</span>
+                    <a href="#" class="btn btn-outline" style="padding: 0.5rem 1rem;">Muat Turun</a>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                &copy; 2026 Portal Mualaf. Hak Cipta Terpelihara.
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

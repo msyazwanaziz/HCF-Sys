@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalender & Waktu Solat - Portal Mualaf</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .event-card {
+            border-left: 4px solid var(--primary);
+            padding-left: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .prayer-time {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            background: var(--bg-alt);
+            border-radius: var(--radius-md);
+            margin-bottom: 0.5rem;
+        }
+
+        .prayer-time.next {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9" />
+                    <path d="M20 3v4" />
+                    <path d="M22 5h-4" />
+                </svg>
+                PortalMualaf
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Utama</a>
+                <a href="fardhu-ain.html" class="nav-link">Fardhu Ain</a>
+                <a href="multimedia.html" class="nav-link">Multimedia</a>
+                <a href="calendar.html" class="nav-link active">Kalender</a>
+                <a href="pendaftaran.html" class="nav-link btn btn-primary">Daftar</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero" style="padding: 8rem 0 4rem;">
+        <div class="container text-center">
+            <h2>Kalender & Waktu Solat</h2>
+            <p class="text-muted">Rancang perjalanan ibadah anda dengan teliti.</p>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container">
+            <div class="calendar-grid">
+                <!-- Prayer Times -->
+                <div>
+                    <h3>Waktu Solat Hari Ini</h3>
+                    <p class="text-muted mb-4">Wilayah Persekutuan Kuala Lumpur</p>
+                    <div class="prayer-time"><span>Subuh</span> <span>06:12</span></div>
+                    <div class="prayer-time"><span>Syuruk</span> <span>07:24</span></div>
+                    <div class="prayer-time next"><span>Zuhur</span> <span>13:25 (Akan Datang)</span></div>
+                    <div class="prayer-time"><span>Asar</span> <span>16:38</span></div>
+                    <div class="prayer-time"><span>Maghrib</span> <span>19:22</span></div>
+                    <div class="prayer-time"><span>Isyak</span> <span>20:32</span></div>
+                </div>
+
+                <!-- Events -->
+                <div class="glass-card">
+                    <h3>Program & Kelas</h3>
+                    <div class="event-card">
+                        <h4>Kelas Asas Fardhu Ain</h4>
+                        <p class="text-muted">Setiap Sabtu | 9:00 AM - 11:00 AM</p>
+                        <p>Lokasi: Masjid Wilayah Persekutuan</p>
+                    </div>
+                    <div class="event-card">
+                        <h4>Bimbingan Saudara Baru</h4>
+                        <p class="text-muted">Ahad Pertama | 2:00 PM - 4:00 PM</p>
+                        <p>Lokasi: Pusat Islam KL</p>
+                    </div>
+                    <a href="#" class="btn btn-outline" style="width: 100%;">Tambah ke Kalender</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                &copy; 2026 Portal Mualaf. Hak Cipta Terpelihara.
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

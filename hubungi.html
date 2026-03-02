@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hubungi Kami - Bantuan & Sokongan</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9" />
+                    <path d="M20 3v4" />
+                    <path d="M22 5h-4" />
+                </svg>
+                PortalMualaf
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Utama</a>
+                <a href="fardhu-ain.html" class="nav-link">Fardhu Ain</a>
+                <a href="faq.html" class="nav-link">FAQ</a>
+                <a href="hubungi.html" class="nav-link active">Hubungi</a>
+                <a href="pendaftaran.html" class="nav-link btn btn-primary">Daftar</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero" style="padding: 8rem 0 4rem;">
+        <div class="container text-center">
+            <h2>Hubungi Kami</h2>
+            <p class="text-muted">Kami sedia mendengar dan membimbing anda.</p>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem;">
+                <div class="glass-card">
+                    <h3>Maklumat Hubungan</h3>
+                    <p class="text-muted mb-4">Sila hubungi kami melalui saluran berikut untuk respon pantas.</p>
+
+                    <div class="mb-2">
+                        <strong>Alamat:</strong><br>
+                        Pusat Dakwah Islam, Persiaran Masjid,<br>
+                        Wilayah Persekutuan, Kuala Lumpur.
+                    </div>
+                    <div class="mb-2">
+                        <strong>E-mel:</strong><br>
+                        sokongan@portalmualaf.my
+                    </div>
+                    <div class="mb-2">
+                        <strong>Telefon:</strong><br>
+                        +603-1234 5678
+                    </div>
+                </div>
+
+                <div>
+                    <h3>Hantar Mesej</h3>
+                    <form onsubmit="event.preventDefault(); alert('Pesanan anda telah dihantar!');">
+                        <div class="mb-2">
+                            <input type="text" placeholder="Nama Anda" class="btn btn-outline"
+                                style="width: 100%; text-align: left; background: white;" required>
+                        </div>
+                        <div class="mb-2">
+                            <input type="email" placeholder="E-mel Anda" class="btn btn-outline"
+                                style="width: 100%; text-align: left; background: white;" required>
+                        </div>
+                        <div class="mb-2">
+                            <textarea placeholder="Mesej atau Soalan" class="btn btn-outline"
+                                style="width: 100%; height: 150px; text-align: left; background: white;"
+                                required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Hantar Mesej</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                &copy; 2026 Portal Mualaf. Hak Cipta Terpelihara.
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
