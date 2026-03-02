@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Komuniti & Sokongan - Jaringan Saudara Baru</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .forum-list {
+            margin-top: 2rem;
+        }
+
+        .forum-item {
+            display: flex;
+            gap: 1.5rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1rem;
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .forum-item:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9" />
+                    <path d="M20 3v4" />
+                    <path d="M22 5h-4" />
+                </svg>
+                PortalMualaf
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Utama</a>
+                <a href="fardhu-ain.html" class="nav-link">Fardhu Ain</a>
+                <a href="multimedia.html" class="nav-link">Multimedia</a>
+                <a href="komuniti.html" class="nav-link active">Komuniti</a>
+                <a href="hubungi.html" class="nav-link btn btn-primary">Bantuan</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero" style="padding: 8rem 0 4rem;">
+        <div class="container text-center">
+            <h2>Komuniti & Sokongan</h2>
+            <p class="text-muted">Anda tidak bersendirian. Sertai jaringan saudara baru kami.</p>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem;">
+                <!-- Main Content -->
+                <div style="flex: 2;">
+                    <h3>Forum Perbincangan</h3>
+                    <div class="forum-list">
+                        <div class="forum-item">
+                            <div class="user-avatar">AS</div>
+                            <div>
+                                <h4 class="mb-1">Bagaimana cara istiqamah dalam solat?</h4>
+                                <p class="text-muted">Dihantar oleh Ahamad S. • 2 jam yang lalu</p>
+                            </div>
+                        </div>
+                        <div class="forum-item">
+                            <div class="user-avatar">MK</div>
+                            <div>
+                                <h4 class="mb-1">Cadangan buku mualaf untuk pemula?</h4>
+                                <p class="text-muted">Dihantar oleh Maryam K. • 5 jam yang lalu</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div style="flex: 1;">
+                    <div class="glass-card">
+                        <h3>Cari Mentor</h3>
+                        <p class="text-muted mb-4">Kami mempunyai ahli yang sedia membimbing anda secara peribadi.</p>
+                        <a href="#" class="btn btn-primary" style="width: 100%;">Daftar Jadi Mentor</a>
+                        <br><br>
+                        <a href="#" class="btn btn-outline" style="width: 100%;">Cari Mentor Saya</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                &copy; 2026 Portal Mualaf. Hak Cipta Terpelihara.
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zakat - Kalkulator & Panduan Zakat</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .calc-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+        }
+
+        .result-box {
+            background: var(--primary-light);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            margin-top: 1.5rem;
+            border: 1px solid var(--primary);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9" />
+                    <path d="M20 3v4" />
+                    <path d="M22 5h-4" />
+                </svg>
+                PortalMualaf
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Utama</a>
+                <a href="fardhu-ain.html" class="nav-link">Fardhu Ain</a>
+                <a href="doa-adab.html" class="nav-link">Doa & Adab</a>
+                <a href="muamalat.html" class="nav-link">Muamalat</a>
+                <a href="zakat.html" class="nav-link active">Zakat</a>
+                <a href="pendaftaran.html" class="nav-link btn btn-primary">Daftar</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero" style="padding: 8rem 0 4rem;">
+        <div class="container text-center">
+            <h2>Kiraan Zakat & Derma</h2>
+            <p class="text-muted">Sucikan harta anda dengan menunaikan kewajiban zakat.</p>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 3rem;">
+                <!-- Information -->
+                <div>
+                    <h3>Apa Itu Zakat?</h3>
+                    <p class="text-muted mb-4">Zakat adalah salah satu rukun Islam yang wajib ditunaikan oleh setiap
+                        Muslim yang memenuhi syarat. Ia bertujuan untuk membersihkan harta dan membantu golongan yang
+                        memerlukan.</p>
+
+                    <h3>Siapa Wajib Bayar?</h3>
+                    <ul class="text-muted" style="margin-left: 1.5rem; margin-bottom: 2rem;">
+                        <li>Beragama Islam</li>
+                        <li>Merdeka (Bukan hamba)</li>
+                        <li>Harta milik penuh</li>
+                        <li>Cukup Nisab (Had minimum)</li>
+                        <li>Cukup Haul (Simpanan selama setahun)</li>
+                    </ul>
+                </div>
+
+                <!-- Calculator -->
+                <div class="glass-card">
+                    <h3>Kalkulator Zakat Simpanan</h3>
+                    <p class="text-muted mb-2">Gunakan alat ini untuk mengira amaun zakat anda (2.5%).</p>
+
+                    <label>Jumlah Simpanan Setahun (RM)</label>
+                    <input type="number" id="savings" class="calc-input" placeholder="Contoh: 15000"
+                        oninput="calculateZakat()">
+
+                    <div id="result" class="result-box" style="display: none;">
+                        <p>Zakat yang perlu dibayar:</p>
+                        <h2 id="zakat-amount" style="color: var(--primary);">RM 0.00</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                &copy; 2026 Portal Mualaf. Hak Cipta Terpelihara.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function calculateZakat() {
+            const savings = document.getElementById('savings').value;
+            const resultBox = document.getElementById('result');
+            const amountText = document.getElementById('zakat-amount');
+
+            if (savings && savings > 0) {
+                const zakat = (savings * 0.025).toFixed(2);
+                amountText.innerText = 'RM ' + zakat;
+                resultBox.style.display = 'block';
+            } else {
+                resultBox.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>
