@@ -7,98 +7,95 @@
     <title>Zakat - Kalkulator & Panduan Zakat</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        .calc-box {
+            background: var(--apple-bg-alt);
+            padding: 60px;
+            border-radius: var(--radius-apple);
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
         .calc-input {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: var(--radius-md);
-            margin-bottom: 1rem;
+            padding: 18px;
+            border: 1px solid #d2d2d7;
+            border-radius: 12px;
+            font-size: 19px;
+            margin-bottom: 30px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .calc-input:focus {
+            border-color: var(--apple-blue);
         }
 
         .result-box {
-            background: var(--primary-light);
-            padding: 1.5rem;
-            border-radius: var(--radius-md);
-            margin-top: 1.5rem;
-            border: 1px solid var(--primary);
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            margin-top: 30px;
+            text-align: center;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .result-amount {
+            font-size: 48px;
+            font-weight: 600;
+            color: var(--apple-blue);
+            margin-top: 10px;
         }
     </style>
 </head>
 
 <body>
     <nav class="navbar">
-        <div class="container nav-content">
-            <a href="index.html" class="logo">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9" />
-                    <path d="M20 3v4" />
-                    <path d="M22 5h-4" />
-                </svg>
-                PortalMualaf
-            </a>
+        <div class="nav-content">
+            <a href="index.html" class="logo">PortalMualaf</a>
             <div class="nav-links">
                 <a href="index.html" class="nav-link">Utama</a>
                 <a href="fardhu-ain.html" class="nav-link">Fardhu Ain</a>
                 <a href="doa-adab.html" class="nav-link">Doa & Adab</a>
                 <a href="muamalat.html" class="nav-link">Muamalat</a>
-                <a href="zakat.html" class="nav-link active">Zakat</a>
-                <a href="pendaftaran.html" class="nav-link btn btn-primary">Daftar</a>
+                <a href="zakat.html" class="nav-link active" style="color: var(--apple-text);">Zakat</a>
             </div>
         </div>
     </nav>
 
-    <header class="hero" style="padding: 8rem 0 4rem;">
-        <div class="container text-center">
-            <h2>Kiraan Zakat & Derma</h2>
-            <p class="text-muted">Sucikan harta anda dengan menunaikan kewajiban zakat.</p>
-        </div>
+    <header class="stage">
+        <h1 class="stage-title">Zakat & Derma.</h1>
+        <p class="stage-subtitle">Kesucian harta, ketenangan jiwa.</p>
     </header>
 
-    <section class="section">
-        <div class="container">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 3rem;">
-                <!-- Information -->
-                <div>
-                    <h3>Apa Itu Zakat?</h3>
-                    <p class="text-muted mb-4">Zakat adalah salah satu rukun Islam yang wajib ditunaikan oleh setiap
-                        Muslim yang memenuhi syarat. Ia bertujuan untuk membersihkan harta dan membantu golongan yang
-                        memerlukan.</p>
+    <main class="container">
+        <section class="section">
+            <div class="calc-box">
+                <h3 style="font-size: 32px; margin-bottom: 20px;">Kalkulator Zakat Simpanan.</h3>
+                <p class="stage-subtitle" style="font-size: 19px; color: var(--apple-text-muted); margin-bottom: 40px;">
+                    Gunakan alat ini untuk mengira amaun zakat anda (2.5%).</p>
 
-                    <h3>Siapa Wajib Bayar?</h3>
-                    <ul class="text-muted" style="margin-left: 1.5rem; margin-bottom: 2rem;">
-                        <li>Beragama Islam</li>
-                        <li>Merdeka (Bukan hamba)</li>
-                        <li>Harta milik penuh</li>
-                        <li>Cukup Nisab (Had minimum)</li>
-                        <li>Cukup Haul (Simpanan selama setahun)</li>
-                    </ul>
-                </div>
+                <label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 10px;">JUMLAH SIMPANAN
+                    SETAHUN (RM)</label>
+                <input type="number" id="savings" class="calc-input" placeholder="0.00" oninput="calculateZakat()">
 
-                <!-- Calculator -->
-                <div class="glass-card">
-                    <h3>Kalkulator Zakat Simpanan</h3>
-                    <p class="text-muted mb-2">Gunakan alat ini untuk mengira amaun zakat anda (2.5%).</p>
-
-                    <label>Jumlah Simpanan Setahun (RM)</label>
-                    <input type="number" id="savings" class="calc-input" placeholder="Contoh: 15000"
-                        oninput="calculateZakat()">
-
-                    <div id="result" class="result-box" style="display: none;">
-                        <p>Zakat yang perlu dibayar:</p>
-                        <h2 id="zakat-amount" style="color: var(--primary);">RM 0.00</h2>
-                    </div>
+                <div id="result" class="result-box" style="display: none;">
+                    <p style="font-size: 14px; color: var(--apple-text-muted);">Zakat yang perlu dibayar:</p>
+                    <div id="zakat-amount" class="result-amount">RM 0.00</div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-bottom">
-                &copy; 2026 Portal Mualaf. Hak Cipta Terpelihara.
-            </div>
-        </div>
+        <section class="section" style="text-align: center;">
+            <h2 class="stage-title" style="font-size: 40px;">Apa Itu Zakat?</h2>
+            <p class="apple-step-desc" style="margin: 0 auto;">Zakat adalah salah satu rukun Islam yang wajib ditunaikan
+                oleh setiap Muslim yang memenuhi syarat. Ia bertujuan untuk membersihkan harta dan membantu golongan
+                yang memerlukan.</p>
+        </section>
+    </main>
+
+    <footer class="section" style="text-align: center; margin-top: 100px;">
+        <p style="color: var(--apple-text-muted); font-size: 12px;">© 2026 Portal Mualaf. Hak Cipta Terpelihara.</p>
     </footer>
 
     <script>

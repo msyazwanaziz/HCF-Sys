@@ -4,90 +4,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hubungi Kami - Bantuan & Sokongan</title>
+    <title>Hubungi Kami - Portal Mualaf</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .contact-info {
+            text-align: left;
+        }
+
+        .contact-card {
+            background: var(--apple-bg-alt);
+            padding: 40px;
+            border-radius: var(--radius-apple);
+            margin-bottom: 20px;
+        }
+
+        .form-box {
+            text-align: left;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d2d2d7;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <nav class="navbar">
-        <div class="container nav-content">
-            <a href="index.html" class="logo">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9" />
-                    <path d="M20 3v4" />
-                    <path d="M22 5h-4" />
-                </svg>
-                PortalMualaf
-            </a>
+        <div class="nav-content">
+            <a href="index.html" class="logo">PortalMualaf</a>
             <div class="nav-links">
                 <a href="index.html" class="nav-link">Utama</a>
                 <a href="fardhu-ain.html" class="nav-link">Fardhu Ain</a>
-                <a href="faq.html" class="nav-link">FAQ</a>
-                <a href="hubungi.html" class="nav-link active">Hubungi</a>
-                <a href="pendaftaran.html" class="nav-link btn btn-primary">Daftar</a>
+                <a href="zakat.html" class="nav-link">Zakat</a>
             </div>
         </div>
     </nav>
 
-    <header class="hero" style="padding: 8rem 0 4rem;">
-        <div class="container text-center">
-            <h2>Hubungi Kami</h2>
-            <p class="text-muted">Kami sedia mendengar dan membimbing anda.</p>
-        </div>
+    <header class="stage">
+        <h1 class="stage-title">Hubungi Kami.</h1>
+        <p class="stage-subtitle">Kami sedia mendengar dan membimbing anda.</p>
     </header>
 
-    <section class="section">
-        <div class="container">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem;">
-                <div class="glass-card">
-                    <h3>Maklumat Hubungan</h3>
-                    <p class="text-muted mb-4">Sila hubungi kami melalui saluran berikut untuk respon pantas.</p>
-
-                    <div class="mb-2">
+    <main class="container">
+        <div class="contact-grid">
+            <div class="contact-info">
+                <div class="contact-card">
+                    <h3 style="font-size: 24px; margin-bottom: 20px;">Maklumat Hubungan.</h3>
+                    <p class="meta-info" style="margin-bottom: 20px;">Sila hubungi kami melalui saluran berikut untuk
+                        respon pantas.</p>
+                    <div style="font-size: 17px; line-height: 1.6;">
                         <strong>Alamat:</strong><br>
                         Pusat Dakwah Islam, Persiaran Masjid,<br>
-                        Wilayah Persekutuan, Kuala Lumpur.
-                    </div>
-                    <div class="mb-2">
+                        Wilayah Persekutuan, Kuala Lumpur.<br><br>
                         <strong>E-mel:</strong><br>
-                        sokongan@portalmualaf.my
-                    </div>
-                    <div class="mb-2">
+                        sokongan@portalmualaf.my<br><br>
                         <strong>Telefon:</strong><br>
                         +603-1234 5678
                     </div>
                 </div>
+            </div>
 
-                <div>
-                    <h3>Hantar Mesej</h3>
-                    <form onsubmit="event.preventDefault(); alert('Pesanan anda telah dihantar!');">
-                        <div class="mb-2">
-                            <input type="text" placeholder="Nama Anda" class="btn btn-outline"
-                                style="width: 100%; text-align: left; background: white;" required>
-                        </div>
-                        <div class="mb-2">
-                            <input type="email" placeholder="E-mel Anda" class="btn btn-outline"
-                                style="width: 100%; text-align: left; background: white;" required>
-                        </div>
-                        <div class="mb-2">
-                            <textarea placeholder="Mesej atau Soalan" class="btn btn-outline"
-                                style="width: 100%; height: 150px; text-align: left; background: white;"
-                                required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary" style="width: 100%;">Hantar Mesej</button>
-                    </form>
-                </div>
+            <div class="form-box">
+                <form onsubmit="event.preventDefault(); alert('Pesanan anda telah dihantar!');">
+                    <div class="input-group">
+                        <label class="input-label">NAMA</label>
+                        <input type="text" class="input-field" placeholder="Nama anda" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">EMEL</label>
+                        <input type="email" class="input-field" placeholder="emel@contoh.com" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">MESEJ</label>
+                        <textarea class="input-field" style="height: 150px;" placeholder="Tulis mesej anda di sini..."
+                            required></textarea>
+                    </div>
+                    <button class="btn-apple" style="width: 100%; padding: 15px; font-size: 17px;">Hantar Mesej</button>
+                </form>
             </div>
         </div>
-    </section>
+    </main>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-bottom">
-                &copy; 2026 Portal Mualaf. Hak Cipta Terpelihara.
-            </div>
-        </div>
+    <footer class="section" style="text-align: center; margin-top: 100px;">
+        <p style="color: var(--apple-text-muted); font-size: 12px;">© 2026 Portal Mualaf. Hak Cipta Terpelihara.</p>
     </footer>
 </body>
 

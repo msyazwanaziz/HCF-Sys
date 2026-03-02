@@ -4,117 +4,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Komuniti & Sokongan - Jaringan Saudara Baru</title>
+    <title>Komuniti - Jaringan Saudara Baru</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        .forum-list {
-            margin-top: 2rem;
+        .community-hero {
+            background-color: #fbfbfd;
+            padding: 100px 0;
+            text-align: center;
         }
 
-        .forum-item {
+        .forum-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 60px;
+        }
+
+        .forum-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: var(--radius-apple);
+            border: 1px solid #d2d2d7;
+            text-align: left;
+            transition: var(--transition-smooth);
             display: flex;
-            gap: 1.5rem;
-            background: white;
-            padding: 1.5rem;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 1rem;
-            transition: var(--transition);
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .forum-item:hover {
-            border-color: var(--primary);
-            transform: translateX(5px);
+        .forum-card:hover {
+            border-color: var(--apple-blue);
         }
 
-        .user-avatar {
-            width: 50px;
-            height: 50px;
-            background: var(--primary-light);
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            background: var(--apple-bg-alt);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            color: var(--primary);
+            font-weight: 600;
+            color: var(--apple-text);
+        }
+
+        .thread-title {
+            font-size: 21px;
+            font-weight: 600;
+        }
+
+        .meta-info {
+            font-size: 14px;
+            color: var(--apple-text-muted);
         }
     </style>
 </head>
 
 <body>
     <nav class="navbar">
-        <div class="container nav-content">
-            <a href="index.html" class="logo">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9" />
-                    <path d="M20 3v4" />
-                    <path d="M22 5h-4" />
-                </svg>
-                PortalMualaf
-            </a>
+        <div class="nav-content">
+            <a href="index.html" class="logo">PortalMualaf</a>
             <div class="nav-links">
                 <a href="index.html" class="nav-link">Utama</a>
                 <a href="fardhu-ain.html" class="nav-link">Fardhu Ain</a>
+                <a href="doa-adab.html" class="nav-link">Doa & Adab</a>
+                <a href="muamalat.html" class="nav-link">Muamalat</a>
+                <a href="zakat.html" class="nav-link">Zakat</a>
                 <a href="multimedia.html" class="nav-link">Multimedia</a>
-                <a href="komuniti.html" class="nav-link active">Komuniti</a>
-                <a href="hubungi.html" class="nav-link btn btn-primary">Bantuan</a>
+                <a href="komuniti.html" class="nav-link active" style="color: var(--apple-text);">Komuniti</a>
             </div>
         </div>
     </nav>
 
-    <header class="hero" style="padding: 8rem 0 4rem;">
-        <div class="container text-center">
-            <h2>Komuniti & Sokongan</h2>
-            <p class="text-muted">Anda tidak bersendirian. Sertai jaringan saudara baru kami.</p>
-        </div>
+    <header class="stage">
+        <h1 class="stage-title">Anda Tidak Bersendirian.</h1>
+        <p class="stage-subtitle">Sertai komuniti mualaf untuk berkongsi pengalaman.</p>
     </header>
 
-    <section class="section">
-        <div class="container">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem;">
-                <!-- Main Content -->
-                <div style="flex: 2;">
-                    <h3>Forum Perbincangan</h3>
-                    <div class="forum-list">
-                        <div class="forum-item">
-                            <div class="user-avatar">AS</div>
-                            <div>
-                                <h4 class="mb-1">Bagaimana cara istiqamah dalam solat?</h4>
-                                <p class="text-muted">Dihantar oleh Ahamad S. • 2 jam yang lalu</p>
-                            </div>
-                        </div>
-                        <div class="forum-item">
-                            <div class="user-avatar">MK</div>
-                            <div>
-                                <h4 class="mb-1">Cadangan buku mualaf untuk pemula?</h4>
-                                <p class="text-muted">Dihantar oleh Maryam K. • 5 jam yang lalu</p>
-                            </div>
+    <main class="container">
+        <section class="section">
+            <h2 class="stage-title" style="font-size: 32px; text-align: left;">Perbincangan Terkini.</h2>
+
+            <div class="forum-grid">
+                <div class="forum-card">
+                    <div class="user-info">
+                        <div class="avatar">AS</div>
+                        <div>
+                            <div class="thread-title">Bagaimana cara istiqamah dalam solat?</div>
+                            <div class="meta-info">Dihantar oleh Ahamad S. • 2 jam yang lalu</div>
                         </div>
                     </div>
+                    <a href="#" class="link-cta" style="font-size: 17px;">Sertai ></a>
                 </div>
 
-                <!-- Sidebar -->
-                <div style="flex: 1;">
-                    <div class="glass-card">
-                        <h3>Cari Mentor</h3>
-                        <p class="text-muted mb-4">Kami mempunyai ahli yang sedia membimbing anda secara peribadi.</p>
-                        <a href="#" class="btn btn-primary" style="width: 100%;">Daftar Jadi Mentor</a>
-                        <br><br>
-                        <a href="#" class="btn btn-outline" style="width: 100%;">Cari Mentor Saya</a>
+                <div class="forum-card">
+                    <div class="user-info">
+                        <div class="avatar">MK</div>
+                        <div>
+                            <div class="thread-title">Cadangan buku mualaf untuk pemula?</div>
+                            <div class="meta-info">Dihantar oleh Maryam K. • 5 jam yang lalu</div>
+                        </div>
                     </div>
+                    <a href="#" class="link-cta" style="font-size: 17px;">Sertai ></a>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-bottom">
-                &copy; 2026 Portal Mualaf. Hak Cipta Terpelihara.
-            </div>
-        </div>
+        <section class="stage"
+            style="background-color: var(--apple-bg-alt); border-radius: var(--radius-apple); margin-top: 60px;">
+            <h2 class="stage-title" style="font-size: 32px;">Cari Mentor Peribadi.</h2>
+            <p class="stage-subtitle" style="font-size: 19px;">Dapatkan bimbingan secara satu-lawan-satu daripada ahli
+                berpengalaman.</p>
+            <button class="btn-apple" style="padding: 12px 24px; font-size: 17px;">Hubungi Mentor</button>
+        </section>
+    </main>
+
+    <footer class="section" style="text-align: center; margin-top: 100px;">
+        <p style="color: var(--apple-text-muted); font-size: 12px;">© 2026 Portal Mualaf. Hak Cipta Terpelihara.</p>
     </footer>
 </body>
 

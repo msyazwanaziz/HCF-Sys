@@ -4,106 +4,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAQ - Soalan Lazim Mualaf</title>
+    <title>Soalan Lazim - Portal Mualaf</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        details {
-            background: white;
-            padding: 1.5rem;
-            border-radius: var(--radius-md);
-            margin-bottom: 1rem;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+        .faq-item {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #d2d2d7;
+            text-align: left;
         }
 
-        summary {
-            font-weight: 700;
-            color: var(--primary-dark);
-            cursor: pointer;
-            list-style: none;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .faq-question {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
         }
 
-        summary::after {
-            content: '+';
-            font-size: 1.5rem;
-            transition: var(--transition);
-        }
-
-        details[open] summary::after {
-            transform: rotate(45deg);
-        }
-
-        .faq-ans {
-            margin-top: 1rem;
-            color: var(--text-muted);
-            line-height: 1.8;
+        .faq-answer {
+            font-size: 19px;
+            color: var(--apple-text-muted);
         }
     </style>
 </head>
 
 <body>
     <nav class="navbar">
-        <div class="container nav-content">
-            <a href="index.html" class="logo">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9" />
-                    <path d="M20 3v4" />
-                    <path d="M22 5h-4" />
-                </svg>
-                PortalMualaf
-            </a>
+        <div class="nav-content">
+            <a href="index.html" class="logo">PortalMualaf</a>
             <div class="nav-links">
                 <a href="index.html" class="nav-link">Utama</a>
                 <a href="fardhu-ain.html" class="nav-link">Fardhu Ain</a>
                 <a href="doa-adab.html" class="nav-link">Doa & Adab</a>
                 <a href="muamalat.html" class="nav-link">Muamalat</a>
                 <a href="zakat.html" class="nav-link">Zakat</a>
-                <a href="pendaftaran.html" class="nav-link btn btn-primary">Daftar</a>
             </div>
         </div>
     </nav>
 
-    <header class="hero" style="padding: 8rem 0 4rem;">
-        <div class="container text-center">
-            <h2>Soalan Lazim (FAQ)</h2>
-            <p class="text-muted">Jawapan pantas kepada kemusykilan anda.</p>
-        </div>
+    <header class="stage">
+        <h1 class="stage-title">Soalan Lazim.</h1>
+        <p class="stage-subtitle">Jawapan ringkas kepada kemusykilan anda.</p>
     </header>
 
-    <section class="section">
-        <div class="container" style="max-width: 800px;">
-            <details>
-                <summary>Solat belum sempurna macam mana?</summary>
-                <p class="faq-ans">Jangan risau. Allah Maha Pengampun. Belajar sikit-sikit, yang penting ada usaha untuk
-                    memperbaiki kualiti solat anda setiap hari.</p>
-            </details>
-            <details>
-                <summary>Bolehkah saya memakai cincin emas (lelaki)?</summary>
-                <p class="faq-ans">Dalam Islam, lelaki dilarang memakai emas. Cincin perak atau logam lain adalah
-                    dibenarkan.</p>
-            </details>
-            <details>
-                <summary>Bagaimana cara mandi wajib yang betul?</summary>
-                <p class="faq-ans">Niat mandi wajib, kemudian ratakan air ke seluruh anggota badan dengan sempurna tanpa
-                    ada tempat yang tertinggal.</p>
-            </details>
-            <details>
-                <summary>Syarat aurat bagi wanita dan lelaki?</summary>
-                <p class="faq-ans">Aurat lelaki adalah antara pusat hingga lutut. Aurat wanita adalah seluruh badan
-                    kecuali muka dan kedua tapak tangan.</p>
-            </details>
-        </div>
-    </section>
-
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-bottom">
-                &copy; 2026 Portal Mualaf. Hak Cipta Terpelihara.
+    <main class="container">
+        <section class="section" style="max-width: 800px; margin: 0 auto;">
+            <div class="faq-item">
+                <h3 class="faq-question">Bagaimana saya boleh memulakan langkah sebagai mualaf?</h3>
+                <p class="faq-answer">Mulakan dengan mempelajari asas-asas Islam seperti Syahadah, Wuduk, dan Solat
+                    melalui portal ini atau hubungi mentor kami.</p>
             </div>
-        </div>
+            <div class="faq-item">
+                <h3 class="faq-question">Adakah saya perlu menukar nama dalam kad pengenalan?</h3>
+                <p class="faq-answer">Secara teknikalnya, ia digalakkan tetapi yang paling penting adalah kepercayaan di
+                    dalam hati dan pengamalan cara hidup Islam.</p>
+            </div>
+            <div class="faq-item">
+                <h3 class="faq-question">Di mana saya boleh mendapatkan bantuan kewangan atau zakat?</h3>
+                <p class="faq-answer">Anda boleh memohon bantuan asnaf mualaf melalui pusat zakat negeri masing-masing.
+                    Kami juga menyediakan panduan kiraan zakat di sini.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="section" style="text-align: center; margin-top: 100px;">
+        <p style="color: var(--apple-text-muted); font-size: 12px;">© 2026 Portal Mualaf. Hak Cipta Terpelihara.</p>
     </footer>
 </body>
 
