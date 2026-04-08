@@ -1,0 +1,303 @@
+/* 
+  Mualaf Portal - Higglo Aesthetic Redesign
+  Characteristics: Deep Dark Mode, Vibrant Gradients, Glassmorphism Cards, Large Typography
+*/
+
+:root {
+    --bg-dark: #050505;
+    --text-primary: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.7);
+    --gradient-primary: linear-gradient(to right, #6366F1, #8B5CF6, #EC4899);
+    --gradient-cyan: linear-gradient(to right, #8ff5ff, #00deec);
+    
+    --card-bg: rgba(38, 37, 41, 0.4);
+    --card-border: rgba(72, 71, 74, 0.3);
+    --nav-bg: rgba(5, 5, 5, 0.6);
+    
+    --transition-smooth: all 0.4s ease;
+    --radius-xl: 16px;
+    --radius-pill: 999px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+    overflow-x: hidden;
+}
+
+/* Navbar - Floating Dock */
+.navbar {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 40px);
+    max-width: 1024px;
+    height: 60px;
+    background: var(--nav-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 9999;
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    transition: var(--transition-smooth);
+}
+
+.nav-content {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.nav-link {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: var(--transition-smooth);
+}
+
+.nav-link:hover {
+    color: var(--text-primary);
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    letter-spacing: -0.05em;
+}
+
+/* Button */
+.btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 10px 24px;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+    transition: var(--transition-smooth);
+    text-decoration: none;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.7);
+    transform: translateY(-2px);
+}
+
+.btn-cyan {
+    background: var(--gradient-cyan);
+    color: #005359;
+    padding: 14px 32px;
+    border-radius: var(--radius-pill);
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-cyan:hover {
+    box-shadow: 0 0 20px rgba(0, 222, 236, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Hero Section */
+.stage {
+    padding-top: 180px;
+    padding-bottom: 120px;
+    text-align: center;
+    position: relative;
+}
+
+.stage::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(5, 5, 5, 0) 70%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+.badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+    border: 1px solid var(--card-border);
+    padding: 6px 16px;
+    border-radius: var(--radius-pill);
+    margin-bottom: 24px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.stage-title {
+    font-size: clamp(3rem, 6vw, 5rem);
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    margin-bottom: 20px;
+    line-height: 1.1;
+    background: linear-gradient(to bottom, #ffffff, #888);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.stage-title em {
+    font-style: italic;
+    font-weight: 400;
+    background: var(--gradient-cyan);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.stage-subtitle {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 40px auto;
+}
+
+.cta-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.link-cta {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid var(--text-muted);
+    padding-bottom: 2px;
+    transition: var(--transition-smooth);
+}
+
+.link-cta:hover {
+    color: #8B5CF6;
+    border-color: #8B5CF6;
+}
+
+/* Card Grid - Glassmorphism Sections */
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.feature-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: var(--radius-xl);
+    padding: 60px 40px;
+    text-align: left;
+    transition: var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.card-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    font-size: 24px;
+}
+
+.feature-card h3 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    letter-spacing: -0.02em;
+}
+
+.feature-card p {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+/* Specific Page Overrides */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.section {
+    padding: 100px 0;
+}
+
+footer {
+    border-top: 1px solid var(--card-border);
+    padding: 40px 0;
+    margin-top: 100px;
+}
+
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .nav-links {
+        display: none;
+    }
+    
+    .stage-title {
+        font-size: 2.5rem;
+    }
+}
