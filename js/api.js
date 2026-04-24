@@ -54,6 +54,14 @@ class APIService {
 
     processCSVData(csvText) {
         const overrides = JSON.parse(localStorage.getItem('hcf_name_overrides') || '{}');
+        
+        // Custom Column Mappings
+        const cDate = localStorage.getItem('hcf_col_date');
+        const cAmount = localStorage.getItem('hcf_col_amount');
+        const cBank = localStorage.getItem('hcf_col_bank');
+        const cName = localStorage.getItem('hcf_col_name');
+        const cRef = localStorage.getItem('hcf_col_ref');
+
         const rows = this.parseCSV(csvText);
         const data = [];
         
@@ -98,6 +106,22 @@ class APIService {
                 transactionRef = clean(row[7]) || '-';
                 fundCat1 = clean(row[13]) || 'Unknown';
                 fundCat2 = clean(row[14]) || 'Unknown';
+            }
+
+            // Apply User Custom Mappings if defined
+            if (cDate && cDate !== '') {
+                dateRaw = clean(row[parseInt(cDate)]);
+                if (dateRaw && dateRaw.includes(' ')) dateRaw = dateRaw.split(' ')[0];
+            }
+            if (cAmount && cAmount !== '') amountStr = clean(row[parseInt(cAmount)]);
+            if (cBank && cBank !== '') {
+                negeri = clean(row[parseInt(cBank)]); // Primary display for Bank in Dashboard
+                fundCategory = negeri;
+            }
+            if (cName && cName !== '') baseName = clean(row[parseInt(cName)]);
+            if (cRef && cRef !== '') {
+                txId = clean(row[parseInt(cRef)]);
+                reference = txId;
             }
 
             if (!dateRaw || !dateRaw.includes('/')) continue; 
