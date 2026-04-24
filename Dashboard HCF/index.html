@@ -262,6 +262,34 @@
                 </button>
             </div>
 
+            <div style="margin-bottom: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                <h3 style="color: #fff; margin-bottom: 1rem; font-size: 1rem;">Data Column Mapping (0-based)</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Customize column indices if your sheet structure changes. Leave empty for Auto.</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Date</label>
+                        <input type="number" id="setting-col-date" placeholder="Auto" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Amount</label>
+                        <input type="number" id="setting-col-amount" placeholder="Auto" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Bank Name</label>
+                        <input type="number" id="setting-col-bank" placeholder="Auto" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Payer Name</label>
+                        <input type="number" id="setting-col-name" placeholder="Auto" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Reference ID</label>
+                        <input type="number" id="setting-col-ref" placeholder="Auto" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                    </div>
+                </div>
+            </div>
+
             <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 2rem;">
                 <button onclick="document.getElementById('settings-modal').style.display='none'" style="background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 0.5rem 1rem;">Cancel</button>
                 <button class="upload-btn" onclick="saveSettings()" style="margin-top: 0; padding: 0.5rem 1.5rem;">Save Changes</button>
@@ -280,6 +308,13 @@
             
             document.getElementById('setting-sheet-url').value = localStorage.getItem('hcf_google_sheet_url') || '';
             document.getElementById('google-sheet-url-container').style.display = source === 'google' ? 'block' : 'none';
+
+            // Column Mapping
+            document.getElementById('setting-col-date').value = localStorage.getItem('hcf_col_date') || '';
+            document.getElementById('setting-col-amount').value = localStorage.getItem('hcf_col_amount') || '';
+            document.getElementById('setting-col-bank').value = localStorage.getItem('hcf_col_bank') || '';
+            document.getElementById('setting-col-name').value = localStorage.getItem('hcf_col_name') || '';
+            document.getElementById('setting-col-ref').value = localStorage.getItem('hcf_col_ref') || '';
         }
 
         function saveSettings() {
@@ -288,6 +323,13 @@
             const role = document.getElementById('setting-role').value;
             localStorage.setItem('hcf_user_role', role);
             
+            // Save Column Mapping
+            localStorage.setItem('hcf_col_date', document.getElementById('setting-col-date').value);
+            localStorage.setItem('hcf_col_amount', document.getElementById('setting-col-amount').value);
+            localStorage.setItem('hcf_col_bank', document.getElementById('setting-col-bank').value);
+            localStorage.setItem('hcf_col_name', document.getElementById('setting-col-name').value);
+            localStorage.setItem('hcf_col_ref', document.getElementById('setting-col-ref').value);
+
             document.getElementById('user-role-display').textContent = role;
             document.getElementById('settings-modal').style.display = 'none';
             alert('Settings Saved! Triggering data sync...');
