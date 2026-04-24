@@ -4,35 +4,9 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if authenticated
-    const authStatus = localStorage.getItem('hcf_admin_auth');
-    const loginOverlay = document.getElementById('login-overlay');
-    const authButton = document.getElementById('auth-button');
     const dataEntryNav = document.getElementById('nav-data-entry');
+    if (dataEntryNav) dataEntryNav.style.display = 'flex';
 
-    if (authStatus !== 'true') {
-        loginOverlay.style.display = 'flex';
-        dataEntryNav.style.display = 'none'; // Hide in nav until logged in
-    }
-
-    // Handle Login
-    document.getElementById('login-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        // Mock simple auth - any un/pw passes, realistically this goes to backend
-        localStorage.setItem('hcf_admin_auth', 'true');
-        loginOverlay.style.display = 'none';
-        dataEntryNav.style.display = 'flex';
-        showToast('Successfully logged in as Admin', 'success');
-    });
-
-    // Handle Logout
-    if (authButton) {
-        authButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            localStorage.removeItem('hcf_admin_auth');
-            window.location.href = 'index.html';
-        });
-    }
 
     // Set today's date automatically
     const dateInput = document.getElementById('date');
