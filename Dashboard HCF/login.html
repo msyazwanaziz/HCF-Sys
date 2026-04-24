@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCF Dashboard - Login</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body style="display: flex; align-items: center; justify-content: center; height: 100vh; background: var(--bg-color);">
+
+    <div class="login-box animate-fade-in" style="width: 100%; max-width: 400px; padding: 2rem; background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-glow);">
+        <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
+            <img src="https://hidayahcentre.org.my/wp-content/uploads/2021/06/logo-web2.png" onerror="this.src='https://hidayahcentre.org.my/wp-content/uploads/2021/06/logo-web2-100x64.png'" style="height: 60px; object-fit: contain;" alt="HCF Logo">
+        </div>
+        <h2 style="text-align: center; margin-bottom: 0.5rem; color: #fff;">Staff Portal</h2>
+        <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1.5rem;">Enter your credentials to access the dashboard.</p>
+        
+        <form id="global-login-form">
+            <div class="form-group text-left" style="text-align: left; margin-bottom: 1rem;">
+                <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem;">Username</label>
+                <input type="text" id="login-username" class="form-control" style="width: 100%; padding: 0.8rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;" placeholder="Enter username" required>
+            </div>
+            <div class="form-group text-left" style="text-align: left; margin-bottom: 1.5rem;">
+                <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem;">Password</label>
+                <input type="password" id="login-password" class="form-control" style="width: 100%; padding: 0.8rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;" placeholder="Enter password" required>
+            </div>
+            <div id="login-error" style="color: #ef4444; text-align: center; margin-bottom: 1rem; display: none; font-size: 0.9rem;">
+                Invalid username or password
+            </div>
+            <button type="submit" class="btn btn-primary btn-block text-center" style="width: 100%; justify-content: center; padding: 0.8rem; background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); border: none; color: white; font-weight: bold; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                Login Securely <i class="ph-bold ph-arrow-right"></i>
+            </button>
+        </form>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        document.getElementById('global-login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const user = document.getElementById('login-username').value;
+            const pass = document.getElementById('login-password').value;
+            
+            if (!login(user, pass)) {
+                document.getElementById('login-error').style.display = 'block';
+                // Shake animation for error
+                const box = document.querySelector('.login-box');
+                box.style.transform = 'translateX(-5px)';
+                setTimeout(() => box.style.transform = 'translateX(5px)', 50);
+                setTimeout(() => box.style.transform = 'translateX(-5px)', 100);
+                setTimeout(() => box.style.transform = 'translateX(5px)', 150);
+                setTimeout(() => box.style.transform = 'translateX(0)', 200);
+            }
+        });
+    </script>
+</body>
+</html>

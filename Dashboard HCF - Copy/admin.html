@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCF Admin - Data Entry</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Include Phosphor Icons for aesthetic icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">
+                <img src="https://hidayahcentre.org.my/wp-content/uploads/2021/06/logo-web2.png" onerror="this.src='https://hidayahcentre.org.my/wp-content/uploads/2021/06/logo-web2-100x64.png'" alt="HCF Logo">
+            </div>
+            <span style="font-size: 1.2rem; display: none;">HCF Sys</span>
+        </div>
+        
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="ph ph-squares-four"></i> Dashboard</a></li>
+            <li><a href="admin.html" class="active" id="nav-data-entry"><i class="ph ph-file-plus"></i> Data Entry</a></li>
+            <li style="margin-top: auto;">
+                <a href="#" id="auth-button"><i class="ph ph-sign-out"></i> Logout</a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Topbar -->
+        <header class="topbar">
+            <div>
+                <span style="color: var(--text-secondary); font-size: 0.9rem;">Hidayah Centre Foundation</span>
+            </div>
+            <div class="user-profile">
+                <div class="google-sheets-sync" style="margin: 0; padding: 5px 10px; background: transparent; border: none;">
+                    <i class="ph ph-arrows-clockwise" id="sync-icon"></i>
+                    <span id="sync-status">Connected</span>
+                </div>
+                <div class="avatar" id="user-avatar" style="display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--accent-secondary);">
+                    A
+                </div>
+                <span id="user-role" style="font-size: 0.9rem; font-weight: 500;">Admin</span>
+            </div>
+        </header>
+
+        <!-- Admin Content -->
+        <div class="dashboard-container" id="admin-view">
+            <!-- Login Overlay (Hidden if authenticated in JS) -->
+            <div id="login-overlay" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 1000; align-items: center; justify-content: center;">
+                <div class="login-box">
+                    <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
+                        <img src="https://hidayahcentre.org.my/wp-content/uploads/2021/06/logo-web2.png" onerror="this.src='https://hidayahcentre.org.my/wp-content/uploads/2021/06/logo-web2-100x64.png'" style="height: 60px; object-fit: contain;" alt="HCF Logo">
+                    </div>
+                    <h2>Admin Portal</h2>
+                    <p>Enter your credentials to access the data entry dashboard.</p>
+                    
+                    <form id="login-form">
+                        <div class="form-group text-left" style="text-align: left;">
+                            <label>Username / Email</label>
+                            <input type="text" id="login-username" class="form-control" placeholder="admin" required>
+                        </div>
+                        <div class="form-group text-left" style="text-align: left;">
+                            <label>Password</label>
+                            <input type="password" id="login-password" class="form-control" placeholder="admin123" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block text-center" style="width: 100%; justify-content: center;">
+                            Login Securely <i class="ph-bold ph-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Data Entry Form -->
+            <div id="data-entry-content" class="animate-fade-in">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Manual Data Entry</h1>
+                        <p style="color: var(--text-secondary); margin-top: 5px;">Record new inflow transactions directly into the system. Data will sync automatically.</p>
+                    </div>
+                </div>
+
+                <div class="admin-form">
+                    <form id="inflow-form">
+                        <div class="form-group">
+                            <label for="bank">Bank / Component</label>
+                            <div style="position: relative;">
+                                <select id="bank" class="form-control" required style="appearance: none;">
+                                    <option value="" disabled selected>Select Bank Account</option>
+                                    <option value="maybank">Maybank (Primary)</option>
+                                    <option value="cimb">CIMB (Secondary)</option>
+                                    <option value="bimb">BIMB (Zakat/Special)</option>
+                                </select>
+                                <i class="ph ph-caret-down" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-secondary);"></i>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div class="form-group">
+                                <label for="amount">Amount (RM)</label>
+                                <input type="number" id="amount" class="form-control" step="0.01" min="0" placeholder="0.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="date">Transaction Date</label>
+                                <input type="date" id="date" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reference">Reference ID / Receipt No.</label>
+                            <input type="text" id="reference" class="form-control" placeholder="e.g. TR-99824" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notes">Notes / Donor info (Optional)</label>
+                            <input type="text" id="notes" class="form-control" placeholder="Hamba Allah">
+                        </div>
+
+                        <div class="google-sheets-sync" style="justify-content: center; margin-bottom: 1.5rem;">
+                            <i class="ph ph-google-logo"></i> Records will be automatically synced to Google Sheets
+                        </div>
+
+                        <div style="text-align: right;">
+                            <button type="submit" class="btn btn-primary" id="submit-btn">
+                                <i class="ph-bold ph-plus-circle"></i> Submit Record
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Family | Dashboard System</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i data-lucide="network"></i>
+                <span>My Family</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <i data-lucide="layout-dashboard"></i> Dashboard
+                </a>
+                <a href="#" class="nav-item" data-page="members">
+                    <i data-lucide="users"></i> Directory
+                </a>
+                <a href="#" class="nav-item" data-page="tree">
+                    <i data-lucide="git-merge"></i> Family Tree
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="theme-toggle" class="btn-icon" aria-label="Toggle Theme">
+                    <i data-lucide="sun" class="light-icon"></i>
+                    <i data-lucide="moon" class="dark-icon"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <h1 id="page-title">Dashboard Overview</h1>
+                <div class="header-actions">
+                    <button id="btn-add-member" class="btn-primary" style="display: none;">
+                        <i data-lucide="plus"></i> Add Member
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dynamic Views Container -->
+            <div class="views-container">
+                <!-- Dashboard View -->
+                <section id="view-dashboard" class="view active">
+                    <div class="stats-grid" id="dashboard-stats">
+                        <!-- Stats injected via JS -->
+                    </div>
+                    <div class="recent-members-section">
+                        <h2>Recently Added Members</h2>
+                        <div class="recent-grid" id="recent-members-grid"></div>
+                    </div>
+                </section>
+
+                <!-- Members Directory View -->
+                <section id="view-members" class="view">
+                    <div class="search-bar">
+                        <i data-lucide="search"></i>
+                        <input type="text" id="search-members" placeholder="Search members by name...">
+                    </div>
+                    <div class="members-grid" id="members-list-grid">
+                        <!-- Members injected via JS -->
+                    </div>
+                </section>
+
+                <!-- Family Tree View -->
+                <section id="view-tree" class="view">
+                    <div class="tree-controls">
+                        <button class="btn-icon" id="zoom-in"><i data-lucide="zoom-in"></i></button>
+                        <button class="btn-icon" id="zoom-out"><i data-lucide="zoom-out"></i></button>
+                        <button class="btn-icon" id="reset-zoom"><i data-lucide="maximize"></i></button>
+                    </div>
+                    <div class="tree-container" id="family-tree-container">
+                        <!-- SVG / DOM Nodes injected here -->
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="member-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add Family Member</h2>
+                <button class="btn-close" id="close-modal"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="member-form">
+                    <input type="hidden" id="member-id">
+                    
+                    <div class="form-group picture-upload">
+                        <label for="member-picture" class="picture-preview" id="picture-preview-container">
+                            <i data-lucide="camera"></i>
+                            <span>Upload Photo</span>
+                            <img id="picture-preview-img" src="" alt="Preview" style="display: none;">
+                        </label>
+                        <input type="file" id="member-picture" accept="image/*" hidden>
+                        <input type="hidden" id="member-picture-data">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name *</label>
+                            <input type="text" id="member-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Gender *</label>
+                            <select id="member-gender" required>
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date of Birth</label>
+                            <input type="date" id="member-dob">
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select id="member-status">
+                                <option value="alive">Alive</option>
+                                <option value="deceased">Deceased</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Biography / Details</label>
+                        <textarea id="member-bio" rows="3"></textarea>
+                    </div>
+
+                    <h3 class="section-title">Relationships</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Select Parents (Optional)</label>
+                            <select id="member-parents" multiple class="relationship-select">
+                                <!-- Options populated via JS -->
+                            </select>
+                            <small>Hold Ctrl/Cmd to select multiple</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Select Spouse (Optional)</label>
+                            <select id="member-spouse" class="relationship-select">
+                                <option value="">None</option>
+                                <!-- Options populated via JS -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" id="cancel-modal">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Member</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
