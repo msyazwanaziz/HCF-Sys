@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCF Inflow Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Include Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Include Phosphor Icons for aesthetic icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">
+                <img src="https://hidayahcentre.org.my/wp-content/uploads/2021/06/logo-web2.png" onerror="this.src='https://hidayahcentre.org.my/wp-content/uploads/2021/06/logo-web2-100x64.png'" alt="HCF Logo">
+            </div>
+            <span style="font-size: 1.2rem; display: none;">HCF Sys</span>
+        </div>
+        
+        <ul class="nav-links">
+            <li><a href="index.html" class="active"><i class="ph ph-squares-four"></i> Dashboard</a></li>
+            <li><a href="transactions.html"><i class="ph ph-list-dashes"></i> Transactions</a></li>
+            <li><a href="#" onclick="openSettings()"><i class="ph ph-gear"></i> Settings</a></li>
+            <!-- Data Entry Devoked --><li style="margin-top: auto;">
+                <a href="#" id="auth-button"><i class="ph ph-sign-in"></i> Login</a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Topbar -->
+        <header class="topbar">
+            <div>
+                <span style="color: var(--text-secondary); font-size: 0.9rem;">Hidayah Centre Foundation</span>
+            </div>
+            <div class="user-profile">
+                <div class="google-sheets-sync" id="sync-button" style="margin: 0; padding: 5px 10px; background: transparent; border: none; cursor: pointer;">
+                    <i class="ph ph-arrows-clockwise" id="sync-icon"></i>
+                    <span id="sync-status">Refresh Sync</span>
+                </div>
+                <div class="avatar" id="user-avatar" style="display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--text-primary); background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); width: 35px; height: 35px; border-radius: 50%;">
+                    A
+                </div>
+                <span id="user-role-display" style="font-size: 0.9rem; font-weight: 500;">Super Admin</span>
+            </div>
+        </header>
+
+        <!-- Dashboard View -->
+        <div class="dashboard-container" id="dashboard-view">
+            <div class="page-header animate-fade-in">
+                <h1 class="page-title">Fund Inflow Overview</h1>
+                
+                <div class="controls-slicer">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <i class="ph ph-calendar-blank" style="color: var(--text-secondary);"></i>
+                        <select id="month-slicer">
+                            <option value="all" selected>All Months</option>
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <i class="ph ph-map-pin" style="color: var(--text-secondary);"></i>
+                        <select id="negeri-slicer">
+                            <option value="all">All Regions</option>
+                        </select>
+                    </div>
+                    <div style="border-left: 1px solid var(--border-color); margin: 0 5px;"></div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <i class="ph ph-funnel" style="color: var(--text-secondary);"></i>
+                        <select id="sumber-slicer">
+                            <option value="all">All Sources</option>
+                        </select>
+                    </div>
+                    <div style="border-left: 1px solid var(--border-color); margin: 0 5px;"></div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <i class="ph ph-bank" style="color: var(--text-secondary);"></i>
+                        <select id="bank-slicer">
+                            <option value="all">All Accounts</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- File Upload Overlay (Shown strictly if no data is found) -->
+            <div id="file-overlay" class="file-drop-overlay" style="display: none;">
+                <i class="ph ph-upload-simple"></i>
+                <h2 style="margin-bottom: 0.5rem; color: #fff;">Upload Local Backup CSV</h2>
+                <p style="color: var(--text-secondary); max-width: 400px; margin-bottom: 1rem;">
+                    Since you're running locally, select your <b>live_data_backup.csv</b> file to populate the dark dashboard securely.
+                </p>
+                <input type="file" id="csv-file-input" accept=".csv" style="display: none;">
+                <button class="upload-btn" onclick="document.getElementById('csv-file-input').click()">Browse Files</button>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid animate-fade-in" id="dashboard-content" style="animation-delay: 0.1s;">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span>Total Inflow</span>
+                        <i class="ph ph-wallet" style="color: var(--accent-primary); font-size: 1.2rem;"></i>
+                    </div>
+                    <div class="stat-value" id="total-inflow">RM 0</div>
+                    <div class="stat-trend trend-up">
+                        <i class="ph-bold ph-trend-up"></i>
+                        <span>Active tracking</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span>Maybank Contributions</span>
+                        <i class="ph ph-bank" style="color: #eab308; font-size: 1.2rem;"></i>
+                    </div>
+                    <div class="stat-value" id="maybank-total">RM 0</div>
+                    <div class="stat-trend" style="color: var(--text-secondary);">
+                        <span>Primary Account</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span>CIMB Contributions</span>
+                        <i class="ph ph-bank" style="color: #ef4444; font-size: 1.2rem;"></i>
+                    </div>
+                    <div class="stat-value" id="cimb-total">RM 0</div>
+                    <div class="stat-trend" style="color: var(--text-secondary);">
+                        <span>Secondary Account</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span>Total Transactions</span>
+                        <i class="ph ph-receipt" style="color: var(--accent-secondary); font-size: 1.2rem;"></i>
+                    </div>
+                    <div class="stat-value" id="total-tx">0</div>
+                    <div class="stat-trend" style="color: var(--text-secondary);">
+                        <span>Successful</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 1 -->
+            <div class="charts-grid animate-fade-in" style="animation-delay: 0.2s;">
+                <div class="chart-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 style="margin: 0;">Inflow Trend</h3>
+                        <select id="trend-period" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); border-radius: var(--radius-sm); outline: none; padding: 2px 5px; cursor: pointer;">
+                            <option value="daily" style="background: var(--bg-base); color: white;">Daily</option>
+                            <option value="monthly" style="background: var(--bg-base); color: white;">Monthly</option>
+                        </select>
+                    </div>
+                    <div style="height: 300px; width: 100%;">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h3>Fund Category 1 Comparison</h3>
+                    <div style="height: 300px; width: 100%; display: flex; justify-content: center;">
+                        <canvas id="fundCat1Chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Inflow by Sumber</h3>
+                    <div style="height: 300px; width: 100%; display: flex; justify-content: center;">
+                        <canvas id="sumberChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 2 -->
+            <div class="charts-grid animate-fade-in" style="animation-delay: 0.3s; grid-template-columns: 1fr 1fr;">
+                <div class="chart-card">
+                    <h3>Inflow by Negeri/Jabatan</h3>
+                    <div style="height: 300px; width: 100%; display: flex; justify-content: center;">
+                        <canvas id="negeriChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h3>Fund Category 2 Comparison</h3>
+                    <div style="height: 300px; width: 100%; display: flex; justify-content: center;">
+                        <canvas id="fundCat2Chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Data Table -->
+            <div class="data-table-card animate-fade-in" style="animation-delay: 0.3s;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 style="font-weight: 500; font-size: 1.2rem;">Recent Transactions</h3>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">* Synced with Google Sheets</div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Reference ID</th>
+                                <th>Bank</th>
+                                <th>Amount (RM)</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transaction-tbody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="modal-content" style="background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 2rem; width: 90%; max-width: 500px; box-shadow: var(--shadow-glow);">
+            <h2 style="margin-bottom: 1.5rem; color: #fff;">System Settings</h2>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.9rem;">Data Source Sync</label>
+                <select id="setting-source" style="width: 100%; padding: 0.8rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;" onchange="document.getElementById('google-sheet-url-container').style.display = this.value === 'google' ? 'block' : 'none'">
+                    <option value="local">Local Disk Backup (live_data_backup.csv)</option>
+                    <option value="google">Google Sheet Live API</option>
+                </select>
+            </div>
+
+            <div id="google-sheet-url-container" style="margin-bottom: 1.5rem; display: none;">
+                <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.9rem;">Google Sheet URL (Public)</label>
+                <input type="text" id="setting-sheet-url" placeholder="https://docs.google.com/spreadsheets/d/.../edit" style="width: 100%; padding: 0.8rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Must be "Anyone with the link can view".</p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.9rem;">Current Access Role</label>
+                <select id="setting-role" style="width: 100%; padding: 0.8rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                    <option value="Admin">Super Admin (Full Access)</option>
+                    <option value="Manager">Manager (Cannot modify settings)</option>
+                    <option value="Viewer">Viewer (Read-Only)</option>
+                </select>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Roles adapt interface visibility immediately.</p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                <button class="upload-btn" onclick="alert('Account creation portal triggered. Database backend required.')" style="margin-top: 0; width: 100%; background: transparent; border: 1px solid var(--accent-primary);">
+                    <i class="ph ph-user-plus"></i> Create New Account
+                </button>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 2rem;">
+                <button onclick="document.getElementById('settings-modal').style.display='none'" style="background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 0.5rem 1rem;">Cancel</button>
+                <button class="upload-btn" onclick="saveSettings()" style="margin-top: 0; padding: 0.5rem 1.5rem;">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script>
+        function openSettings() {
+            document.getElementById('settings-modal').style.display = 'flex';
+            const source = localStorage.getItem('hcf_data_source') || 'local';
+            document.getElementById('setting-source').value = source;
+            document.getElementById('setting-role').value = localStorage.getItem('hcf_user_role') || 'Admin';
+            
+            document.getElementById('setting-sheet-url').value = localStorage.getItem('hcf_google_sheet_url') || '';
+            document.getElementById('google-sheet-url-container').style.display = source === 'google' ? 'block' : 'none';
+        }
+
+        function saveSettings() {
+            localStorage.setItem('hcf_data_source', document.getElementById('setting-source').value);
+            localStorage.setItem('hcf_google_sheet_url', document.getElementById('setting-sheet-url').value);
+            const role = document.getElementById('setting-role').value;
+            localStorage.setItem('hcf_user_role', role);
+            
+            document.getElementById('user-role-display').textContent = role;
+            document.getElementById('settings-modal').style.display = 'none';
+            alert('Settings Saved! Triggering data sync...');
+            if (window.triggerSync) window.triggerSync();
+        }
+
+        // Initialize role on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('user-role-display').textContent = localStorage.getItem('hcf_user_role') || 'Super Admin';
+        });
+    </script>
+</body>
+</html>

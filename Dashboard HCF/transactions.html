@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions - HCF Inflow Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Include Phosphor Icons for aesthetic icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        .pagination { 
+            display: flex; 
+            justify-content: flex-end; 
+            align-items: center; 
+            gap: 1rem; 
+            margin-top: 1.5rem; 
+        }
+        .page-btn { 
+            background: var(--bg-base); 
+            color: var(--text-primary); 
+            border: 1px solid var(--border-color); 
+            padding: 0.5rem 1rem; 
+            border-radius: var(--radius-sm); 
+            cursor: pointer; 
+            transition: all 0.2s; 
+        }
+        .page-btn:hover:not(:disabled) { 
+            background: var(--accent-primary); 
+            color: white; 
+            border-color: var(--accent-primary); 
+        }
+        .page-btn:disabled { 
+            opacity: 0.5; 
+            cursor: not-allowed; 
+        }
+        .page-info { 
+            color: var(--text-secondary); 
+            font-size: 0.9rem; 
+        }
+        .search-wrapper { 
+            position: relative; 
+            display: flex;
+            align-items: center;
+        }
+        .search-wrapper i { 
+            position: absolute; 
+            left: 10px; 
+            color: var(--text-secondary); 
+            pointer-events: none;
+        }
+        .search-wrapper input { 
+            width: 300px; 
+            padding: 0.6rem 1rem 0.6rem 2.2rem; 
+            background: var(--bg-base); 
+            border: 1px solid var(--border-color); 
+            color: white; 
+            border-radius: var(--radius-sm); 
+            outline: none; 
+            font-family: inherit;
+        }
+        .search-wrapper input:focus {
+            border-color: var(--accent-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">
+                <img src="https://hidayahcentre.org.my/wp-content/uploads/2021/06/logo-web2.png" onerror="this.src='https://hidayahcentre.org.my/wp-content/uploads/2021/06/logo-web2-100x64.png'" alt="HCF Logo">
+            </div>
+            <span style="font-size: 1.2rem; display: none;">HCF Sys</span>
+        </div>
+        
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="ph ph-squares-four"></i> Dashboard</a></li>
+            <li><a href="transactions.html" class="active"><i class="ph ph-list-dashes"></i> Transactions</a></li>
+            <li><a href="#" onclick="alert('Please navigate back to the Dashboard to change settings.')"><i class="ph ph-gear"></i> Settings</a></li>
+            <!-- Data Entry Devoked --><li style="margin-top: auto;">
+                <a href="#" id="auth-button"><i class="ph ph-sign-in"></i> Login</a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Topbar -->
+        <header class="topbar">
+            <div>
+                <span style="color: var(--text-secondary); font-size: 0.9rem;">Hidayah Centre Foundation</span>
+            </div>
+            <div class="user-profile">
+                <!-- Data is loaded actively via api.js so no sync button needed here -->
+                <div class="avatar" id="user-avatar" style="display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--text-primary); background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); width: 35px; height: 35px; border-radius: 50%;">
+                    A
+                </div>
+                <span id="user-role-display" style="font-size: 0.9rem; font-weight: 500;">Super Admin</span>
+            </div>
+        </header>
+
+        <!-- Dashboard View -->
+        <div class="dashboard-container">
+            <div class="page-header animate-fade-in">
+                <h1 class="page-title">Full Transactions Ledger</h1>
+                
+                <div class="controls-slicer">
+                    <div class="search-wrapper">
+                        <i class="ph ph-magnifying-glass"></i>
+                        <input type="text" id="search-input" placeholder="Search Ref ID, Bank, Amount...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Full Data Table -->
+            <div class="data-table-card animate-fade-in" style="animation-delay: 0.1s;">
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; text-align: left; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Reference ID</th>
+                                <th>Bank Name</th>
+                                <th>Receipt Name</th>
+                                <th>Transaction Ref</th>
+                                <th>Bank Account</th>
+                                <th>Category 1</th>
+                                <th>State/Region</th>
+                                <th>Amount (RM)</th>
+                                <th>Status</th>
+                                <th style="text-align: center;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transaction-tbody">
+                            <!-- Populated by JS -->
+                            <tr><td colspan="11" style="text-align:center; padding: 2rem; color:var(--text-secondary);">Loading full transaction ledger...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="pagination" id="pagination-controls" style="display: none;">
+                    <div class="page-info">
+                        Showing <span id="page-start">0</span> to <span id="page-end">0</span> of <span id="total-rows">0</span> entries
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="page-btn" id="prev-btn" onclick="changePage(-1)"><i class="ph ph-caret-left"></i> Prev</button>
+                        <button class="page-btn" id="next-btn" onclick="changePage(1)">Next <i class="ph ph-caret-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/transactions.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('user-role-display').textContent = localStorage.getItem('hcf_user_role') || 'Super Admin';
+        });
+    </script>
+</body>
+</html>
