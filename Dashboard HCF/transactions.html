@@ -77,7 +77,7 @@
         <ul class="nav-links">
             <li><a href="index.html"><i class="ph ph-squares-four"></i> Dashboard</a></li>
             <li><a href="transactions.html" class="active"><i class="ph ph-list-dashes"></i> Transactions</a></li>
-            <li><a href="#" onclick="alert('Please navigate back to the Dashboard to change settings.')"><i class="ph ph-gear"></i> Settings</a></li>
+            <li><a href="#" onclick="openSettings()"><i class="ph ph-gear"></i> Settings</a></li>
             <!-- Data Entry Devoked --><li style="margin-top: auto;">
                 <a href="#" id="auth-button"><i class="ph ph-sign-in"></i> Login</a>
             </li>
@@ -152,9 +152,170 @@
         </div>
     </main>
 
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center;">
+        <div class="modal-content" style="background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 2rem; width: 90%; max-width: 500px; box-shadow: var(--shadow-glow);">
+            <h2 style="margin-bottom: 1.5rem; color: #fff;">System Settings</h2>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.9rem;">Data Source Sync</label>
+                <select id="setting-source" style="width: 100%; padding: 0.8rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;" onchange="document.getElementById('google-sheet-url-container').style.display = this.value === 'google' ? 'block' : 'none'">
+                    <option value="local">Local Disk Backup (live_data_backup.csv)</option>
+                    <option value="google">Google Sheet Live API</option>
+                </select>
+            </div>
+
+            <div id="google-sheet-url-container" style="margin-bottom: 1.5rem; display: none;">
+                <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.9rem;">Google Sheet URL (Public)</label>
+                <input type="text" id="setting-sheet-url" placeholder="https://docs.google.com/spreadsheets/d/.../edit" style="width: 100%; padding: 0.8rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Must be "Anyone with the link can view".</p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.9rem;">Current Access Role</label>
+                <select id="setting-role" style="width: 100%; padding: 0.8rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                    <option value="Admin">Super Admin (Full Access)</option>
+                    <option value="Manager">Manager (Cannot modify settings)</option>
+                    <option value="Viewer">Viewer (Read-Only)</option>
+                </select>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Roles adapt interface visibility immediately.</p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                <button class="upload-btn" onclick="alert('Account creation portal triggered. Database backend required.')" style="margin-top: 0; width: 100%; background: transparent; border: 1px solid var(--accent-primary);">
+                    <i class="ph ph-user-plus"></i> Create New Account
+                </button>
+            </div>
+
+            <div style="margin-bottom: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                <h3 style="color: #fff; margin-bottom: 1rem; font-size: 1rem;">Dynamic Header Data Mapping</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Select the actual column headers from your data to map to dashboard fields. This prevents breaks when columns shift.</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Date</label>
+                        <select class="mapping-select" id="setting-col-date" data-store="hcf_col_date" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;"></select>
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Amount (RM)</label>
+                        <select class="mapping-select" id="setting-col-amount" data-store="hcf_col_amount" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;"></select>
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Bank/Account Name</label>
+                        <select class="mapping-select" id="setting-col-bank" data-store="hcf_col_bank" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;"></select>
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Payer Name / Notes</label>
+                        <select class="mapping-select" id="setting-col-name" data-store="hcf_col_name" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;"></select>
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Reference ID</label>
+                        <select class="mapping-select" id="setting-col-ref" data-store="hcf_col_ref" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;"></select>
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Sumber / Source</label>
+                        <select class="mapping-select" id="setting-col-sumber" data-store="hcf_col_sumber" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;"></select>
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Fund Category 1</label>
+                        <select class="mapping-select" id="setting-col-fund1" data-store="hcf_col_fund1" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;"></select>
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Fund Category 2</label>
+                        <select class="mapping-select" id="setting-col-fund2" data-store="hcf_col_fund2" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;"></select>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 2rem;">
+                <button onclick="document.getElementById('settings-modal').style.display='none'" style="background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 0.5rem 1rem;">Cancel</button>
+                <button class="upload-btn" onclick="saveSettings()" style="margin-top: 0; padding: 0.5rem 1.5rem;">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/api.js"></script>
     <script src="js/transactions.js"></script>
     <script>
+        // Helper to convert index to letter for backwards compatibility with old saves
+        function getColumnLetter(index) {
+            let letter = '';
+            let temp = parseInt(index);
+            if (isNaN(temp)) return index; // It's already a letter or string
+            while (temp >= 0) {
+                letter = String.fromCharCode(65 + (temp % 26)) + letter;
+                temp = Math.floor(temp / 26) - 1;
+            }
+            return letter;
+        }
+
+        function loadHeadersForMapping() {
+            const selects = document.querySelectorAll('.mapping-select');
+            const localCsv = localStorage.getItem('hcf_csv_cache');
+            
+            if (!localCsv) {
+                selects.forEach(sel => {
+                    sel.innerHTML = '<option value="">No data found. Sync first.</option>';
+                });
+                return;
+            }
+
+            // Simple CSV first row parser to get headers
+            const firstLine = localCsv.split('\n')[0];
+            const headers = firstLine.split(',').map(h => h.replace(/^"|"$/g, '').trim());
+            
+            selects.forEach(sel => {
+                const currentVal = localStorage.getItem(sel.dataset.store) || '';
+                let optionsHtml = '<option value="">-- Auto Detect --</option>';
+                
+                headers.forEach((header, index) => {
+                    if(!header) return;
+                    // Check if current value matches header name, index, or column letter (for legacy support)
+                    const letter = getColumnLetter(index);
+                    const selected = (currentVal === header || currentVal == index || currentVal === letter) ? 'selected' : '';
+                    optionsHtml += `<option value="${header}" ${selected}>${header}</option>`;
+                });
+                
+                sel.innerHTML = optionsHtml;
+            });
+        }
+
+        function openSettings() {
+            document.getElementById('settings-modal').style.display = 'flex';
+            const source = localStorage.getItem('hcf_data_source') || 'local';
+            document.getElementById('setting-source').value = source;
+            document.getElementById('setting-role').value = localStorage.getItem('hcf_user_role') || 'Admin';
+            
+            document.getElementById('setting-sheet-url').value = localStorage.getItem('hcf_google_sheet_url') || '';
+            document.getElementById('google-sheet-url-container').style.display = source === 'google' ? 'block' : 'none';
+
+            loadHeadersForMapping();
+        }
+
+        function saveSettings() {
+            localStorage.setItem('hcf_data_source', document.getElementById('setting-source').value);
+            localStorage.setItem('hcf_google_sheet_url', document.getElementById('setting-sheet-url').value);
+            const role = document.getElementById('setting-role').value;
+            localStorage.setItem('hcf_user_role', role);
+            
+            // Save Dynamic Column Mapping
+            document.querySelectorAll('.mapping-select').forEach(sel => {
+                localStorage.setItem(sel.dataset.store, sel.value);
+            });
+
+            document.getElementById('user-role-display').textContent = role;
+            document.getElementById('settings-modal').style.display = 'none';
+            alert('Settings Saved! Triggering data sync...');
+            
+            // In transactions view, we can just trigger window.loadTransactions
+            if (window.loadTransactions) {
+                // Ensure api syncs fresh data from cache
+                window.api.getData().then(() => {
+                    window.loadTransactions();
+                });
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('user-role-display').textContent = localStorage.getItem('hcf_user_role') || 'Super Admin';
         });
