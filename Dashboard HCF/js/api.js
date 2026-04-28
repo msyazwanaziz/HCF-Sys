@@ -52,6 +52,20 @@ class APIService {
         return arr;
     }
 
+    // Helper to convert column letter (A, B, C...) or number string to 0-based index
+    getColumnIndex(val) {
+        if (val === null || val === undefined || val === '') return null;
+        if (!isNaN(val)) return parseInt(val); // Fallback for old 0-based indices
+        
+        let column = 0;
+        const letter = val.toString().toUpperCase().replace(/[^A-Z]/g, '');
+        if (!letter) return null;
+        for (let i = 0; i < letter.length; i++) {
+            column += (letter.charCodeAt(i) - 64) * Math.pow(26, letter.length - i - 1);
+        }
+        return column - 1;
+    }
+
     processCSVData(csvText) {
         const overrides = JSON.parse(localStorage.getItem('hcf_name_overrides') || '{}');
         
@@ -109,18 +123,26 @@ class APIService {
             }
 
             // Apply User Custom Mappings if defined
-            if (cDate && cDate !== '') {
-                dateRaw = clean(row[parseInt(cDate)]);
+            const iDate = this.getColumnIndex(cDate);
+            if (iDate !== null) {
+                dateRaw = clean(row[iDate]);
                 if (dateRaw && dateRaw.includes(' ')) dateRaw = dateRaw.split(' ')[0];
             }
-            if (cAmount && cAmount !== '') amountStr = clean(row[parseInt(cAmount)]);
-            if (cBank && cBank !== '') {
-                negeri = clean(row[parseInt(cBank)]); // Primary display for Bank in Dashboard
+            const iAmount = this.getColumnIndex(cAmount);
+            if (iAmount !== null) amountStr = clean(row[iAmount]);
+            
+            const iBank = this.getColumnIndex(cBank);
+            if (iBank !== null) {
+                negeri = clean(row[iBank]); // Primary display for Bank in Dashboard
                 fundCategory = negeri;
             }
-            if (cName && cName !== '') baseName = clean(row[parseInt(cName)]);
-            if (cRef && cRef !== '') {
-                txId = clean(row[parseInt(cRef)]);
+            
+            const iName = this.getColumnIndex(cName);
+            if (iName !== null) baseName = clean(row[iName]);
+            
+            const iRef = this.getColumnIndex(cRef);
+            if (iRef !== null) {
+                txId = clean(row[iRef]);
                 reference = txId;
             }
 
