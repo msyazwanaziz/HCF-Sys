@@ -119,16 +119,34 @@
                     <table style="width: 100%; text-align: left; border-collapse: collapse;">
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Reference ID</th>
-                                <th>Bank Name</th>
-                                <th>Receipt Name</th>
-                                <th>Transaction Ref</th>
-                                <th>Bank Account</th>
-                                <th>Category 1</th>
-                                <th>State/Region</th>
-                                <th>Amount (RM)</th>
-                                <th>Status</th>
+                                <th>Date <br><input type="text" id="filter-date" class="col-filter" data-key="date" placeholder="Filter..." style="width: 80px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
+                                <th>Reference ID <br><input type="text" id="filter-ref" class="col-filter" data-key="reference" placeholder="Filter..." style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
+                                <th>Bank Name <br><input type="text" id="filter-name" class="col-filter" data-key="name" placeholder="Filter..." style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
+                                <th>Receipt Name <br><input type="text" id="filter-receipt" class="col-filter" data-key="receiptName" placeholder="Filter..." style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
+                                <th>Transaction Ref <br><input type="text" id="filter-tref" class="col-filter" data-key="transactionRef" placeholder="Filter..." style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
+                                <th>Bank Account <br>
+                                    <select id="filter-bank" class="col-filter" data-key="bank" style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;">
+                                        <option value="">All</option>
+                                    </select>
+                                </th>
+                                <th>Category 1 <br>
+                                    <select id="filter-cat" class="col-filter" data-key="fundCat1" style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;">
+                                        <option value="">All</option>
+                                    </select>
+                                </th>
+                                <th>State/Region <br>
+                                    <select id="filter-state" class="col-filter" data-key="negeri" style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;">
+                                        <option value="">All</option>
+                                    </select>
+                                </th>
+                                <th>Amount (RM) <br><input type="text" id="filter-amt" class="col-filter" data-key="amount" placeholder="Filter..." style="width: 80px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
+                                <th>Status <br>
+                                    <select id="filter-status" class="col-filter" data-key="status" style="width: 80px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;">
+                                        <option value="">All</option>
+                                        <option value="synced">Synced</option>
+                                        <option value="pending">Pending</option>
+                                    </select>
+                                </th>
                                 <th style="text-align: center;">Action</th>
                             </tr>
                         </thead>

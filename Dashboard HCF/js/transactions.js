@@ -28,6 +28,31 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
         
+        // Populate select dropdowns for column filters
+        const bankSelect = document.getElementById('filter-bank');
+        const catSelect = document.getElementById('filter-cat');
+        const stateSelect = document.getElementById('filter-state');
+        
+        const uniqueBanks = [...new Set(allTransactions.map(t => t.bank).filter(Boolean))].sort();
+        const uniqueCats = [...new Set(allTransactions.map(t => t.fundCat1).filter(Boolean))].sort();
+        const uniqueStates = [...new Set(allTransactions.map(t => t.negeri).filter(Boolean))].sort();
+        
+        if (bankSelect) uniqueBanks.forEach(b => bankSelect.add(new Option(b, b)));
+        if (catSelect) uniqueCats.forEach(c => catSelect.add(new Option(c, c)));
+        if (stateSelect) uniqueStates.forEach(s => stateSelect.add(new Option(s, s)));
+
+        // Event listeners for column filters
+        document.querySelectorAll('.col-filter').forEach(el => {
+            el.addEventListener('input', () => {
+                currentPage = 1;
+                applyFilters();
+            });
+            el.addEventListener('change', () => {
+                currentPage = 1;
+                applyFilters();
+            });
+        });
+        
         renderTable();
     } catch (err) {
         console.error("Error loading transactions:", err);
@@ -40,10 +65,36 @@ function applyFilters() {
     const searchInput = document.getElementById('search-input');
     const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
     
+    // Gather column filters
+    const colFilters = {};
+    document.querySelectorAll('.col-filter').forEach(el => {
+        if (el.value.trim() !== '') {
+            colFilters[el.dataset.key] = el.value.toLowerCase();
+        }
+    });
+
     filteredTransactions = allTransactions.filter(tx => {
-        // Search across Reference, Name, Receipt Name, Transaction Ref, Bank, Category, State, Amount
-        const searchableText = `${tx.reference || ''} ${tx.name || ''} ${tx.receiptName || ''} ${tx.transactionRef || ''} ${tx.bank || ''} ${tx.fundCat1 || ''} ${tx.negeri || ''} ${tx.amount || ''}`.toLowerCase();
-        return searchableText.includes(searchTerm);
+        // 1. Global search
+        if (searchTerm) {
+            const searchableText = `${tx.reference || ''} ${tx.name || ''} ${tx.receiptName || ''} ${tx.transactionRef || ''} ${tx.bank || ''} ${tx.fundCat1 || ''} ${tx.negeri || ''} ${tx.amount || ''}`.toLowerCase();
+            if (!searchableText.includes(searchTerm)) return false;
+        }
+
+        // 2. Column specific filters
+        for (const key in colFilters) {
+            const filterVal = colFilters[key];
+            let cellVal = String(tx[key] || '').toLowerCase();
+            // exact match for dropdowns, partial match for inputs
+            const isDropdown = document.querySelector(`.col-filter[data-key="${key}"]`).tagName === 'SELECT';
+            
+            if (isDropdown) {
+                if (cellVal !== filterVal) return false;
+            } else {
+                if (!cellVal.includes(filterVal)) return false;
+            }
+        }
+        
+        return true;
     });
     
     renderTable();
