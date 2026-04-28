@@ -119,28 +119,28 @@
                     <table style="width: 100%; text-align: left; border-collapse: collapse;">
                         <thead>
                             <tr>
-                                <th>Date <br><input type="text" id="filter-date" class="col-filter" data-key="date" placeholder="Filter..." style="width: 80px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
-                                <th>Reference ID <br><input type="text" id="filter-ref" class="col-filter" data-key="reference" placeholder="Filter..." style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
-                                <th>Bank Name <br><input type="text" id="filter-name" class="col-filter" data-key="name" placeholder="Filter..." style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
-                                <th>Receipt Name <br><input type="text" id="filter-receipt" class="col-filter" data-key="receiptName" placeholder="Filter..." style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
-                                <th>Transaction Ref <br><input type="text" id="filter-tref" class="col-filter" data-key="transactionRef" placeholder="Filter..." style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
-                                <th>Bank Account <br>
+                                <th><span id="label-date">Date</span> <br><input type="text" id="filter-date" class="col-filter" data-key="date" placeholder="Filter..." style="width: 80px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
+                                <th><span id="label-ref">Reference ID</span> <br><input type="text" id="filter-ref" class="col-filter" data-key="reference" placeholder="Filter..." style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
+                                <th><span id="label-name">Bank Name</span> <br><input type="text" id="filter-name" class="col-filter" data-key="name" placeholder="Filter..." style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
+                                <th><span id="label-receipt">Receipt Name</span> <br><input type="text" id="filter-receipt" class="col-filter" data-key="receiptName" placeholder="Filter..." style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
+                                <th><span id="label-tref">Transaction Ref</span> <br><input type="text" id="filter-tref" class="col-filter" data-key="transactionRef" placeholder="Filter..." style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
+                                <th><span id="label-bank">Bank Account</span> <br>
                                     <select id="filter-bank" class="col-filter" data-key="bank" style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;">
                                         <option value="">All</option>
                                     </select>
                                 </th>
-                                <th>Category 1 <br>
+                                <th><span id="label-cat">Category 1</span> <br>
                                     <select id="filter-cat" class="col-filter" data-key="fundCat1" style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;">
                                         <option value="">All</option>
                                     </select>
                                 </th>
-                                <th>State/Region <br>
+                                <th><span id="label-state">State/Region</span> <br>
                                     <select id="filter-state" class="col-filter" data-key="negeri" style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;">
                                         <option value="">All</option>
                                     </select>
                                 </th>
-                                <th>Amount (RM) <br><input type="text" id="filter-amt" class="col-filter" data-key="amount" placeholder="Filter..." style="width: 80px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
-                                <th>Status <br>
+                                <th><span id="label-amt">Amount (RM)</span> <br><input type="text" id="filter-amt" class="col-filter" data-key="amount" placeholder="Filter..." style="width: 80px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;"></th>
+                                <th><span id="label-status">Status</span> <br>
                                     <select id="filter-status" class="col-filter" data-key="status" style="width: 80px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;">
                                         <option value="">All</option>
                                         <option value="synced">Synced</option>
@@ -203,6 +203,50 @@
                 <button class="upload-btn" onclick="alert('Account creation portal triggered. Database backend required.')" style="margin-top: 0; width: 100%; background: transparent; border: 1px solid var(--accent-primary);">
                     <i class="ph ph-user-plus"></i> Create New Account
                 </button>
+            </div>
+
+            <div style="margin-bottom: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                <h3 style="color: #fff; margin-bottom: 1rem; font-size: 1rem;">Customize Table Headers</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Rename the table headers directly on the transaction page.</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 200px; overflow-y: auto; padding-right: 10px;">
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Date Header</label>
+                        <input type="text" class="header-rename" data-target="label-date" placeholder="Date" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Reference ID Header</label>
+                        <input type="text" class="header-rename" data-target="label-ref" placeholder="Reference ID" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Bank Name Header</label>
+                        <input type="text" class="header-rename" data-target="label-name" placeholder="Bank Name" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Receipt Name Header</label>
+                        <input type="text" class="header-rename" data-target="label-receipt" placeholder="Receipt Name" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Transaction Ref Header</label>
+                        <input type="text" class="header-rename" data-target="label-tref" placeholder="Transaction Ref" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Bank Account Header</label>
+                        <input type="text" class="header-rename" data-target="label-bank" placeholder="Bank Account" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Category 1 Header</label>
+                        <input type="text" class="header-rename" data-target="label-cat" placeholder="Category 1" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">State/Region Header</label>
+                        <input type="text" class="header-rename" data-target="label-state" placeholder="State/Region" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Amount Header</label>
+                        <input type="text" class="header-rename" data-target="label-amt" placeholder="Amount (RM)" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                    </div>
+                </div>
             </div>
 
             <div style="margin-bottom: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
@@ -307,6 +351,11 @@
             document.getElementById('setting-sheet-url').value = localStorage.getItem('hcf_google_sheet_url') || '';
             document.getElementById('google-sheet-url-container').style.display = source === 'google' ? 'block' : 'none';
 
+            // Load header renames
+            document.querySelectorAll('.header-rename').forEach(input => {
+                input.value = localStorage.getItem('hcf_head_' + input.dataset.target) || '';
+            });
+
             loadHeadersForMapping();
         }
 
@@ -321,10 +370,17 @@
                 localStorage.setItem(sel.dataset.store, sel.value);
             });
 
+            // Save header renames
+            document.querySelectorAll('.header-rename').forEach(input => {
+                localStorage.setItem('hcf_head_' + input.dataset.target, input.value);
+            });
+
             document.getElementById('user-role-display').textContent = role;
             document.getElementById('settings-modal').style.display = 'none';
-            alert('Settings Saved! Triggering data sync...');
+            alert('Settings Saved!');
             
+            applyHeaderNames();
+
             // In transactions view, we can just trigger window.loadTransactions
             if (window.loadTransactions) {
                 // Ensure api syncs fresh data from cache
@@ -334,8 +390,20 @@
             }
         }
 
+        function applyHeaderNames() {
+            document.querySelectorAll('.header-rename').forEach(input => {
+                const targetId = input.dataset.target;
+                const savedName = localStorage.getItem('hcf_head_' + targetId);
+                if (savedName && savedName.trim() !== '') {
+                    const span = document.getElementById(targetId);
+                    if (span) span.textContent = savedName;
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('user-role-display').textContent = localStorage.getItem('hcf_user_role') || 'Super Admin';
+            applyHeaderNames();
         });
     </script>
 </body>
