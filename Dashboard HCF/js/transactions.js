@@ -241,3 +241,19 @@ window.changePage = function(delta) {
         renderTable();
     }
 };
+
+window.reloadTransactions = async function() {
+    try {
+        const tbody = document.getElementById('transaction-tbody');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; padding: 2rem; color:var(--text-secondary);">Reloading data...</td></tr>';
+        
+        // Refresh data using the updated mappings
+        allTransactions = await window.api.getData();
+        allTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+        filteredTransactions = [...allTransactions];
+        
+        applyFilters();
+    } catch (err) {
+        console.error("Error reloading transactions:", err);
+    }
+};
