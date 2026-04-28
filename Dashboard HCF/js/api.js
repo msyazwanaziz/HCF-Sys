@@ -52,11 +52,18 @@ class APIService {
         return arr;
     }
 
-    // Helper to convert column letter (A, B, C...) or number string to 0-based index
-    getColumnIndex(val) {
+    // Helper to convert header name, column letter (A, B, C...) or number string to 0-based index
+    getColumnIndex(val, headersArr = []) {
         if (val === null || val === undefined || val === '') return null;
+        
+        // 1. Try mapping by exact header name first (Dynamic Header Mapping)
+        const headerIndex = headersArr.findIndex(h => h === val);
+        if (headerIndex !== -1) return headerIndex;
+
+        // 2. Try falling back to integer (0-based)
         if (!isNaN(val)) return parseInt(val); // Fallback for old 0-based indices
         
+        // 3. Try falling back to alphabetical letter
         let column = 0;
         const letter = val.toString().toUpperCase().replace(/[^A-Z]/g, '');
         if (!letter) return null;
@@ -75,12 +82,16 @@ class APIService {
         const cBank = localStorage.getItem('hcf_col_bank');
         const cName = localStorage.getItem('hcf_col_name');
         const cRef = localStorage.getItem('hcf_col_ref');
+        const cSumber = localStorage.getItem('hcf_col_sumber');
+        const cFund1 = localStorage.getItem('hcf_col_fund1');
+        const cFund2 = localStorage.getItem('hcf_col_fund2');
 
         const rows = this.parseCSV(csvText);
         const data = [];
         
         if (rows.length === 0) return data;
         const header = rows[0].join(',').toLowerCase();
+        const headersArr = rows[0].map(h => h ? h.toString().replace(/^"|"$/g, '').trim() : '');
         const isNewFormat = header.includes('kod dana') && header.includes('fund category') && header.includes('bank');
 
         for (let i = 1; i < rows.length; i++) {
@@ -123,28 +134,37 @@ class APIService {
             }
 
             // Apply User Custom Mappings if defined
-            const iDate = this.getColumnIndex(cDate);
+            const iDate = this.getColumnIndex(cDate, headersArr);
             if (iDate !== null) {
                 dateRaw = clean(row[iDate]);
                 if (dateRaw && dateRaw.includes(' ')) dateRaw = dateRaw.split(' ')[0];
             }
-            const iAmount = this.getColumnIndex(cAmount);
+            const iAmount = this.getColumnIndex(cAmount, headersArr);
             if (iAmount !== null) amountStr = clean(row[iAmount]);
             
-            const iBank = this.getColumnIndex(cBank);
+            const iBank = this.getColumnIndex(cBank, headersArr);
             if (iBank !== null) {
                 negeri = clean(row[iBank]); // Primary display for Bank in Dashboard
                 fundCategory = negeri;
             }
             
-            const iName = this.getColumnIndex(cName);
+            const iName = this.getColumnIndex(cName, headersArr);
             if (iName !== null) baseName = clean(row[iName]);
             
-            const iRef = this.getColumnIndex(cRef);
+            const iRef = this.getColumnIndex(cRef, headersArr);
             if (iRef !== null) {
                 txId = clean(row[iRef]);
                 reference = txId;
             }
+
+            const iSumber = this.getColumnIndex(cSumber, headersArr);
+            if (iSumber !== null) sumber = clean(row[iSumber]);
+
+            const iFund1 = this.getColumnIndex(cFund1, headersArr);
+            if (iFund1 !== null) fundCat1 = clean(row[iFund1]);
+
+            const iFund2 = this.getColumnIndex(cFund2, headersArr);
+            if (iFund2 !== null) fundCat2 = clean(row[iFund2]);
 
             if (!dateRaw || !dateRaw.includes('/')) continue; 
 

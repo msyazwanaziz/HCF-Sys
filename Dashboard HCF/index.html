@@ -263,29 +263,41 @@
             </div>
 
             <div style="margin-bottom: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
-                <h3 style="color: #fff; margin-bottom: 1rem; font-size: 1rem;">Data Column Mapping</h3>
-                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Customize column letters (e.g. A, B, C) if your sheet structure changes. Leave empty for Auto.</p>
+                <h3 style="color: #fff; margin-bottom: 1rem; font-size: 1rem;">Dynamic Header Data Mapping</h3>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Select the actual column headers from your data to map to dashboard fields. This prevents breaks when columns shift.</p>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div>
                         <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Date</label>
-                        <input type="text" id="setting-col-date" placeholder="e.g. A" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                        <select class="mapping-select" id="setting-col-date" data-store="hcf_col_date" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;"></select>
                     </div>
                     <div>
-                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Amount</label>
-                        <input type="text" id="setting-col-amount" placeholder="e.g. B" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Amount (RM)</label>
+                        <select class="mapping-select" id="setting-col-amount" data-store="hcf_col_amount" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;"></select>
                     </div>
                     <div>
-                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Bank Name</label>
-                        <input type="text" id="setting-col-bank" placeholder="e.g. C" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Bank/Account Name</label>
+                        <select class="mapping-select" id="setting-col-bank" data-store="hcf_col_bank" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;"></select>
                     </div>
                     <div>
-                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Payer Name</label>
-                        <input type="text" id="setting-col-name" placeholder="e.g. D" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Payer Name / Notes</label>
+                        <select class="mapping-select" id="setting-col-name" data-store="hcf_col_name" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;"></select>
                     </div>
                     <div>
                         <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Reference ID</label>
-                        <input type="text" id="setting-col-ref" placeholder="e.g. E" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;">
+                        <select class="mapping-select" id="setting-col-ref" data-store="hcf_col_ref" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;"></select>
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Sumber / Source</label>
+                        <select class="mapping-select" id="setting-col-sumber" data-store="hcf_col_sumber" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;"></select>
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Fund Category 1</label>
+                        <select class="mapping-select" id="setting-col-fund1" data-store="hcf_col_fund1" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;"></select>
+                    </div>
+                    <div>
+                        <label style="display: block; color: var(--text-secondary); margin-bottom: 0.3rem; font-size: 0.8rem;">Fund Category 2</label>
+                        <select class="mapping-select" id="setting-col-fund2" data-store="hcf_col_fund2" style="width: 100%; padding: 0.5rem; background: var(--bg-base); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); outline: none;"></select>
                     </div>
                 </div>
             </div>
@@ -300,6 +312,49 @@
     <script src="js/api.js"></script>
     <script src="js/dashboard.js"></script>
     <script>
+        // Helper to convert index to letter for backwards compatibility with old saves
+        function getColumnLetter(index) {
+            let letter = '';
+            let temp = parseInt(index);
+            if (isNaN(temp)) return index; // It's already a letter or string
+            while (temp >= 0) {
+                letter = String.fromCharCode(65 + (temp % 26)) + letter;
+                temp = Math.floor(temp / 26) - 1;
+            }
+            return letter;
+        }
+
+        function loadHeadersForMapping() {
+            const selects = document.querySelectorAll('.mapping-select');
+            const localCsv = localStorage.getItem('hcf_csv_cache');
+            
+            if (!localCsv) {
+                selects.forEach(sel => {
+                    sel.innerHTML = '<option value="">No data found. Sync first.</option>';
+                });
+                return;
+            }
+
+            // Simple CSV first row parser to get headers
+            const firstLine = localCsv.split('\n')[0];
+            const headers = firstLine.split(',').map(h => h.replace(/^"|"$/g, '').trim());
+            
+            selects.forEach(sel => {
+                const currentVal = localStorage.getItem(sel.dataset.store) || '';
+                let optionsHtml = '<option value="">-- Auto Detect --</option>';
+                
+                headers.forEach((header, index) => {
+                    if(!header) return;
+                    // Check if current value matches header name, index, or column letter (for legacy support)
+                    const letter = getColumnLetter(index);
+                    const selected = (currentVal === header || currentVal == index || currentVal === letter) ? 'selected' : '';
+                    optionsHtml += `<option value="${header}" ${selected}>${header}</option>`;
+                });
+                
+                sel.innerHTML = optionsHtml;
+            });
+        }
+
         function openSettings() {
             document.getElementById('settings-modal').style.display = 'flex';
             const source = localStorage.getItem('hcf_data_source') || 'local';
@@ -309,12 +364,7 @@
             document.getElementById('setting-sheet-url').value = localStorage.getItem('hcf_google_sheet_url') || '';
             document.getElementById('google-sheet-url-container').style.display = source === 'google' ? 'block' : 'none';
 
-            // Column Mapping
-            document.getElementById('setting-col-date').value = localStorage.getItem('hcf_col_date') || '';
-            document.getElementById('setting-col-amount').value = localStorage.getItem('hcf_col_amount') || '';
-            document.getElementById('setting-col-bank').value = localStorage.getItem('hcf_col_bank') || '';
-            document.getElementById('setting-col-name').value = localStorage.getItem('hcf_col_name') || '';
-            document.getElementById('setting-col-ref').value = localStorage.getItem('hcf_col_ref') || '';
+            loadHeadersForMapping();
         }
 
         function saveSettings() {
@@ -323,12 +373,10 @@
             const role = document.getElementById('setting-role').value;
             localStorage.setItem('hcf_user_role', role);
             
-            // Save Column Mapping
-            localStorage.setItem('hcf_col_date', document.getElementById('setting-col-date').value);
-            localStorage.setItem('hcf_col_amount', document.getElementById('setting-col-amount').value);
-            localStorage.setItem('hcf_col_bank', document.getElementById('setting-col-bank').value);
-            localStorage.setItem('hcf_col_name', document.getElementById('setting-col-name').value);
-            localStorage.setItem('hcf_col_ref', document.getElementById('setting-col-ref').value);
+            // Save Dynamic Column Mapping
+            document.querySelectorAll('.mapping-select').forEach(sel => {
+                localStorage.setItem(sel.dataset.store, sel.value);
+            });
 
             document.getElementById('user-role-display').textContent = role;
             document.getElementById('settings-modal').style.display = 'none';
