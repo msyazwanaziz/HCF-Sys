@@ -229,12 +229,12 @@
 
             <div class="receipt-title">
                 <h1>Official Receipt</h1>
-                <span style="color: var(--text-light); font-size: 0.9rem;" id="receipt-date">Date: </span>
+                <span style="color: var(--text-light); font-size: 0.9rem;">Date: <span class="editable-field" id="receipt-date" contenteditable="true" spellcheck="false" style="display:inline-block; min-width: 100px;"></span></span>
             </div>
 
             <div class="amount-highlight">
                 <div class="label">Amount Received</div>
-                <div class="value" id="receipt-amount">RM 0.00</div>
+                <div class="value editable-field" id="receipt-amount" contenteditable="true" spellcheck="false" style="display:inline-block; min-width: 150px;">RM 0.00</div>
             </div>
 
             <div class="receipt-details">
@@ -264,25 +264,21 @@
                     </div>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Transaction Date</span>
-                    <div style="display: flex; align-items: center; justify-content: flex-end;">
-                        <span class="detail-value editable-field" id="receipt-date-field" contenteditable="true" spellcheck="false">-</span>
-                        <span class="editable-hint no-print">(Click to edit)</span>
-                    </div>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Amount</span>
-                    <div style="display: flex; align-items: center; justify-content: flex-end;">
-                        <span class="detail-value editable-field" id="receipt-amount-field" contenteditable="true" spellcheck="false">-</span>
-                        <span class="editable-hint no-print">(Click to edit)</span>
-                    </div>
-                </div>
-                <div class="detail-row">
                     <span class="detail-label">Transaction Details</span>
                     <div style="display: flex; align-items: center; justify-content: flex-end;">
                         <span class="detail-value editable-field" id="receipt-details" contenteditable="true" spellcheck="false">-</span>
                         <span class="editable-hint no-print">(Click to edit)</span>
                     </div>
+                </div>
+            </div>
+
+            <div class="signature-block" style="margin-top: 3rem; text-align: right; padding-right: 2rem;">
+                <div style="display: inline-block; text-align: center;">
+                    <div style="border-bottom: 1px solid var(--border); width: 200px; margin-bottom: 0.5rem; height: 40px; display: flex; align-items: end; justify-content: center; font-family: 'Brush Script MT', 'Segoe Print', cursive; font-size: 1.5rem; color: var(--hcf-blue);">
+                        <span id="issuer-signature-name"></span>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--text-main); font-weight: 500;">Issued By</div>
+                    <div style="font-size: 0.75rem; color: var(--text-light);" id="issuer-name"></div>
                 </div>
             </div>
 
@@ -387,34 +383,36 @@
 
             // Date
             const defaultDate = formatDate(tx.date);
-            document.getElementById('receipt-date-field').textContent = savedData.date || defaultDate;
-            document.getElementById('receipt-date').textContent = "Date: " + (savedData.date || defaultDate);
+            document.getElementById('receipt-date').textContent = savedData.date || defaultDate;
 
             // Amount
             const defaultAmount = formatCurrency(tx.amount);
-            document.getElementById('receipt-amount-field').textContent = savedData.amount || defaultAmount;
             document.getElementById('receipt-amount').textContent = savedData.amount || defaultAmount;
 
             // Details
             document.getElementById('receipt-details').textContent = savedData.details || tx.fundCat1 || 'General Donation';
 
+            // Signature
+            const issuerName = localStorage.getItem('hcf_auth_name') || 'Admin';
+            const issuerId = localStorage.getItem('hcf_auth_user') || 'admin';
+            document.getElementById('issuer-signature-name').textContent = issuerName;
+            document.getElementById('issuer-name').textContent = `${issuerName} (${issuerId})`;
+
             // Save immediately on load to mark as generated
             saveReceiptData();
 
             // Bind events for saving edits
-            const fields = ['receipt-name', 'receipt-ic', 'receipt-phone', 'receipt-date-field', 'receipt-amount-field', 'receipt-details'];
+            const fields = ['receipt-name', 'receipt-ic', 'receipt-phone', 'receipt-date', 'receipt-amount', 'receipt-details'];
             fields.forEach(id => {
                 const el = document.getElementById(id);
-                el.addEventListener('blur', function() {
-                    saveReceiptData();
-                    // Update header representations
-                    if (id === 'receipt-date-field') document.getElementById('receipt-date').textContent = "Date: " + this.textContent.trim();
-                    if (id === 'receipt-amount-field') document.getElementById('receipt-amount').textContent = this.textContent.trim();
-                    
-                    // Show a quick visual confirmation
-                    this.parentElement.style.opacity = '0.5';
-                    setTimeout(() => { this.parentElement.style.opacity = '1'; }, 200);
-                });
+                if (el) {
+                    el.addEventListener('blur', function() {
+                        saveReceiptData();
+                        // Show a quick visual confirmation
+                        this.style.opacity = '0.5';
+                        setTimeout(() => { this.style.opacity = '1'; }, 200);
+                    });
+                }
             });
         }
 
@@ -427,8 +425,8 @@
                 name: document.getElementById('receipt-name').textContent.trim(),
                 ic: document.getElementById('receipt-ic').textContent.trim(),
                 phone: document.getElementById('receipt-phone').textContent.trim(),
-                date: document.getElementById('receipt-date-field').textContent.trim(),
-                amount: document.getElementById('receipt-amount-field').textContent.trim(),
+                date: document.getElementById('receipt-date').textContent.trim(),
+                amount: document.getElementById('receipt-amount').textContent.trim(),
                 details: document.getElementById('receipt-details').textContent.trim(),
             };
 
