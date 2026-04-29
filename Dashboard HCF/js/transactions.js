@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         });
         
+        setupColumnToggle();
         renderTable();
     } catch (err) {
         console.error("Error loading transactions:", err);
@@ -257,3 +258,78 @@ window.reloadTransactions = async function() {
         console.error("Error reloading transactions:", err);
     }
 };
+
+const COLUMN_NAMES = [
+    "Date", "Reference ID", "Bank Name", "Receipt Name", 
+    "Transaction Ref", "Bank Account", "Category 1", 
+    "State/Region", "Amount (RM)", "Status", "Action"
+];
+
+function setupColumnToggle() {
+    const menu = document.getElementById('columns-menu');
+    if (!menu) return;
+    
+    // Load saved preferences or default to all true
+    const savedCols = JSON.parse(localStorage.getItem('hcf_visible_cols') || '[]');
+    let visibleCols = savedCols.length > 0 ? savedCols : COLUMN_NAMES.map((_, i) => i);
+    
+    // Generate menu
+    menu.innerHTML = '';
+    COLUMN_NAMES.forEach((name, index) => {
+        const isChecked = visibleCols.includes(index) ? 'checked' : '';
+        menu.innerHTML += `
+            <label class="column-toggle">
+                <input type="checkbox" value="${index}" ${isChecked} onchange="toggleColumn(this.value, this.checked)">
+                ${name}
+            </label>
+        `;
+        
+        // Apply initial state
+        if (!visibleCols.includes(index)) {
+            hideColumnCSS(index);
+        }
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.columns-dropdown-wrapper')) {
+            menu.classList.remove('show');
+        }
+    });
+}
+
+window.toggleColumn = function(index, isVisible) {
+    index = parseInt(index);
+    let visibleCols = JSON.parse(localStorage.getItem('hcf_visible_cols') || '[]');
+    if (visibleCols.length === 0) visibleCols = COLUMN_NAMES.map((_, i) => i);
+    
+    if (isVisible) {
+        if (!visibleCols.includes(index)) visibleCols.push(index);
+        showColumnCSS(index);
+    } else {
+        visibleCols = visibleCols.filter(c => c !== index);
+        hideColumnCSS(index);
+    }
+    
+    localStorage.setItem('hcf_visible_cols', JSON.stringify(visibleCols));
+};
+
+function hideColumnCSS(index) {
+    const styleId = 'hide-col-' + index;
+    if (!document.getElementById(styleId)) {
+        const style = document.createElement('style');
+        style.id = styleId;
+        style.textContent = `
+            #transaction-table th:nth-child(${index + 1}),
+            #transaction-table td:nth-child(${index + 1}) {
+                display: none !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+function showColumnCSS(index) {
+    const style = document.getElementById('hide-col-' + index);
+    if (style) style.remove();
+}

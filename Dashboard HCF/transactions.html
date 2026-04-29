@@ -62,6 +62,24 @@
         .search-wrapper input:focus {
             border-color: var(--accent-primary);
         }
+        
+        /* Corporate Table Styles */
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .corporate-table { width: 100%; text-align: left; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; color: #e2e8f0; background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        .corporate-table thead { background: var(--bg-base); color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem; }
+        .corporate-table th, .corporate-table td { padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
+        .corporate-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+        .col-filter { width: 100%; box-sizing: border-box; padding: 6px 8px; margin-top: 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.75rem; color: #e2e8f0; background: var(--bg-base); text-transform: none; font-weight: normal; font-family: inherit; }
+        .col-filter:focus { outline: none; border-color: var(--accent-primary); }
+        
+        /* Column Visibility Dropdown */
+        .columns-dropdown-wrapper { position: relative; display: inline-block; margin-left: 10px; }
+        .columns-btn { background: var(--bg-panel); border: 1px solid var(--border-color); padding: 0.6rem 1rem; border-radius: var(--radius-sm); color: #e2e8f0; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-family: inherit; height: 100%; }
+        .columns-btn:hover { background: var(--bg-base); }
+        .columns-menu { position: absolute; right: 0; top: 100%; margin-top: 0.5rem; background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 6px; padding: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); z-index: 50; display: none; min-width: 200px; }
+        .columns-menu.show { display: block; }
+        .column-toggle { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.5rem; cursor: pointer; color: #e2e8f0; font-size: 0.85rem; }
+        .column-toggle:hover { background: var(--bg-base); border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -105,10 +123,18 @@
             <div class="page-header animate-fade-in">
                 <h1 class="page-title">Full Transactions Ledger</h1>
                 
-                <div class="controls-slicer">
+                <div class="controls-slicer" style="display: flex; align-items: stretch;">
                     <div class="search-wrapper">
                         <i class="ph ph-magnifying-glass"></i>
                         <input type="text" id="search-input" placeholder="Search Ref ID, Bank, Amount...">
+                    </div>
+                    <div class="columns-dropdown-wrapper">
+                        <button class="columns-btn" onclick="document.getElementById('columns-menu').classList.toggle('show')">
+                            <i class="ph ph-columns"></i> Columns
+                        </button>
+                        <div id="columns-menu" class="columns-menu">
+                            <!-- Populated by JS -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -116,32 +142,38 @@
             <!-- Full Data Table -->
             <div class="data-table-card animate-fade-in" style="animation-delay: 0.1s;">
                 <div style="overflow-x: auto;">
-                    <table style="width: 100%; text-align: left; border-collapse: collapse;">
+                    <table class="corporate-table" id="transaction-table">
                         <thead>
                             <tr>
-                                <th>Date <br>
-                                    <select class="mapping-select" data-store="hcf_col_date" style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;" onchange="saveHeaderMapping(this)"></select>
+                                <th data-col="0">Date <br><input type="text" id="filter-date" class="col-filter" data-key="date" placeholder="Filter..."></th>
+                                <th data-col="1">Reference ID <br><input type="text" id="filter-ref" class="col-filter" data-key="reference" placeholder="Filter..."></th>
+                                <th data-col="2">Bank Name <br><input type="text" id="filter-name" class="col-filter" data-key="name" placeholder="Filter..."></th>
+                                <th data-col="3">Receipt Name <br><input type="text" id="filter-receipt" class="col-filter" data-key="receiptName" placeholder="Filter..."></th>
+                                <th data-col="4">Transaction Ref <br><input type="text" id="filter-tref" class="col-filter" data-key="transactionRef" placeholder="Filter..."></th>
+                                <th data-col="5">Bank Account <br>
+                                    <select id="filter-bank" class="col-filter" data-key="bank">
+                                        <option value="">All</option>
+                                    </select>
                                 </th>
-                                <th>Reference ID <br>
-                                    <select class="mapping-select" data-store="hcf_col_ref" style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;" onchange="saveHeaderMapping(this)"></select>
+                                <th data-col="6">Category 1 <br>
+                                    <select id="filter-cat" class="col-filter" data-key="fundCat1">
+                                        <option value="">All</option>
+                                    </select>
                                 </th>
-                                <th>Bank Name <br>
-                                    <select class="mapping-select" data-store="hcf_col_name" style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;" onchange="saveHeaderMapping(this)"></select>
+                                <th data-col="7">State/Region <br>
+                                    <select id="filter-state" class="col-filter" data-key="negeri">
+                                        <option value="">All</option>
+                                    </select>
                                 </th>
-                                <th>Receipt Name</th>
-                                <th>Transaction Ref</th>
-                                <th>Bank Account <br>
-                                    <select class="mapping-select" data-store="hcf_col_bank" style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;" onchange="saveHeaderMapping(this)"></select>
+                                <th data-col="8">Amount (RM) <br><input type="text" id="filter-amt" class="col-filter" data-key="amount" placeholder="Filter..."></th>
+                                <th data-col="9">Status <br>
+                                    <select id="filter-status" class="col-filter" data-key="status">
+                                        <option value="">All</option>
+                                        <option value="synced">Synced</option>
+                                        <option value="pending">Pending</option>
+                                    </select>
                                 </th>
-                                <th>Category 1 <br>
-                                    <select class="mapping-select" data-store="hcf_col_fund1" style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;" onchange="saveHeaderMapping(this)"></select>
-                                </th>
-                                <th>State/Region</th>
-                                <th>Amount (RM) <br>
-                                    <select class="mapping-select" data-store="hcf_col_amount" style="width: 100px; padding: 2px 5px; margin-top: 5px; background: var(--bg-base); border: 1px solid var(--border-color); color: white; border-radius: 3px; font-weight: normal; font-size: 0.8rem;" onchange="saveHeaderMapping(this)"></select>
-                                </th>
-                                <th>Status</th>
-                                <th style="text-align: center;">Action</th>
+                                <th data-col="10" style="text-align: center;">Action</th>
                             </tr>
                         </thead>
                         <tbody id="transaction-tbody">
