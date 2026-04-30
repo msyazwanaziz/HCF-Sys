@@ -1,8 +1,0 @@
-{
-  "name": "hcf-sys-root",
-  "private": true,
-  "scripts": {
-    "build": "npm run build --prefix \"System BOT/hcf-bot-system\"",
-    "install": "npm install --prefix \"System BOT/hcf-bot-system\""
-  }
-}
