@@ -1,0 +1,178 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User & Role-Based Access Control
+model User {
+  id             String    @id @default(uuid())
+  email          String    @unique
+  passwordHash   String
+  firstName      String
+  lastName       String
+  role           Role      @default(USER)
+  department     String?
+  mfaEnabled     Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  lastLoginAt    DateTime?
+
+  // Relations
+  approvals      Approval[]
+  resolutions    Resolution[]
+  auditLogs      AuditLog[]
+  attendances    MeetingAttendance[]
+}
+
+enum Role {
+  SUPER_ADMIN
+  BOT_CHAIRPERSON
+  BOT_MEMBER
+  CEO
+  SENIOR_MANAGEMENT
+  COMPANY_SECRETARY
+  ADMIN
+  USER
+}
+
+// Board Governance & Meetings
+model Meeting {
+  id          String    @id @default(uuid())
+  title       String
+  type        MeetingType
+  date        DateTime
+  location    String?
+  agenda      Json?
+  minutes     String?   @db.Text
+  status      MeetingStatus @default(SCHEDULED)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  attendances MeetingAttendance[]
+  documents   Document[]
+  resolutions Resolution[]
+}
+
+enum MeetingType {
+  QUARTERLY_BOT
+  COMMITTEE
+  EMERGENCY
+  AGM
+}
+
+enum MeetingStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model MeetingAttendance {
+  id        String   @id @default(uuid())
+  meetingId String
+  userId    String
+  status    AttendanceStatus
+  
+  meeting   Meeting  @relation(fields: [meetingId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([meetingId, userId])
+}
+
+enum AttendanceStatus {
+  ATTENDED
+  ABSENT
+  EXCUSED
+}
+
+// Resolutions & Approvals
+model Resolution {
+  id          String   @id @default(uuid())
+  title       String
+  description String   @db.Text
+  meetingId   String
+  proposerId  String
+  status      ResolutionStatus @default(PENDING)
+  createdAt   DateTime @default(now())
+  
+  meeting     Meeting  @relation(fields: [meetingId], references: [id])
+  proposer    User     @relation(fields: [proposerId], references: [id])
+}
+
+enum ResolutionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  DEFERRED
+}
+
+model Approval {
+  id          String   @id @default(uuid())
+  title       String
+  type        ApprovalType
+  department  String
+  amount      Float?
+  status      ApprovalStatus @default(PENDING)
+  requesterId String
+  createdAt   DateTime @default(now())
+  
+  requester   User     @relation(fields: [requesterId], references: [id])
+}
+
+enum ApprovalType {
+  BUDGET
+  POLICY
+  PROJECT
+  HR
+}
+
+enum ApprovalStatus {
+  PENDING
+  IN_REVIEW
+  APPROVED
+  REJECTED
+}
+
+// Secure Document Vault
+model Document {
+  id          String   @id @default(uuid())
+  title       String
+  type        DocumentType
+  url         String
+  version     String   @default("1.0")
+  meetingId   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  meeting     Meeting? @relation(fields: [meetingId], references: [id])
+}
+
+enum DocumentType {
+  BOARD_PAPER
+  POLICY
+  CONTRACT
+  AUDIT_REPORT
+  MINUTES
+  OTHER
+}
+
+// Audit Trail
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  entity    String
+  entityId  String?
+  details   Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+}
