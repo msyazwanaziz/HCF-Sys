@@ -43,6 +43,7 @@ export interface RevTransaction {
   agama: boolean;
   kerajaan: boolean;
   infaqAbadi: boolean;
+  cat1_1: string;
 }
 
 let cachedRevenueData: RevTransaction[] | null = null;
@@ -61,6 +62,7 @@ export async function getRevenueData(): Promise<RevTransaction[]> {
       const creditIdx = headers.indexOf('Credit');
       const cat1Idx = headers.indexOf('Fund Category 1');
       const cat2Idx = headers.indexOf('Fund Category 2');
+      const cat1_1Idx = headers.indexOf('Fund Category 1-1');
       
       const qIdx = headers.indexOf('Sumbangan Umum');
       const rIdx = headers.indexOf('Tabung Cahaya HQ');
@@ -108,12 +110,17 @@ export async function getRevenueData(): Promise<RevTransaction[]> {
             agama: wIdx > -1 && !!row[wIdx],
             kerajaan: xIdx > -1 && !!row[xIdx],
             infaqAbadi: yIdx > -1 && !!row[yIdx],
+            cat1_1: cat1_1Idx > -1 ? (row[cat1_1Idx] || 'Uncategorized') : 'Uncategorized',
           });
         }
       }
 
       cachedRevenueData = transactions;
-      return cachedRevenueData;
+      return transactions;
+    }).catch(err => {
+      console.error("Revenue Data Fetch Error:", err);
+      fetchRevenuePromise = null; // Allow retry
+      return [];
     });
   }
   return fetchRevenuePromise;
@@ -131,18 +138,34 @@ export async function getRevenueTargets(): Promise<Record<string, number>> {
       const lines = text.split('\n').filter(l => l.trim() !== '');
       const targets: Record<string, number> = {};
       
+      let prevVal = 0;
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
       for (let i = 1; i < lines.length; i++) {
         const row = parseCSVLine(lines[i]);
         if (row.length >= 2 && row[0] && row[1]) {
+           const label = row[0].trim();
            const valStr = row[1].replace(/,/g, '').replace(/"/g, '');
            const val = parseFloat(valStr);
+           
            if (!isNaN(val)) {
-             targets[row[0].trim()] = val;
+             if (monthNames.includes(label)) {
+                // Monthly targets
+                targets[label] = Math.round(val - prevVal);
+                targets[`${label}_cum`] = Math.round(val);
+                prevVal = val;
+             } else {
+                targets[label] = Math.round(val);
+             }
            }
         }
       }
       cachedRevenueTargets = targets;
       return targets;
+    }).catch(err => {
+      console.error("Revenue Targets Fetch Error:", err);
+      fetchTargetsPromise = null;
+      return {};
     });
   }
   return fetchTargetsPromise;
@@ -163,9 +186,11 @@ export function RevenueDataWrapper({ children }: { children: (data: { transactio
 }
 
 export function InflowTrendChart({ data }: { data: any[] }) {
+  if (!data || data.length === 0) return <div className="h-[300px] flex items-center justify-center text-navy-400">No trend data available</div>;
+  
   return (
-    <div className="h-[300px] w-full animate-in fade-in duration-700">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="h-[300px] w-full animate-in fade-in duration-700 min-h-[300px]">
+      <ResponsiveContainer width="100%" height="100%" minHeight={300}>
         <AreaChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
           <defs>
             <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
@@ -189,9 +214,11 @@ export function InflowTrendChart({ data }: { data: any[] }) {
 }
 
 export function Category1Chart({ data }: { data: any[] }) {
+  if (!data || data.length === 0) return <div className="h-[400px] flex items-center justify-center text-navy-400">No category data available</div>;
+
   return (
-    <div className="h-[400px] w-full animate-in fade-in duration-700">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="h-[400px] w-full animate-in fade-in duration-700 min-h-[400px]">
+      <ResponsiveContainer width="100%" height="100%" minHeight={400}>
         <BarChart layout="vertical" data={data} margin={{ top: 20, right: 30, left: 40, bottom: 20 }}>
           <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
           <XAxis type="number" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 11}} tickFormatter={(val) => `RM ${val/1000}k`} />
@@ -215,9 +242,11 @@ export function Category1Chart({ data }: { data: any[] }) {
 }
 
 export function SpecialCategoryChart({ data }: { data: any[] }) {
+  if (!data || data.length === 0) return <div className="h-[300px] flex items-center justify-center text-navy-400 text-sm italic">No records in this category</div>;
+
   return (
-    <div className="h-[300px] w-full animate-in fade-in duration-700">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="h-[300px] w-full animate-in fade-in duration-700 min-h-[300px]">
+      <ResponsiveContainer width="100%" height="100%" minHeight={300}>
         <BarChart data={data} margin={{ top: 20, right: 10, left: 0, bottom: 20 }}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
           <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 11}} dy={10} interval={0} angle={-15} textAnchor="end" />
@@ -236,6 +265,75 @@ export function SpecialCategoryChart({ data }: { data: any[] }) {
           <Bar dataKey="target" name="Target" radius={[4, 4, 0, 0]} barSize={20} fill="var(--chart-target)" />
         </BarChart>
       </ResponsiveContainer>
+    </div>
+  );
+}
+
+export function HybridTableChart({ data }: { data: any[] }) {
+  const formatVal = (val: number) => {
+    return `RM ${val.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  };
+
+  return (
+    <div className="space-y-6 animate-in fade-in duration-700">
+      <div className="h-[200px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" opacity={0.5} />
+            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 10}} />
+            <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 10}} tickFormatter={(val) => val >= 1000000 ? `${(val/1000000).toFixed(1)}M` : `${val/1000}k`} />
+            <Tooltip 
+              contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '12px' }}
+              formatter={(val: any) => [`RM ${Number(val).toLocaleString()}`, undefined]}
+            />
+            <Bar dataKey="value" name="Actual" fill="#10b981" radius={[2, 2, 0, 0]} barSize={32} />
+            <Bar dataKey="target" name="Target" fill="#e2e8f0" radius={[2, 2, 0, 0]} barSize={32} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="overflow-x-auto border border-border rounded-xl bg-background/50 overflow-hidden shadow-sm">
+        <table className="w-full text-left text-sm border-collapse">
+          <thead>
+            <tr className="bg-navy-50 dark:bg-navy-900/50 text-navy-600 dark:text-navy-300 border-b border-border">
+              <th className="px-6 py-4 font-semibold">Category Description</th>
+              <th className="px-6 py-4 font-semibold text-right">Target Allocation</th>
+              <th className="px-6 py-4 font-semibold text-right">Actual Inflow</th>
+              <th className="px-6 py-4 font-semibold text-right">Variance</th>
+              <th className="px-6 py-4 font-semibold text-right w-48">Achievement Progress</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {data.map((item, idx) => {
+              const variance = item.value - item.target;
+              const pct = item.target > 0 ? Math.round((item.value / item.target) * 100) : 0;
+              const isPositive = variance >= 0;
+              
+              return (
+                <tr key={idx} className="hover:bg-surface-hover/50 transition-colors">
+                  <td className="px-6 py-4 font-bold text-foreground">{item.name}</td>
+                  <td className="px-6 py-4 text-right text-navy-600 dark:text-navy-400 tabular-nums">{formatVal(item.target)}</td>
+                  <td className="px-6 py-4 text-right font-bold text-foreground tabular-nums">{formatVal(item.value)}</td>
+                  <td className={`px-6 py-4 text-right font-bold tabular-nums ${isPositive ? 'text-emerald-600' : 'text-rose-500'}`}>
+                    {isPositive ? '+' : ''}{formatVal(variance)}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 bg-navy-100 dark:bg-navy-800 rounded-full h-2 overflow-hidden shadow-inner">
+                        <div 
+                          className={`h-full rounded-full transition-all duration-1000 ${pct >= 100 ? 'bg-emerald-500' : pct >= 70 ? 'bg-amber-500' : 'bg-rose-500'}`}
+                          style={{ width: `${Math.min(pct, 100)}%` }}
+                        ></div>
+                      </div>
+                      <span className="font-bold text-navy-700 dark:text-navy-300 w-10 text-right">{pct}%</span>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

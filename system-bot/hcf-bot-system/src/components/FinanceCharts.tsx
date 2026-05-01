@@ -212,6 +212,10 @@ async function getSheetData() {
 
       cachedData = { incomeExpense: formattedMonthly, fundSources: formattedSources, restricted: totalRestricted, unrestricted: totalUnrestricted };
       return cachedData;
+    }).catch(err => {
+      console.error("Finance Data Fetch Error:", err);
+      fetchPromise = null;
+      return { incomeExpense: [], fundSources: [], restricted: 0, unrestricted: 0 };
     });
   }
   return fetchPromise;
@@ -227,8 +231,8 @@ export function IncomeExpenseChart() {
   if (!data.length) return <div className="h-[350px] flex items-center justify-center text-sm text-navy-400">Loading Google Sheet data...</div>;
 
   return (
-    <div className="h-[350px] w-full animate-in fade-in duration-700">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="h-[350px] w-full animate-in fade-in duration-700 min-h-[350px]">
+      <ResponsiveContainer width="100%" height="100%" minHeight={350}>
         <BarChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 0 }} barGap={8}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
           <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
@@ -257,8 +261,8 @@ export function FundSourcesChart() {
   if (!data.length) return <div className="h-[300px] flex items-center justify-center text-sm text-navy-400">Loading...</div>;
 
   return (
-    <div className="h-[300px] w-full flex items-center justify-center animate-in fade-in duration-700">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="h-[300px] w-full flex items-center justify-center animate-in fade-in duration-700 min-h-[300px]">
+      <ResponsiveContainer width="100%" height="100%" minHeight={300}>
         <PieChart>
           <Pie
             data={data}

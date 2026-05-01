@@ -15,9 +15,11 @@ const departmentPerformance = [
 ];
 
 export function DepartmentRadarChart() {
+  if (!departmentPerformance || departmentPerformance.length === 0) return <div className="h-[350px] flex items-center justify-center">No data</div>;
+
   return (
-    <div className="h-[350px] w-full animate-in fade-in duration-700">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="h-[350px] w-full animate-in fade-in duration-700 min-h-[350px]">
+      <ResponsiveContainer width="100%" height="100%" minHeight={350}>
         <RadarChart cx="50%" cy="50%" outerRadius="70%" data={departmentPerformance}>
           <PolarGrid stroke="#e2e8f0" />
           <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }} />
@@ -43,9 +45,11 @@ const quarterlyProgress = [
 ];
 
 export function ProgressWaterfallChart() {
+  if (!quarterlyProgress || quarterlyProgress.length === 0) return <div className="h-[350px] flex items-center justify-center">No data</div>;
+
   return (
-    <div className="h-[350px] w-full animate-in fade-in duration-700">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="h-[350px] w-full animate-in fade-in duration-700 min-h-[350px]">
+      <ResponsiveContainer width="100%" height="100%" minHeight={350}>
         <BarChart data={quarterlyProgress} margin={{ top: 20, right: 30, left: -20, bottom: 0 }} barGap={0}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
           <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
