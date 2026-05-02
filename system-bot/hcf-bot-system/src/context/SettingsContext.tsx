@@ -54,7 +54,28 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Load from local storage on mount
+    async function loadSettings() {
+      try {
+        const res = await fetch('/api/settings');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.enabledModules) setEnabledModules({ ...defaultModules, ...data.enabledModules });
+          if (data.theme) setTheme(data.theme);
+          if (data.authorizedMembers) setAuthorizedMembers(data.authorizedMembers);
+          if (data.masterKey) setMasterKey(data.masterKey);
+        } else {
+          loadFromLocalStorage();
+        }
+      } catch (err) {
+        console.error("API failed, using localStorage fallback", err);
+        loadFromLocalStorage();
+      }
+      setIsLoaded(true);
+    }
+    loadSettings();
+  }, []);
+
+  function loadFromLocalStorage() {
     const stored = localStorage.getItem("hcf-enabled-modules");
     if (stored) {
       try {
@@ -81,18 +102,27 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
     const storedKey = localStorage.getItem("hcf-master-key");
     if (storedKey) setMasterKey(storedKey);
-
-    setIsLoaded(true);
-  }, []);
+  }
 
   useEffect(() => {
-    // Save to local storage whenever it changes
     if (isLoaded) {
       localStorage.setItem("hcf-enabled-modules", JSON.stringify(enabledModules));
       localStorage.setItem("hcf-theme", theme);
       localStorage.setItem("hcf-members", JSON.stringify(authorizedMembers));
       localStorage.setItem("hcf-master-key", masterKey);
       
+      // Push to API in background
+      fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          enabledModules,
+          theme,
+          authorizedMembers,
+          masterKey
+        })
+      }).catch(err => console.error("Failed to save to API", err));
+
       const root = window.document.documentElement;
       root.classList.remove("light", "dark");
       if (theme === "system") {
@@ -102,7 +132,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         root.classList.add(theme);
       }
     }
-  }, [enabledModules, theme, isLoaded]);
+  }, [enabledModules, theme, authorizedMembers, masterKey, isLoaded]);
 
   const [authorizedMembers, setAuthorizedMembers] = useState<AuthorizedMember[]>([]);
   const [masterKey, setMasterKey] = useState("hcf2026");
