@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 
 const moduleInfo = [
-  { id: "dashboard", name: "Dashboard", description: "Main executive summary and KPIs.", icon: LayoutDashboard, required: true },
+  { id: "dashboard", name: "Dashboard", description: "Main executive summary and KPIs.", icon: LayoutDashboard },
   { id: "governance", name: "Governance Portal", description: "Board member profiles, committees, and resolutions.", icon: Users },
   { id: "meetings", name: "Meetings", description: "Agenda builder, board papers, and auto minutes.", icon: Calendar },
   { id: "approvals", name: "Approvals", description: "Digital signatures and approval workflows.", icon: CheckSquare },
@@ -156,14 +156,12 @@ export default function SettingsPage() {
                           <p className="text-sm text-navy-500 mt-0.5">{mod.description}</p>
                         </div>
                       </div>
-                      
                       <button
                         type="button"
-                        disabled={mod.required}
-                        onClick={() => !mod.required && toggleModule(mod.id as any)}
+                        onClick={() => toggleModule(mod.id as any)}
                         className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${
                           isEnabled ? "bg-emerald-500" : "bg-navy-200 dark:bg-navy-700"
-                        } ${mod.required ? "opacity-50 cursor-not-allowed" : ""}`}
+                        }`}
                         role="switch"
                         aria-checked={isEnabled}
                       >

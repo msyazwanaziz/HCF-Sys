@@ -39,7 +39,8 @@ export default function RevenueDashboard() {
   };
 
   return (
-    <RevenueDataWrapper>
+    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700 slide-in-from-bottom-2">
+      <RevenueDataWrapper>
       {(data) => {
         const rawData = data.transactions;
         const targets = data.targets;
@@ -177,7 +178,7 @@ export default function RevenueDashboard() {
         };
 
         return (
-          <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 relative">
+          <div className="space-y-8 relative">
             {exportSuccess && (
               <div className="fixed top-8 right-8 z-[200] bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-2xl animate-in slide-in-from-right-8 duration-500 flex items-center gap-3">
                 <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
@@ -189,7 +190,7 @@ export default function RevenueDashboard() {
 
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div>
-                <h1 className="text-3xl font-bold text-foreground tracking-tight">Income & Revenue Summaries</h1>
+                <h1 className="text-3xl font-bold text-foreground tracking-tight">Inflow & Outflow Summaries</h1>
                 <p className="text-navy-500 mt-1">Live inflow mapping based on Google Sheets data sources.</p>
               </div>
               <div className="flex items-center gap-3">
@@ -361,6 +362,7 @@ export default function RevenueDashboard() {
           </div>
         );
       }}
-    </RevenueDataWrapper>
+      </RevenueDataWrapper>
+    </div>
   );
 }

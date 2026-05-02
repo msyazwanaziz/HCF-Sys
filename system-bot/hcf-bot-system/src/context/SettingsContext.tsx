@@ -108,7 +108,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [masterKey, setMasterKey] = useState("hcf2026");
 
   const toggleModule = (key: ModuleKey) => {
-    if (key === "dashboard") return; // Prevent disabling dashboard
+    // Removed dashboard restriction to allow hiding it
     setEnabledModules(prev => ({
       ...prev,
       [key]: !prev[key]
