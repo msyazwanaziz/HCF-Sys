@@ -269,28 +269,61 @@ export function SpecialCategoryChart({ data }: { data: any[] }) {
   );
 }
 
-export function HybridTableChart({ data }: { data: any[] }) {
+export function FundSourceDoughnutChart({ data }: { data: any[] }) {
+  if (!data || data.length === 0) return null;
+
+  return (
+    <div className="h-[300px] w-full animate-in fade-in duration-700">
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius={60}
+            outerRadius={90}
+            paddingAngle={5}
+            dataKey="value"
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip 
+            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+            formatter={(val: any) => [`RM ${Number(val).toLocaleString()}`, undefined]}
+          />
+          <Legend iconType="circle" />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+export function HybridTableChart({ data, showChart = true }: { data: any[], showChart?: boolean }) {
   const formatVal = (val: number) => {
     return `RM ${val.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
   };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-700">
-      <div className="h-[200px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" opacity={0.5} />
-            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 10}} />
-            <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 10}} tickFormatter={(val) => val >= 1000000 ? `${(val/1000000).toFixed(1)}M` : `${val/1000}k`} />
-            <Tooltip 
-              contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '12px' }}
-              formatter={(val: any) => [`RM ${Number(val).toLocaleString()}`, undefined]}
-            />
-            <Bar dataKey="value" name="Actual" fill="#10b981" radius={[2, 2, 0, 0]} barSize={32} />
-            <Bar dataKey="target" name="Target" fill="#e2e8f0" radius={[2, 2, 0, 0]} barSize={32} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      {showChart && (
+        <div className="h-[200px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" opacity={0.5} />
+              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 10}} />
+              <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 10}} tickFormatter={(val) => val >= 1000000 ? `${(val/1000000).toFixed(1)}M` : `${val/1000}k`} />
+              <Tooltip 
+                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '12px' }}
+                formatter={(val: any) => [`RM ${Number(val).toLocaleString()}`, undefined]}
+              />
+              <Bar dataKey="value" name="Actual" fill="#10b981" radius={[2, 2, 0, 0]} barSize={32} />
+              <Bar dataKey="target" name="Target" fill="#e2e8f0" radius={[2, 2, 0, 0]} barSize={32} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
       <div className="overflow-x-auto border border-border rounded-xl bg-background/50 overflow-hidden shadow-sm">
         <table className="w-full text-left text-sm border-collapse">

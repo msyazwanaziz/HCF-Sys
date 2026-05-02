@@ -15,7 +15,12 @@ import {
   Save,
   Bell,
   Shield,
-  Palette
+  Palette,
+  Edit,
+  Trash2,
+  Plus,
+  X,
+  UserPlus
 } from "lucide-react";
 
 const moduleInfo = [
@@ -31,8 +36,28 @@ const moduleInfo = [
 ];
 
 export default function SettingsPage() {
-  const { enabledModules, toggleModule, theme, setTheme } = useSettings();
-  const [activeTab, setActiveTab] = useState<"modules" | "appearance">("modules");
+  const { 
+    enabledModules, toggleModule, 
+    theme, setTheme, 
+    authorizedMembers, updateMember, addMember, removeMember,
+    masterKey, setMasterKey 
+  } = useSettings();
+  
+  const [activeTab, setActiveTab] = useState<"modules" | "appearance" | "security">("modules");
+  const [isSaving, setIsSaving] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [editingMember, setEditingMember] = useState<any>(null);
+  const [isAddingMember, setIsAddingMember] = useState(false);
+  const [newMember, setNewMember] = useState({ name: '', email: '', role: 'Board Member' });
+
+  const handleSave = () => {
+    setIsSaving(true);
+    setTimeout(() => {
+      setIsSaving(false);
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    }, 800);
+  };
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500">
@@ -44,11 +69,24 @@ export default function SettingsPage() {
           </h1>
           <p className="text-navy-500 mt-2">Manage your preferences, modules, and platform configuration.</p>
         </div>
-        <button className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm shadow-emerald-600/20 flex items-center gap-2">
-          <Save className="w-4 h-4" />
-          Save Changes
+        <button 
+          onClick={handleSave}
+          disabled={isSaving}
+          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm shadow-emerald-600/20 flex items-center gap-2"
+        >
+          {isSaving ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save className="w-4 h-4" />}
+          {isSaving ? "Saving..." : "Save Changes"}
         </button>
       </div>
+
+      {showSuccess && (
+        <div className="fixed top-8 right-8 z-[200] bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-2xl animate-in slide-in-from-right-8 duration-500 flex items-center gap-3">
+          <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
+            <Save className="w-3 h-3" />
+          </div>
+          <span className="font-bold text-sm">System settings updated successfully!</span>
+        </div>
+      )}
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Settings Navigation Sidebar */}
@@ -62,7 +100,12 @@ export default function SettingsPage() {
             <LayoutDashboard className="w-5 h-5" />
             Modules & Features
           </button>
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-navy-600 hover:bg-surface-hover transition-colors">
+          <button 
+            onClick={() => setActiveTab("security")}
+            className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors ${
+              activeTab === "security" ? "bg-navy-50 dark:bg-navy-900 text-emerald-600 dark:text-emerald-400" : "text-navy-600 hover:bg-surface-hover"
+            }`}
+          >
             <Shield className="w-5 h-5 text-navy-400" />
             Security & Access
           </button>
@@ -134,6 +177,215 @@ export default function SettingsPage() {
                     </div>
                   );
                 })}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "security" && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+              {/* Access Key Management */}
+              <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
+                <div className="p-6 border-b border-border bg-background/50">
+                  <h2 className="text-lg font-bold text-foreground">Global Security</h2>
+                  <p className="text-sm text-navy-500 mt-1">Configure the master access key used for executive authorization.</p>
+                </div>
+                <div className="p-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-navy-600 uppercase tracking-wider">Current Master Key</label>
+                      <input 
+                        type="password" 
+                        value={masterKey} 
+                        readOnly 
+                        className="w-full bg-navy-50 border border-border rounded-xl px-4 py-2.5 text-navy-500 text-sm outline-none cursor-not-allowed"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-navy-600 uppercase tracking-wider">New Master Key</label>
+                      <input 
+                        type="password" 
+                        placeholder="Enter new key"
+                        onChange={(e) => setMasterKey(e.target.value)}
+                        className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm outline-none focus:ring-2 focus:ring-emerald-500/20"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-500/20 rounded-xl">
+                    <Shield className="w-5 h-5 text-emerald-500" />
+                    <p className="text-xs text-emerald-700 dark:text-emerald-400 font-medium">Changing the master key will require all active board sessions to re-authenticate.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Hybrid Login / Staff Access */}
+              <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
+                <div className="p-6 border-b border-border bg-background/50 flex items-center justify-between">
+                  <div>
+                    <h2 className="text-lg font-bold text-foreground">Staff & Board Access</h2>
+                    <p className="text-sm text-navy-500 mt-1">Manage individual accounts for hybrid login system.</p>
+                  </div>
+                  <button 
+                    onClick={() => setIsAddingMember(true)}
+                    className="px-3 py-1.5 bg-navy-900 text-white text-xs font-bold rounded-lg hover:bg-navy-800 transition-colors flex items-center gap-2"
+                  >
+                    <Plus className="w-3 h-3" />
+                    Add Authorized Member
+                  </button>
+                </div>
+                <div className="divide-y divide-border">
+                  {authorizedMembers.map((member: any) => (
+                    <div key={member.id} className="p-4 flex items-center justify-between hover:bg-surface-hover transition-colors group">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-navy-100 flex items-center justify-center font-bold text-navy-600">
+                          {member.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-foreground">{member.name}</p>
+                          <p className="text-xs text-navy-500">{member.email} • {member.role}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right hidden sm:block">
+                          <p className="text-[10px] text-navy-400 uppercase font-bold">{member.lastActive}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button 
+                            onClick={() => setEditingMember(member)}
+                            className="p-2 text-navy-400 hover:text-emerald-500 hover:bg-emerald-50 rounded-lg transition-colors"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button 
+                            onClick={() => removeMember(member.id)}
+                            className="p-2 text-navy-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Add Member Modal */}
+          {isAddingMember && (
+            <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-navy-950/60 backdrop-blur-sm animate-in fade-in duration-300">
+              <div className="bg-surface w-full max-w-md rounded-3xl shadow-2xl border border-border p-8 animate-in zoom-in-95 duration-300">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-navy-50 rounded-xl">
+                      <UserPlus className="w-5 h-5 text-navy-600" />
+                    </div>
+                    <h2 className="text-xl font-bold text-foreground">Add Member</h2>
+                  </div>
+                  <button onClick={() => setIsAddingMember(false)} className="text-navy-400 hover:text-foreground"><X /></button>
+                </div>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-navy-600 uppercase">Full Name</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. Tan Sri Sulaiman"
+                      onChange={(e) => setNewMember({...newMember, name: e.target.value})}
+                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-navy-600 uppercase">Email Address</label>
+                    <input 
+                      type="email" 
+                      placeholder="email@hcf.org.my"
+                      onChange={(e) => setNewMember({...newMember, email: e.target.value})}
+                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-navy-600 uppercase">Role</label>
+                    <select 
+                      onChange={(e) => setNewMember({...newMember, role: e.target.value})}
+                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
+                    >
+                      <option>Board Member</option>
+                      <option>Chairperson</option>
+                      <option>BOT Admin</option>
+                      <option>Observer</option>
+                    </select>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      addMember(newMember);
+                      setIsAddingMember(false);
+                      setShowSuccess(true);
+                      setTimeout(() => setShowSuccess(false), 3000);
+                    }}
+                    className="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-500 shadow-lg shadow-emerald-900/20 transition-all mt-4"
+                  >
+                    Confirm Access
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Edit Member Modal */}
+          {editingMember && (
+            <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-navy-950/60 backdrop-blur-sm animate-in fade-in duration-300">
+              <div className="bg-surface w-full max-w-md rounded-3xl shadow-2xl border border-border p-8 animate-in zoom-in-95 duration-300">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-emerald-50 rounded-xl">
+                      <Edit className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <h2 className="text-xl font-bold text-foreground">Edit Member</h2>
+                  </div>
+                  <button onClick={() => setEditingMember(null)} className="text-navy-400 hover:text-foreground"><X /></button>
+                </div>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-navy-600 uppercase">Full Name</label>
+                    <input 
+                      type="text" 
+                      defaultValue={editingMember.name}
+                      onChange={(e) => updateMember(editingMember.id, { name: e.target.value })}
+                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-navy-600 uppercase">Email Address</label>
+                    <input 
+                      type="email" 
+                      defaultValue={editingMember.email}
+                      onChange={(e) => updateMember(editingMember.id, { email: e.target.value })}
+                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-navy-600 uppercase">Role</label>
+                    <select 
+                      defaultValue={editingMember.role}
+                      onChange={(e) => updateMember(editingMember.id, { role: e.target.value })}
+                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
+                    >
+                      <option>Board Member</option>
+                      <option>Chairperson</option>
+                      <option>BOT Admin</option>
+                      <option>Observer</option>
+                    </select>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      setEditingMember(null);
+                      setShowSuccess(true);
+                      setTimeout(() => setShowSuccess(false), 3000);
+                    }}
+                    className="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-500 shadow-lg shadow-emerald-900/20 transition-all mt-4"
+                  >
+                    Save Changes
+                  </button>
+                </div>
               </div>
             </div>
           )}

@@ -9,7 +9,7 @@ interface KPICardProps {
   trend?: string;
   trendUp?: boolean;
   icon: ReactNode;
-  subtitle?: string;
+  subtitle?: ReactNode;
 }
 
 export default function KPICard({ title, value, trend, trendUp, icon, subtitle }: KPICardProps) {
@@ -33,7 +33,7 @@ export default function KPICard({ title, value, trend, trendUp, icon, subtitle }
       <div>
         <h3 className="text-navy-500 text-sm font-medium mb-1">{title}</h3>
         <div className="text-3xl font-bold text-foreground mb-1">{value}</div>
-        {subtitle && <p className="text-xs text-navy-400">{subtitle}</p>}
+        {subtitle && <div className="text-xs text-navy-400">{subtitle}</div>}
       </div>
     </div>
   );

@@ -8,7 +8,8 @@ import {
   InflowTrendChart, 
   Category1Chart, 
   SpecialCategoryChart,
-  HybridTableChart
+  HybridTableChart,
+  FundSourceDoughnutChart
 } from "@/components/RevenueCharts";
 import { 
   Target, 
@@ -20,7 +21,8 @@ import {
   Filter,
   CheckCircle2,
   TrendingUp,
-  Settings2
+  Settings2,
+  Loader2
 } from "lucide-react";
 
 export default function RevenueDashboard() {
@@ -28,6 +30,8 @@ export default function RevenueDashboard() {
   const [selectedMonth, setSelectedMonth] = useState('All');
   const [trendView, setTrendView] = useState<'monthly' | 'daily'>('monthly');
   const [unit, setUnit] = useState<'k' | 'm'>('k');
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportSuccess, setExportSuccess] = useState(false);
 
   const formatValue = (val: number) => {
     if (unit === 'm') return `RM ${(val / 1000000).toFixed(2)}M`;
@@ -163,17 +167,39 @@ export default function RevenueDashboard() {
         const cat1Target = cat1Data.reduce((acc, cur) => acc + cur.target, 0);
         const specialTarget = group1Data.reduce((acc, cur) => acc + cur.target, 0) + group2Data.reduce((acc, cur) => acc + cur.target, 0);
 
+        const handleExport = () => {
+          setIsExporting(true);
+          setTimeout(() => {
+            setIsExporting(false);
+            setExportSuccess(true);
+            setTimeout(() => setExportSuccess(false), 3000);
+          }, 1500);
+        };
+
         return (
-          <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+          <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 relative">
+            {exportSuccess && (
+              <div className="fixed top-8 right-8 z-[200] bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-2xl animate-in slide-in-from-right-8 duration-500 flex items-center gap-3">
+                <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
+                  <CheckCircle2 className="w-3 h-3" />
+                </div>
+                <span className="font-bold text-sm">Revenue report exported successfully!</span>
+              </div>
+            )}
+
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div>
                 <h1 className="text-3xl font-bold text-foreground tracking-tight">Income & Revenue Summaries</h1>
                 <p className="text-navy-500 mt-1">Live inflow mapping based on Google Sheets data sources.</p>
               </div>
               <div className="flex items-center gap-3">
-                <button className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm shadow-emerald-600/20 flex items-center gap-2">
-                  <Download className="w-4 h-4" />
-                  Export Sheet
+                <button 
+                  onClick={handleExport}
+                  disabled={isExporting}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm shadow-emerald-600/20 flex items-center gap-2"
+                >
+                  {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                  {isExporting ? "Exporting..." : "Export Sheet"}
                 </button>
               </div>
             </div>
@@ -265,12 +291,13 @@ export default function RevenueDashboard() {
               />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="space-y-6">
+              {/* Trend Full Width */}
               <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h2 className="text-lg font-bold text-foreground">Inflow Trend</h2>
-                    <p className="text-sm text-navy-500">Monthly overview</p>
+                    <h2 className="text-lg font-bold text-foreground">Inflow Trend Strategic Analysis</h2>
+                    <p className="text-sm text-navy-500">Live monthly and daily revenue performance tracking</p>
                   </div>
                   <div className="flex items-center bg-navy-50 dark:bg-navy-900 rounded-lg p-1 border border-border">
                     <button 
@@ -292,13 +319,25 @@ export default function RevenueDashboard() {
                 </div>
               </div>
 
-              <div className="lg:col-span-2 bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
-                <div className="mb-2">
-                  <h2 className="text-lg font-bold text-foreground">Fund Source Performance</h2>
-                  <p className="text-sm text-navy-500">Detailed mapping of Restricted & Unrestricted allocations</p>
+              {/* Fund Source Side by Side */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
+                  <div className="mb-6">
+                    <h2 className="text-lg font-bold text-foreground">Fund Distribution</h2>
+                    <p className="text-sm text-navy-500">Categorical breakdown</p>
+                  </div>
+                  <div className="flex-1 flex items-center justify-center">
+                    <FundSourceDoughnutChart data={cat1Data} />
+                  </div>
                 </div>
-                <div className="flex-1">
-                   <HybridTableChart data={cat1Data} />
+                <div className="lg:col-span-2 bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
+                  <div className="mb-6">
+                    <h2 className="text-lg font-bold text-foreground">Fund Source Performance Ledger</h2>
+                    <p className="text-sm text-navy-500">Detailed mapping of Restricted & Unrestricted allocations</p>
+                  </div>
+                  <div className="flex-1">
+                    <HybridTableChart data={cat1Data} showChart={false} />
+                  </div>
                 </div>
               </div>
             </div>

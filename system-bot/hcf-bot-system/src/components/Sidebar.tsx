@@ -15,6 +15,7 @@ import {
   LogOut
 } from "lucide-react";
 import { useSettings } from "@/context/SettingsContext";
+import { useAuth } from "@/context/AuthContext";
 
 const allNavigation = [
   { id: "dashboard", name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -31,6 +32,7 @@ const allNavigation = [
 export default function Sidebar() {
   const pathname = usePathname();
   const { enabledModules } = useSettings();
+  const { logout } = useAuth();
 
   const navigation = allNavigation.filter(item => enabledModules[item.id as keyof typeof enabledModules]);
 
@@ -83,7 +85,10 @@ export default function Sidebar() {
             }`} />
             Settings
           </Link>
-          <button className="w-full mt-1 group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-navy-300 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200">
+          <button 
+            onClick={logout}
+            className="w-full mt-1 group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-navy-300 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200"
+          >
             <LogOut className="flex-shrink-0 mr-3 h-5 w-5 text-navy-400 group-hover:text-red-400" />
             Logout
           </button>
