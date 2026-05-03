@@ -80,7 +80,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500">
+    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div className="flex items-end justify-between border-b border-border pb-6">
         <div>
           <h1 className="text-3xl font-bold text-foreground tracking-tight flex items-center gap-3">
@@ -174,7 +174,7 @@ export default function SettingsPage() {
                         <div>
                           <h3 className={`text-base font-semibold ${isEnabled ? "text-foreground" : "text-navy-400"}`}>
                             {mod.name}
-                            {(mod as any).required && (
+                            {mod.required && (
                               <span className="ml-2 text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-navy-100 text-navy-600 dark:bg-navy-800 dark:text-navy-400">Required</span>
                             )}
                           </h3>
@@ -265,7 +265,7 @@ export default function SettingsPage() {
                   </button>
                 </div>
                 <div className="divide-y divide-border">
-                  {authorizedMembers.map((member: any) => (
+                  {authorizedMembers.map((member) => (
                     <div key={member.id} className="p-4 flex items-center justify-between hover:bg-surface-hover transition-colors group">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-navy-100 flex items-center justify-center font-bold text-navy-600 uppercase">
@@ -313,25 +313,33 @@ export default function SettingsPage() {
                 <h2 className="text-lg font-bold text-foreground">Theme Settings</h2>
                 <p className="text-sm text-navy-500 mt-1">Customize the appearance of the dashboard.</p>
               </div>
-              <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                {['light', 'dark', 'system'].map((t) => (
-                  <button key={t} onClick={() => setTheme(t as any)} className={`flex flex-col items-center justify-center p-6 border rounded-xl transition-all ${theme === t ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/10 ring-1 ring-emerald-500' : 'border-border hover:bg-surface-hover'}`}>
-                    <span className="capitalize font-semibold">{t} Mode</span>
-                  </button>
-                ))}
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {(['light', 'dark', 'system'] as const).map((t) => (
+                    <button 
+                      key={t} 
+                      onClick={() => setTheme(t)} 
+                      className={`flex flex-col items-center justify-center p-6 border rounded-xl transition-all ${
+                        theme === t ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/10 ring-1 ring-emerald-500' : 'border-border hover:bg-surface-hover'
+                      }`}
+                    >
+                      <span className="capitalize font-semibold text-foreground">{t} Mode</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* Add/Edit Modal (Simplified for brevity) */}
+      {/* Modals */}
       {(isAddingMember || editingMember) && (
         <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-navy-950/60 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-surface w-full max-w-md rounded-3xl shadow-2xl border border-border p-8 animate-in zoom-in-95 duration-300">
              <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-foreground">{isAddingMember ? "Add Member" : "Edit Member"}</h2>
-                <button onClick={() => {setIsAddingMember(false); setEditingMember(null);}} className="text-navy-400 hover:text-foreground"><X /></button>
+                <button onClick={() => {setIsAddingMember(false); setEditingMember(null);}} className="text-navy-400 hover:text-foreground hover:bg-surface-hover p-1 rounded-full transition-colors"><X /></button>
              </div>
              <div className="space-y-4">
                 <div className="space-y-2">
@@ -365,28 +373,6 @@ export default function SettingsPage() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
->
-
-                  <button 
-                    onClick={() => setTheme('system')}
-                    className={`flex flex-col items-center justify-center p-6 border rounded-xl transition-all ${
-                      theme === 'system' ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/10 ring-1 ring-emerald-500' : 'border-border hover:bg-surface-hover'
-                    }`}
-                  >
-                    <div className="w-12 h-12 bg-gradient-to-br from-white to-slate-900 border border-slate-400 rounded-full flex items-center justify-center mb-3 shadow-sm text-slate-400">
-                      <svg className="w-6 h-6 mix-blend-difference text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                    </div>
-                    <span className={`font-semibold ${theme === 'system' ? 'text-emerald-700 dark:text-emerald-400' : 'text-foreground'}`}>System Default</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
     </div>
   );
 }
