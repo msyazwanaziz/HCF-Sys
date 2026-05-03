@@ -24,15 +24,15 @@ import {
 } from "lucide-react";
 
 const moduleInfo = [
-  { id: "dashboard", name: "Dashboard", description: "Main executive summary and KPIs.", icon: LayoutDashboard },
-  { id: "governance", name: "Governance Portal", description: "Board member profiles, committees, and resolutions.", icon: Users },
-  { id: "meetings", name: "Meetings", description: "Agenda builder, board papers, and auto minutes.", icon: Calendar },
-  { id: "approvals", name: "Approvals", description: "Digital signatures and approval workflows.", icon: CheckSquare },
-  { id: "performance", name: "Strategic Performance", description: "Annual targets, department scorecards, and OKRs.", icon: Target },
-  { id: "finance", name: "Financial Oversight", description: "Income, expenses, and budget variance tracking.", icon: PieChart },
-  { id: "revenue", name: "Live Financial Dashboard", description: "Live real-time revenue and inflow summaries from Google Sheets.", icon: PieChart },
-  { id: "risk", name: "Risk & Compliance", description: "Risk register and internal audit issues.", icon: ShieldAlert },
-  { id: "vault", name: "Document Vault", description: "Secure storage for board papers and contracts.", icon: FolderLock },
+  { id: "dashboard", name: "Dashboard", description: "Main executive summary and KPIs.", icon: LayoutDashboard, required: true },
+  { id: "governance", name: "Governance Portal", description: "Board member profiles, committees, and resolutions.", icon: Users, required: false },
+  { id: "meetings", name: "Meetings", description: "Agenda builder, board papers, and auto minutes.", icon: Calendar, required: false },
+  { id: "approvals", name: "Approvals", description: "Digital signatures and approval workflows.", icon: CheckSquare, required: false },
+  { id: "performance", name: "Strategic Performance", description: "Annual targets, department scorecards, and OKRs.", icon: Target, required: false },
+  { id: "finance", name: "Financial Oversight", description: "Income, expenses, and budget variance tracking.", icon: PieChart, required: false },
+  { id: "revenue", name: "Live Financial Dashboard", description: "Live real-time revenue and inflow summaries from Google Sheets.", icon: PieChart, required: false },
+  { id: "risk", name: "Risk & Compliance", description: "Risk register and internal audit issues.", icon: ShieldAlert, required: false },
+  { id: "vault", name: "Document Vault", description: "Secure storage for board papers and contracts.", icon: FolderLock, required: false },
 ];
 
 export default function SettingsPage() {
