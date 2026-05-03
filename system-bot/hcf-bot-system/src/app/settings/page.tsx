@@ -20,10 +20,19 @@ import {
   Trash2,
   Plus,
   X,
-  UserPlus
+  UserPlus,
+  LucideIcon
 } from "lucide-react";
 
-const moduleInfo = [
+interface ModuleConfig {
+  id: string;
+  name: string;
+  description: string;
+  icon: LucideIcon;
+  required: boolean;
+}
+
+const moduleInfo: ModuleConfig[] = [
   { id: "dashboard", name: "Dashboard", description: "Main executive summary and KPIs.", icon: LayoutDashboard, required: true },
   { id: "governance", name: "Governance Portal", description: "Board member profiles, committees, and resolutions.", icon: Users, required: false },
   { id: "meetings", name: "Meetings", description: "Agenda builder, board papers, and auto minutes.", icon: Calendar, required: false },
