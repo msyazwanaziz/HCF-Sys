@@ -18,42 +18,41 @@ import { useSettings } from "@/context/SettingsContext";
 import { useAuth } from "@/context/AuthContext";
 
 const allNavigation = [
-  { id: "dashboard", name: "Dashboard", href: "/", icon: LayoutDashboard, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "BOT_MEMBER", "CEO", "SENIOR_MANAGEMENT", "COMPANY_SECRETARY", "ADMIN", "USER"] },
-  { id: "governance", name: "Governance Portal", href: "/governance", icon: Users, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "BOT_MEMBER", "COMPANY_SECRETARY", "ADMIN"] },
-  { id: "meetings", name: "Meetings", href: "/meetings", icon: Calendar, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "BOT_MEMBER", "COMPANY_SECRETARY", "ADMIN"] },
-  { id: "approvals", name: "Approvals", href: "/approvals", icon: CheckSquare, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "CEO", "SENIOR_MANAGEMENT", "ADMIN"] },
-  { id: "performance", name: "Strategic Performance", href: "/performance", icon: Target, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "BOT_MEMBER", "CEO", "SENIOR_MANAGEMENT", "ADMIN"] },
-  { id: "finance", name: "Financial Oversight", href: "/finance", icon: PieChart, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "CEO", "SENIOR_MANAGEMENT", "ADMIN"] },
-  { id: "revenue", name: "Live Financial Dashboard", href: "/revenue", icon: PieChart, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "CEO", "SENIOR_MANAGEMENT", "ADMIN"] },
-  { id: "risk", name: "Risk & Compliance", href: "/risk", icon: ShieldAlert, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "BOT_MEMBER", "CEO", "SENIOR_MANAGEMENT", "ADMIN"] },
-  { id: "vault", name: "Document Vault", href: "/vault", icon: FolderLock, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "BOT_MEMBER", "COMPANY_SECRETARY", "ADMIN"] },
+  { id: "dashboard", name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { id: "governance", name: "Governance Portal", href: "/governance", icon: Users },
+  { id: "meetings", name: "Meetings", href: "/meetings", icon: Calendar },
+  { id: "approvals", name: "Approvals", href: "/approvals", icon: CheckSquare },
+  { id: "performance", name: "Strategic Performance", href: "/performance", icon: Target },
+  { id: "finance", name: "Financial Oversight", href: "/finance", icon: PieChart },
+  { id: "revenue", name: "Live Financial Dashboard", href: "/revenue", icon: PieChart },
+  { id: "risk", name: "Risk & Compliance", href: "/risk", icon: ShieldAlert },
+  { id: "vault", name: "Document Vault", href: "/vault", icon: FolderLock },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { enabledModules } = useSettings();
+  const { enabledModules, rolePermissions } = useSettings();
   const { user, logout } = useAuth();
 
   const navigation = allNavigation.filter(item => {
-    // 1. Check if module is enabled in settings
-    const isEnabled = enabledModules[item.id as keyof typeof enabledModules];
-    if (!isEnabled) return false;
+    // 1. Check if module is enabled globally in settings
+    const isEnabledGlobal = enabledModules[item.id as keyof typeof enabledModules];
+    if (!isEnabledGlobal) return false;
 
-    // 2. Check role-based access
+    // 2. Check role-based access from dynamic permissions
     if (!user) return false;
     
     const userRole = user.role.toUpperCase();
-    if (userRole === "SUPER_ADMIN" || userRole === "ADMIN" || userRole === "BOT ADMIN") return true;
+    if (userRole === "SUPER_ADMIN") return true; // Super Admin always has full access
     
-    // Check for matches in both enum format and human format
-    const matches = item.roles.some(r => {
-      const targetRole = r.toUpperCase();
-      return userRole === targetRole || 
-             userRole === targetRole.replace('BOT_', '') ||
-             userRole.replace(' ', '_') === targetRole;
-    });
+    // Normalize user role for matching
+    let normalizedRole = userRole;
+    if (userRole === "CHAIRPERSON") normalizedRole = "BOT_CHAIRPERSON";
+    if (userRole === "BOARD MEMBER") normalizedRole = "BOT_MEMBER";
+    if (userRole === "BOT ADMIN") normalizedRole = "ADMIN";
 
-    return matches;
+    const allowedModules = rolePermissions[normalizedRole] || [];
+    return allowedModules.includes(item.id as any);
   });
 
   return (

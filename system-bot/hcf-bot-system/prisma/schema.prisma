@@ -180,6 +180,7 @@ model AuditLog {
 model SystemSetting {
   id                String   @id @default("global")
   enabledModules    Json?
+  rolePermissions   Json?
   theme             String   @default("system")
   authorizedMembers Json?
   masterKey         String   @default("hcf2026")

@@ -47,17 +47,28 @@ const moduleInfo: ModuleConfig[] = [
 export default function SettingsPage() {
   const { 
     enabledModules, toggleModule, 
+    rolePermissions, toggleRolePermission,
     theme, setTheme, 
     authorizedMembers, updateMember, addMember, removeMember,
     masterKey, setMasterKey 
   } = useSettings();
   
-  const [activeTab, setActiveTab] = useState<"modules" | "appearance" | "security">("modules");
+  const [activeTab, setActiveTab] = useState<"modules" | "security" | "permissions" | "appearance">("modules");
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [editingMember, setEditingMember] = useState<any>(null);
   const [isAddingMember, setIsAddingMember] = useState(false);
   const [newMember, setNewMember] = useState({ name: '', email: '', role: 'Board Member' });
+
+  const availableRoles = [
+    "BOT_CHAIRPERSON",
+    "BOT_MEMBER",
+    "CEO",
+    "SENIOR_MANAGEMENT",
+    "COMPANY_SECRETARY",
+    "ADMIN",
+    "USER"
+  ];
 
   const handleSave = () => {
     setIsSaving(true);
@@ -110,17 +121,22 @@ export default function SettingsPage() {
             Modules & Features
           </button>
           <button 
+            onClick={() => setActiveTab("permissions")}
+            className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors ${
+              activeTab === "permissions" ? "bg-navy-50 dark:bg-navy-900 text-emerald-600 dark:text-emerald-400" : "text-navy-600 hover:bg-surface-hover"
+            }`}
+          >
+            <Shield className="w-5 h-5" />
+            Role Permissions
+          </button>
+          <button 
             onClick={() => setActiveTab("security")}
             className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl transition-colors ${
               activeTab === "security" ? "bg-navy-50 dark:bg-navy-900 text-emerald-600 dark:text-emerald-400" : "text-navy-600 hover:bg-surface-hover"
             }`}
           >
-            <Shield className="w-5 h-5 text-navy-400" />
-            Security & Access
-          </button>
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-navy-600 hover:bg-surface-hover transition-colors">
-            <Bell className="w-5 h-5 text-navy-400" />
-            Notifications
+            <Users className="w-5 h-5" />
+            Staff & Board Access
           </button>
           <button 
             onClick={() => setActiveTab("appearance")}
@@ -140,7 +156,7 @@ export default function SettingsPage() {
               <div className="p-6 border-b border-border bg-background/50">
                 <h2 className="text-lg font-bold text-foreground">Active Modules</h2>
                 <p className="text-sm text-navy-500 mt-1">
-                  Toggle the features you want to display in your navigation sidebar. Modules can be enabled or disabled based on your organization's needs.
+                  Toggle the features you want to display in your navigation sidebar globally.
                 </p>
               </div>
               
@@ -171,15 +187,8 @@ export default function SettingsPage() {
                         className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${
                           isEnabled ? "bg-emerald-500" : "bg-navy-200 dark:bg-navy-700"
                         }`}
-                        role="switch"
-                        aria-checked={isEnabled}
                       >
-                        <span
-                          aria-hidden="true"
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                            isEnabled ? "translate-x-5" : "translate-x-0"
-                          }`}
-                        />
+                        <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${isEnabled ? "translate-x-5" : "translate-x-0"}`} />
                       </button>
                     </div>
                   );
@@ -188,42 +197,58 @@ export default function SettingsPage() {
             </div>
           )}
 
+          {activeTab === "permissions" && (
+            <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300">
+              <div className="p-6 border-b border-border bg-background/50">
+                <h2 className="text-lg font-bold text-foreground">Role-Based Access Management</h2>
+                <p className="text-sm text-navy-500 mt-1">
+                  Define which modules are accessible for each organizational role. Note: SUPER_ADMIN always has full access.
+                </p>
+              </div>
+              
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-navy-50 dark:bg-navy-900/50 text-navy-600 dark:text-navy-300 text-xs uppercase tracking-wider font-bold border-b border-border">
+                      <th className="px-6 py-4">Role</th>
+                      {moduleInfo.map(mod => (
+                        <th key={mod.id} className="px-4 py-4 text-center min-w-[100px]">{mod.name}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border text-sm">
+                    {availableRoles.map(role => (
+                      <tr key={role} className="hover:bg-surface-hover transition-colors">
+                        <td className="px-6 py-4 font-bold text-foreground whitespace-nowrap">
+                          {role.replace('_', ' ')}
+                        </td>
+                        {moduleInfo.map(mod => {
+                          const isAllowed = rolePermissions[role]?.includes(mod.id as any);
+                          return (
+                            <td key={mod.id} className="px-4 py-4 text-center">
+                              <button
+                                onClick={() => toggleRolePermission(role, mod.id as any)}
+                                className={`w-6 h-6 rounded border-2 transition-all flex items-center justify-center mx-auto ${
+                                  isAllowed 
+                                    ? "bg-emerald-500 border-emerald-500 text-white" 
+                                    : "border-navy-200 dark:border-navy-700 hover:border-emerald-500/50"
+                                }`}
+                              >
+                                {isAllowed && <CheckSquare className="w-4 h-4" />}
+                              </button>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
           {activeTab === "security" && (
             <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-              {/* Access Key Management */}
-              <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
-                <div className="p-6 border-b border-border bg-background/50">
-                  <h2 className="text-lg font-bold text-foreground">Global Security</h2>
-                  <p className="text-sm text-navy-500 mt-1">Configure the master access key used for executive authorization.</p>
-                </div>
-                <div className="p-6 space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-navy-600 uppercase tracking-wider">Current Master Key</label>
-                      <input 
-                        type="password" 
-                        value={masterKey} 
-                        readOnly 
-                        className="w-full bg-navy-50 border border-border rounded-xl px-4 py-2.5 text-navy-500 text-sm outline-none cursor-not-allowed"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-navy-600 uppercase tracking-wider">New Master Key</label>
-                      <input 
-                        type="password" 
-                        placeholder="Enter new key"
-                        onChange={(e) => setMasterKey(e.target.value)}
-                        className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm outline-none focus:ring-2 focus:ring-emerald-500/20"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 p-4 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-500/20 rounded-xl">
-                    <Shield className="w-5 h-5 text-emerald-500" />
-                    <p className="text-xs text-emerald-700 dark:text-emerald-400 font-medium">Changing the master key will require all active board sessions to re-authenticate.</p>
-                  </div>
-                </div>
-              </div>
-
               {/* Hybrid Login / Staff Access */}
               <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
                 <div className="p-6 border-b border-border bg-background/50 flex items-center justify-between">
@@ -243,7 +268,7 @@ export default function SettingsPage() {
                   {authorizedMembers.map((member: any) => (
                     <div key={member.id} className="p-4 flex items-center justify-between hover:bg-surface-hover transition-colors group">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-navy-100 flex items-center justify-center font-bold text-navy-600">
+                        <div className="w-10 h-10 rounded-full bg-navy-100 flex items-center justify-center font-bold text-navy-600 uppercase">
                           {member.name.charAt(0)}
                         </div>
                         <div>
@@ -251,147 +276,32 @@ export default function SettingsPage() {
                           <p className="text-xs text-navy-500">{member.email} • {member.role}</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-4">
-                        <div className="text-right hidden sm:block">
-                          <p className="text-[10px] text-navy-400 uppercase font-bold">{member.lastActive}</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <button 
-                            onClick={() => setEditingMember(member)}
-                            className="p-2 text-navy-400 hover:text-emerald-500 hover:bg-emerald-50 rounded-lg transition-colors"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-                          <button 
-                            onClick={() => removeMember(member.id)}
-                            className="p-2 text-navy-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => setEditingMember(member)} className="p-2 text-navy-400 hover:text-emerald-500 hover:bg-emerald-50 rounded-lg transition-colors"><Edit className="w-4 h-4" /></button>
+                        <button onClick={() => removeMember(member.id)} className="p-2 text-navy-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* Add Member Modal */}
-          {isAddingMember && (
-            <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-navy-950/60 backdrop-blur-sm animate-in fade-in duration-300">
-              <div className="bg-surface w-full max-w-md rounded-3xl shadow-2xl border border-border p-8 animate-in zoom-in-95 duration-300">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-navy-50 rounded-xl">
-                      <UserPlus className="w-5 h-5 text-navy-600" />
+              {/* Access Key Management */}
+              <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
+                <div className="p-6 border-b border-border bg-background/50">
+                  <h2 className="text-lg font-bold text-foreground">Master Access Key</h2>
+                  <p className="text-sm text-navy-500 mt-1">Configure the master access key used for executive authorization.</p>
+                </div>
+                <div className="p-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-navy-600 uppercase tracking-wider">Current Master Key</label>
+                      <input type="password" value={masterKey} readOnly className="w-full bg-navy-50 border border-border rounded-xl px-4 py-2.5 text-navy-500 text-sm outline-none cursor-not-allowed" />
                     </div>
-                    <h2 className="text-xl font-bold text-foreground">Add Member</h2>
-                  </div>
-                  <button onClick={() => setIsAddingMember(false)} className="text-navy-400 hover:text-foreground"><X /></button>
-                </div>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-navy-600 uppercase">Full Name</label>
-                    <input 
-                      type="text" 
-                      placeholder="e.g. Tan Sri Sulaiman"
-                      onChange={(e) => setNewMember({...newMember, name: e.target.value})}
-                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-navy-600 uppercase">Email Address</label>
-                    <input 
-                      type="email" 
-                      placeholder="email@hcf.org.my"
-                      onChange={(e) => setNewMember({...newMember, email: e.target.value})}
-                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-navy-600 uppercase">Role</label>
-                    <select 
-                      onChange={(e) => setNewMember({...newMember, role: e.target.value})}
-                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
-                    >
-                      <option>Board Member</option>
-                      <option>Chairperson</option>
-                      <option>BOT Admin</option>
-                      <option>Observer</option>
-                    </select>
-                  </div>
-                  <button 
-                    onClick={() => {
-                      addMember(newMember);
-                      setIsAddingMember(false);
-                      setShowSuccess(true);
-                      setTimeout(() => setShowSuccess(false), 3000);
-                    }}
-                    className="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-500 shadow-lg shadow-emerald-900/20 transition-all mt-4"
-                  >
-                    Confirm Access
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Edit Member Modal */}
-          {editingMember && (
-            <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-navy-950/60 backdrop-blur-sm animate-in fade-in duration-300">
-              <div className="bg-surface w-full max-w-md rounded-3xl shadow-2xl border border-border p-8 animate-in zoom-in-95 duration-300">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-emerald-50 rounded-xl">
-                      <Edit className="w-5 h-5 text-emerald-600" />
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-navy-600 uppercase tracking-wider">New Master Key</label>
+                      <input type="password" placeholder="Enter new key" onChange={(e) => setMasterKey(e.target.value)} className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm outline-none focus:ring-2 focus:ring-emerald-500/20" />
                     </div>
-                    <h2 className="text-xl font-bold text-foreground">Edit Member</h2>
                   </div>
-                  <button onClick={() => setEditingMember(null)} className="text-navy-400 hover:text-foreground"><X /></button>
-                </div>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-navy-600 uppercase">Full Name</label>
-                    <input 
-                      type="text" 
-                      defaultValue={editingMember.name}
-                      onChange={(e) => updateMember(editingMember.id, { name: e.target.value })}
-                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-navy-600 uppercase">Email Address</label>
-                    <input 
-                      type="email" 
-                      defaultValue={editingMember.email}
-                      onChange={(e) => updateMember(editingMember.id, { email: e.target.value })}
-                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-navy-600 uppercase">Role</label>
-                    <select 
-                      defaultValue={editingMember.role}
-                      onChange={(e) => updateMember(editingMember.id, { role: e.target.value })}
-                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
-                    >
-                      <option>Board Member</option>
-                      <option>Chairperson</option>
-                      <option>BOT Admin</option>
-                      <option>Observer</option>
-                    </select>
-                  </div>
-                  <button 
-                    onClick={() => {
-                      setEditingMember(null);
-                      setShowSuccess(true);
-                      setTimeout(() => setShowSuccess(false), 3000);
-                    }}
-                    className="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-500 shadow-lg shadow-emerald-900/20 transition-all mt-4"
-                  >
-                    Save Changes
-                  </button>
                 </div>
               </div>
             </div>
@@ -401,36 +311,64 @@ export default function SettingsPage() {
             <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="p-6 border-b border-border bg-background/50">
                 <h2 className="text-lg font-bold text-foreground">Theme Settings</h2>
-                <p className="text-sm text-navy-500 mt-1">
-                  Customize the appearance of the dashboard to match your personal preference or device settings.
-                </p>
+                <p className="text-sm text-navy-500 mt-1">Customize the appearance of the dashboard.</p>
               </div>
-              
-              <div className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <button 
-                    onClick={() => setTheme('light')}
-                    className={`flex flex-col items-center justify-center p-6 border rounded-xl transition-all ${
-                      theme === 'light' ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/10 ring-1 ring-emerald-500' : 'border-border hover:bg-surface-hover'
-                    }`}
-                  >
-                    <div className="w-12 h-12 bg-white border border-slate-200 rounded-full flex items-center justify-center mb-3 shadow-sm text-slate-700">
-                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                    </div>
-                    <span className={`font-semibold ${theme === 'light' ? 'text-emerald-700 dark:text-emerald-400' : 'text-foreground'}`}>Light Mode</span>
+              <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                {['light', 'dark', 'system'].map((t) => (
+                  <button key={t} onClick={() => setTheme(t as any)} className={`flex flex-col items-center justify-center p-6 border rounded-xl transition-all ${theme === t ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/10 ring-1 ring-emerald-500' : 'border-border hover:bg-surface-hover'}`}>
+                    <span className="capitalize font-semibold">{t} Mode</span>
                   </button>
-                  
-                  <button 
-                    onClick={() => setTheme('dark')}
-                    className={`flex flex-col items-center justify-center p-6 border rounded-xl transition-all ${
-                      theme === 'dark' ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/10 ring-1 ring-emerald-500' : 'border-border hover:bg-surface-hover'
-                    }`}
-                  >
-                    <div className="w-12 h-12 bg-slate-900 border border-slate-700 rounded-full flex items-center justify-center mb-3 shadow-sm text-slate-200">
-                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-                    </div>
-                    <span className={`font-semibold ${theme === 'dark' ? 'text-emerald-700 dark:text-emerald-400' : 'text-foreground'}`}>Dark Mode</span>
-                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Add/Edit Modal (Simplified for brevity) */}
+      {(isAddingMember || editingMember) && (
+        <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-navy-950/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-surface w-full max-w-md rounded-3xl shadow-2xl border border-border p-8 animate-in zoom-in-95 duration-300">
+             <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-foreground">{isAddingMember ? "Add Member" : "Edit Member"}</h2>
+                <button onClick={() => {setIsAddingMember(false); setEditingMember(null);}} className="text-navy-400 hover:text-foreground"><X /></button>
+             </div>
+             <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-navy-600 uppercase">Name</label>
+                  <input type="text" defaultValue={editingMember?.name || ""} placeholder="Full Name" onChange={(e) => isAddingMember ? setNewMember({...newMember, name: e.target.value}) : updateMember(editingMember.id, {name: e.target.value})} className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-navy-600 uppercase">Email</label>
+                  <input type="email" defaultValue={editingMember?.email || ""} placeholder="email@hcf.org.my" onChange={(e) => isAddingMember ? setNewMember({...newMember, email: e.target.value}) : updateMember(editingMember.id, {email: e.target.value})} className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-navy-600 uppercase">Role</label>
+                  <select defaultValue={editingMember?.role || "Board Member"} onChange={(e) => isAddingMember ? setNewMember({...newMember, role: e.target.value}) : updateMember(editingMember.id, {role: e.target.value})} className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none">
+                    <option>Board Member</option>
+                    <option>Chairperson</option>
+                    <option>BOT Admin</option>
+                    <option>Observer</option>
+                  </select>
+                </div>
+                <button 
+                  onClick={() => {
+                    if (isAddingMember) addMember(newMember);
+                    setIsAddingMember(false); setEditingMember(null);
+                    setShowSuccess(true); setTimeout(() => setShowSuccess(false), 3000);
+                  }}
+                  className="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-500 shadow-lg shadow-emerald-900/20 transition-all mt-4"
+                >
+                  Confirm
+                </button>
+             </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+>
 
                   <button 
                     onClick={() => setTheme('system')}

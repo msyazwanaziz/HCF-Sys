@@ -24,6 +24,8 @@ interface AuthorizedMember {
 interface SettingsContextType {
   enabledModules: Record<ModuleKey, boolean>;
   toggleModule: (key: ModuleKey) => void;
+  rolePermissions: Record<string, ModuleKey[]>;
+  toggleRolePermission: (role: string, module: ModuleKey) => void;
   theme: "light" | "dark" | "system";
   setTheme: (theme: "light" | "dark" | "system") => void;
   authorizedMembers: AuthorizedMember[];
@@ -35,7 +37,7 @@ interface SettingsContextType {
 }
 
 const defaultModules: Record<ModuleKey, boolean> = {
-  dashboard: true, // Always true, cannot be disabled usually
+  dashboard: true,
   governance: true,
   meetings: true,
   approvals: true,
@@ -46,10 +48,22 @@ const defaultModules: Record<ModuleKey, boolean> = {
   revenue: true,
 };
 
+const defaultRolePermissions: Record<string, ModuleKey[]> = {
+  "SUPER_ADMIN": ["dashboard", "governance", "meetings", "approvals", "performance", "finance", "revenue", "risk", "vault"],
+  "BOT_CHAIRPERSON": ["dashboard", "governance", "meetings", "approvals", "performance", "finance", "revenue", "risk", "vault"],
+  "BOT_MEMBER": ["dashboard", "governance", "meetings", "performance", "risk", "vault"],
+  "CEO": ["dashboard", "approvals", "performance", "finance", "revenue", "risk"],
+  "SENIOR_MANAGEMENT": ["dashboard", "performance", "finance", "revenue", "risk"],
+  "COMPANY_SECRETARY": ["dashboard", "governance", "meetings", "vault"],
+  "ADMIN": ["dashboard", "governance", "meetings", "approvals", "performance", "finance", "revenue", "risk", "vault"],
+  "USER": ["dashboard"],
+};
+
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [enabledModules, setEnabledModules] = useState<Record<ModuleKey, boolean>>(defaultModules);
+  const [rolePermissions, setRolePermissions] = useState<Record<string, ModuleKey[]>>(defaultRolePermissions);
   const [theme, setTheme] = useState<"light" | "dark" | "system">("system");
   const [authorizedMembers, setAuthorizedMembers] = useState<AuthorizedMember[]>([]);
   const [masterKey, setMasterKey] = useState("hcf2026");
@@ -62,6 +76,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         if (res.ok) {
           const data = await res.json();
           if (data.enabledModules) setEnabledModules({ ...defaultModules, ...data.enabledModules });
+          if (data.rolePermissions) setRolePermissions({ ...defaultRolePermissions, ...data.rolePermissions });
           if (data.theme) setTheme(data.theme);
           if (data.authorizedMembers) setAuthorizedMembers(data.authorizedMembers);
           if (data.masterKey) setMasterKey(data.masterKey);
@@ -86,6 +101,16 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         console.error("Failed to parse stored modules", e);
       }
     }
+
+    const storedPerms = localStorage.getItem("hcf-role-permissions");
+    if (storedPerms) {
+      try {
+        setRolePermissions({ ...defaultRolePermissions, ...JSON.parse(storedPerms) });
+      } catch (e) {
+        console.error("Failed to parse stored permissions", e);
+      }
+    }
+
     const storedTheme = localStorage.getItem("hcf-theme") as "light" | "dark" | "system" | null;
     if (storedTheme) {
       setTheme(storedTheme);
@@ -109,6 +134,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem("hcf-enabled-modules", JSON.stringify(enabledModules));
+      localStorage.setItem("hcf-role-permissions", JSON.stringify(rolePermissions));
       localStorage.setItem("hcf-theme", theme);
       localStorage.setItem("hcf-members", JSON.stringify(authorizedMembers));
       localStorage.setItem("hcf-master-key", masterKey);
@@ -119,6 +145,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           enabledModules,
+          rolePermissions,
           theme,
           authorizedMembers,
           masterKey
@@ -134,14 +161,23 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         root.classList.add(theme);
       }
     }
-  }, [enabledModules, theme, authorizedMembers, masterKey, isLoaded]);
+  }, [enabledModules, rolePermissions, theme, authorizedMembers, masterKey, isLoaded]);
 
   const toggleModule = (key: ModuleKey) => {
-    // Removed dashboard restriction to allow hiding it
     setEnabledModules(prev => ({
       ...prev,
       [key]: !prev[key]
     }));
+  };
+
+  const toggleRolePermission = (role: string, module: ModuleKey) => {
+    setRolePermissions(prev => {
+      const current = prev[role] || [];
+      const updated = current.includes(module)
+        ? current.filter(m => m !== module)
+        : [...current, module];
+      return { ...prev, [role]: updated };
+    });
   };
 
   const updateMember = (id: string, updates: Partial<AuthorizedMember>) => {
@@ -163,7 +199,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <SettingsContext.Provider value={{ 
-      enabledModules, toggleModule, theme, setTheme, 
+      enabledModules, toggleModule, rolePermissions, toggleRolePermission,
+      theme, setTheme, 
       authorizedMembers, updateMember, addMember, removeMember,
       masterKey, setMasterKey 
     }}>
