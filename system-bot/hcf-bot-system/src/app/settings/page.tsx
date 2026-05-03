@@ -158,7 +158,7 @@ export default function SettingsPage() {
                         <div>
                           <h3 className={`text-base font-semibold ${isEnabled ? "text-foreground" : "text-navy-400"}`}>
                             {mod.name}
-                            {mod.required && (
+                            {(mod as any).required && (
                               <span className="ml-2 text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-navy-100 text-navy-600 dark:bg-navy-800 dark:text-navy-400">Required</span>
                             )}
                           </h3>
