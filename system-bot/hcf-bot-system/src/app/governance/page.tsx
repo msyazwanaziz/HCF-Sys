@@ -29,25 +29,18 @@ export default function GovernancePage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border pb-8">
+    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black text-foreground tracking-tight flex items-center gap-4">
-            <div className="p-3 bg-navy-900 text-white rounded-2xl shadow-xl shadow-navy-900/20">
-              <ShieldCheck className="w-8 h-8" />
-            </div>
-            Governance Portal
-          </h1>
-          <p className="text-navy-500 mt-3 text-lg max-w-2xl">
-            Managing the Board of Trustees, specialized committees, and organizational compliance framework.
-          </p>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">Governance Portal</h1>
+          <p className="text-navy-500 mt-1">Managing the Board of Trustees, specialized committees, and organizational compliance framework.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="px-5 py-2.5 bg-surface border border-border rounded-xl text-sm font-bold text-navy-600 hover:bg-surface-hover transition-all hover:shadow-md flex items-center gap-2">
+          <button className="px-4 py-2 bg-surface border border-border rounded-lg text-sm font-medium text-navy-600 hover:bg-surface-hover transition-colors shadow-sm flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             View Charter
           </button>
-          <button className="px-5 py-2.5 bg-navy-900 text-white rounded-xl text-sm font-bold transition-all hover:bg-navy-800 hover:shadow-xl hover:shadow-navy-900/20 flex items-center gap-2">
+          <button className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm shadow-emerald-600/20 flex items-center gap-2">
             <UserPlus className="w-4 h-4" />
             Appoint Member
           </button>

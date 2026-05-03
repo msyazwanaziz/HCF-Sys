@@ -25,25 +25,18 @@ export default function VaultPage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border pb-8">
+    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black text-foreground tracking-tight flex items-center gap-4">
-            <div className="p-3 bg-navy-950 text-white rounded-2xl shadow-xl shadow-navy-950/20">
-              <FolderLock className="w-8 h-8" />
-            </div>
-            Secure Vault
-          </h1>
-          <p className="text-navy-500 mt-3 text-lg max-w-2xl">
-            Encrypted storage for sensitive board papers, legal contracts, and historical organizational records.
-          </p>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">Secure Vault</h1>
+          <p className="text-navy-500 mt-1">Encrypted storage for sensitive board papers, legal contracts, and historical organizational records.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="px-5 py-2.5 bg-surface border border-border rounded-xl text-sm font-bold text-navy-600 hover:bg-surface-hover transition-all flex items-center gap-2">
+          <button className="px-4 py-2 bg-surface border border-border rounded-lg text-sm font-medium text-navy-600 hover:bg-surface-hover transition-colors shadow-sm flex items-center gap-2">
             <HardDrive className="w-4 h-4" />
             Manage Storage
           </button>
-          <button className="px-5 py-2.5 bg-navy-950 text-white rounded-xl text-sm font-bold transition-all hover:bg-navy-900 hover:shadow-xl hover:shadow-navy-950/20 flex items-center gap-2">
+          <button className="px-4 py-2 bg-navy-950 text-white rounded-lg text-sm font-medium transition-colors shadow-sm shadow-navy-950/20 flex items-center gap-2 hover:bg-navy-900">
             <Plus className="w-4 h-4" />
             Upload Document
           </button>

@@ -1,8 +1,21 @@
 "use client";
 
 import { Bell, Search, Command } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Header() {
+  const { user } = useAuth();
+
+  // Helper to get initials
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 3);
+  };
+
   return (
     <header className="bg-surface/80 backdrop-blur-md border-b border-border sticky top-0 z-30 h-20 flex items-center justify-between px-8">
       <div className="flex-1 min-w-0">
@@ -29,11 +42,11 @@ export default function Header() {
         {/* Profile Dropdown */}
         <div className="flex items-center gap-3 pl-4 border-l border-border cursor-pointer group">
           <div className="flex flex-col items-end hidden md:flex">
-            <span className="text-sm font-semibold text-foreground">Datuk Seri Amin</span>
-            <span className="text-xs text-navy-400 font-medium">Chairperson</span>
+            <span className="text-sm font-semibold text-foreground">{user?.name || "Guest"}</span>
+            <span className="text-xs text-navy-400 font-medium capitalize">{user?.role?.toLowerCase()?.replace('_', ' ') || "Observer"}</span>
           </div>
           <div className="w-10 h-10 rounded-full bg-navy-800 border-2 border-surface shadow-sm overflow-hidden flex items-center justify-center text-white font-bold group-hover:ring-2 group-hover:ring-emerald-500 group-hover:ring-offset-2 transition-all">
-            DSA
+            {user ? getInitials(user.name) : "U"}
           </div>
         </div>
       </div>

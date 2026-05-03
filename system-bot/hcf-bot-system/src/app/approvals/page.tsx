@@ -49,30 +49,23 @@ export default function ApprovalsPage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border pb-8">
+    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black text-foreground tracking-tight flex items-center gap-4">
-            <div className="p-3 bg-amber-500 text-white rounded-2xl shadow-xl shadow-amber-500/20">
-              <CheckSquare className="w-8 h-8" />
-            </div>
-            Approval Workflows
-          </h1>
-          <p className="text-navy-500 mt-3 text-lg max-w-2xl">
-            Review and authorize board-level resolutions, budget requests, and policy implementations.
-          </p>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">Approval Workflows</h1>
+          <p className="text-navy-500 mt-1">Review and authorize board-level resolutions, budget requests, and policy implementations.</p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="bg-surface p-1 rounded-xl border border-border flex items-center">
+          <div className="bg-surface p-1 rounded-xl border border-border flex items-center shadow-sm">
             <button 
               onClick={() => setActiveTab("pending")}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'pending' ? 'bg-navy-900 text-white shadow-lg' : 'text-navy-500 hover:text-navy-900'}`}
+              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'pending' ? 'bg-navy-900 text-white shadow-lg' : 'text-navy-500 hover:text-navy-900'}`}
             >
               Pending
             </button>
             <button 
               onClick={() => setActiveTab("history")}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'history' ? 'bg-navy-900 text-white shadow-lg' : 'text-navy-500 hover:text-navy-900'}`}
+              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'history' ? 'bg-navy-900 text-white shadow-lg' : 'text-navy-500 hover:text-navy-900'}`}
             >
               History
             </button>

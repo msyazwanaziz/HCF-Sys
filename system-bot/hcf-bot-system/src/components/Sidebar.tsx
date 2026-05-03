@@ -18,23 +18,33 @@ import { useSettings } from "@/context/SettingsContext";
 import { useAuth } from "@/context/AuthContext";
 
 const allNavigation = [
-  { id: "dashboard", name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { id: "governance", name: "Governance Portal", href: "/governance", icon: Users },
-  { id: "meetings", name: "Meetings", href: "/meetings", icon: Calendar },
-  { id: "approvals", name: "Approvals", href: "/approvals", icon: CheckSquare },
-  { id: "performance", name: "Strategic Performance", href: "/performance", icon: Target },
-  { id: "finance", name: "Financial Oversight", href: "/finance", icon: PieChart },
-  { id: "revenue", name: "Live Financial Dashboard", href: "/revenue", icon: PieChart },
-  { id: "risk", name: "Risk & Compliance", href: "/risk", icon: ShieldAlert },
-  { id: "vault", name: "Document Vault", href: "/vault", icon: FolderLock },
+  { id: "dashboard", name: "Dashboard", href: "/", icon: LayoutDashboard, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "BOT_MEMBER", "CEO", "SENIOR_MANAGEMENT", "COMPANY_SECRETARY", "ADMIN", "USER"] },
+  { id: "governance", name: "Governance Portal", href: "/governance", icon: Users, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "BOT_MEMBER", "COMPANY_SECRETARY", "ADMIN"] },
+  { id: "meetings", name: "Meetings", href: "/meetings", icon: Calendar, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "BOT_MEMBER", "COMPANY_SECRETARY", "ADMIN"] },
+  { id: "approvals", name: "Approvals", href: "/approvals", icon: CheckSquare, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "CEO", "SENIOR_MANAGEMENT", "ADMIN"] },
+  { id: "performance", name: "Strategic Performance", href: "/performance", icon: Target, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "BOT_MEMBER", "CEO", "SENIOR_MANAGEMENT", "ADMIN"] },
+  { id: "finance", name: "Financial Oversight", href: "/finance", icon: PieChart, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "CEO", "SENIOR_MANAGEMENT", "ADMIN"] },
+  { id: "revenue", name: "Live Financial Dashboard", href: "/revenue", icon: PieChart, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "CEO", "SENIOR_MANAGEMENT", "ADMIN"] },
+  { id: "risk", name: "Risk & Compliance", href: "/risk", icon: ShieldAlert, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "BOT_MEMBER", "CEO", "SENIOR_MANAGEMENT", "ADMIN"] },
+  { id: "vault", name: "Document Vault", href: "/vault", icon: FolderLock, roles: ["SUPER_ADMIN", "BOT_CHAIRPERSON", "BOT_MEMBER", "COMPANY_SECRETARY", "ADMIN"] },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { enabledModules } = useSettings();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
-  const navigation = allNavigation.filter(item => enabledModules[item.id as keyof typeof enabledModules]);
+  const navigation = allNavigation.filter(item => {
+    // 1. Check if module is enabled in settings
+    const isEnabled = enabledModules[item.id as keyof typeof enabledModules];
+    if (!isEnabled) return false;
+
+    // 2. Check role-based access
+    if (!user) return false;
+    if (user.role === "SUPER_ADMIN") return true;
+    
+    return item.roles.includes(user.role);
+  });
 
   return (
     <div className="hidden lg:flex lg:flex-col lg:w-72 lg:fixed lg:inset-y-0 bg-navy-950 border-r border-navy-800">

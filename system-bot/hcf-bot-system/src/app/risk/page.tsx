@@ -23,21 +23,14 @@ export default function RiskPage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border pb-8">
+    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black text-foreground tracking-tight flex items-center gap-4">
-            <div className="p-3 bg-rose-600 text-white rounded-2xl shadow-xl shadow-rose-600/20">
-              <ShieldAlert className="w-8 h-8" />
-            </div>
-            Risk & Compliance
-          </h1>
-          <p className="text-navy-500 mt-3 text-lg max-w-2xl">
-            Real-time monitoring of organizational risks, internal audits, and regulatory compliance status.
-          </p>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">Risk & Compliance</h1>
+          <p className="text-navy-500 mt-1">Real-time monitoring of organizational risks, internal audits, and regulatory compliance status.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="px-5 py-2.5 bg-rose-600 text-white rounded-xl text-sm font-bold transition-all hover:bg-rose-700 hover:shadow-xl hover:shadow-rose-600/20 flex items-center gap-2">
+          <button className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm shadow-rose-600/20 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4" />
             Report Issue
           </button>
