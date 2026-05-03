@@ -96,14 +96,19 @@ export default function Sidebar() {
         </div>
 
         <div className="p-4 border-t border-navy-800">
-          <Link href="/settings" className={`group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
-            pathname === "/settings" ? "bg-navy-800 text-white shadow-sm" : "text-navy-300 hover:bg-navy-800/50 hover:text-white"
-          }`}>
-            <Settings className={`flex-shrink-0 mr-3 h-5 w-5 transition-colors duration-200 ${
-              pathname === "/settings" ? "text-emerald-400" : "text-navy-400 group-hover:text-emerald-400"
-            }`} />
-            Settings
-          </Link>
+          {(user?.role.toUpperCase() === "SUPER_ADMIN" || 
+            user?.role.toUpperCase() === "ADMIN" || 
+            user?.role.toUpperCase() === "BOT ADMIN" || 
+            user?.role.toUpperCase() === "CHAIRPERSON") && (
+            <Link href="/settings" className={`group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
+              pathname === "/settings" ? "bg-navy-800 text-white shadow-sm" : "text-navy-300 hover:bg-navy-800/50 hover:text-white"
+            }`}>
+              <Settings className={`flex-shrink-0 mr-3 h-5 w-5 transition-colors duration-200 ${
+                pathname === "/settings" ? "text-emerald-400" : "text-navy-400 group-hover:text-emerald-400"
+              }`} />
+              Settings
+            </Link>
+          )}
           <button 
             onClick={logout}
             className="w-full mt-1 group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-navy-300 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200"

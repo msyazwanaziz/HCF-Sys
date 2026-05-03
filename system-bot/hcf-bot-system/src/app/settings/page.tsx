@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useSettings } from "@/context/SettingsContext";
+import { useAuth } from "@/context/AuthContext";
 import { 
   Settings, 
   LayoutDashboard, 
@@ -21,6 +22,7 @@ import {
   Plus,
   X,
   UserPlus,
+  Lock,
   LucideIcon
 } from "lucide-react";
 
@@ -45,6 +47,7 @@ const moduleInfo: ModuleConfig[] = [
 ];
 
 export default function SettingsPage() {
+  const { user } = useAuth();
   const { 
     enabledModules, toggleModule, 
     rolePermissions, toggleRolePermission,
@@ -59,6 +62,28 @@ export default function SettingsPage() {
   const [editingMember, setEditingMember] = useState<any>(null);
   const [isAddingMember, setIsAddingMember] = useState(false);
   const [newMember, setNewMember] = useState({ name: '', email: '', role: 'Board Member' });
+
+  // Admin access check
+  const isAdmin = user && [
+    "SUPER_ADMIN", 
+    "ADMIN", 
+    "BOT ADMIN", 
+    "CHAIRPERSON"
+  ].includes(user.role.toUpperCase());
+
+  if (!isAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-6 animate-in fade-in zoom-in-95 duration-500">
+        <div className="w-20 h-20 bg-rose-50 rounded-3xl flex items-center justify-center mb-6 text-rose-500 border border-rose-100 shadow-sm">
+          <Lock className="w-10 h-10" />
+        </div>
+        <h1 className="text-2xl font-bold text-foreground mb-2">Access Denied</h1>
+        <p className="text-navy-500 max-w-md">
+          You do not have the required permissions to access the system settings. Please contact your administrator if you believe this is an error.
+        </p>
+      </div>
+    );
+  }
 
   const availableRoles = [
     "BOT_CHAIRPERSON",
