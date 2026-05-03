@@ -108,7 +108,13 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-white/5 text-center">
+          <div className="mt-8 pt-6 border-t border-white/5 text-center space-y-4">
+            <p className="text-navy-400 text-sm">
+              Don&apos;t have an account?{" "}
+              <a href="/register" className="text-emerald-500 hover:text-emerald-400 font-bold transition-colors">
+                Register Here
+              </a>
+            </p>
             <p className="text-[10px] text-navy-600 font-medium uppercase tracking-[0.2em]">
               © 2026 Hidayah Centre Foundation • Internal Use Only
             </p>

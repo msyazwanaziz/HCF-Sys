@@ -51,6 +51,8 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [enabledModules, setEnabledModules] = useState<Record<ModuleKey, boolean>>(defaultModules);
   const [theme, setTheme] = useState<"light" | "dark" | "system">("system");
+  const [authorizedMembers, setAuthorizedMembers] = useState<AuthorizedMember[]>([]);
+  const [masterKey, setMasterKey] = useState("hcf2026");
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -133,9 +135,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       }
     }
   }, [enabledModules, theme, authorizedMembers, masterKey, isLoaded]);
-
-  const [authorizedMembers, setAuthorizedMembers] = useState<AuthorizedMember[]>([]);
-  const [masterKey, setMasterKey] = useState("hcf2026");
 
   const toggleModule = (key: ModuleKey) => {
     // Removed dashboard restriction to allow hiding it

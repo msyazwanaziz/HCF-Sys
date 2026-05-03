@@ -34,20 +34,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    // Simple mock authentication for Board of Trustees Portal
-    // In a real app, this would call an API
-    if (email === "admin@hcf.org.my" && password === "hcf2026") {
-      const mockUser = {
-        id: "1",
-        name: "Board Administrator",
-        email: "admin@hcf.org.my",
-        role: "admin",
-      };
-      setUser(mockUser);
-      localStorage.setItem("hcf_user", JSON.stringify(mockUser));
-      return true;
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data.user);
+        localStorage.setItem("hcf_user", JSON.stringify(data.user));
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error("Login failed", err);
+      return false;
     }
-    return false;
   };
 
   const logout = () => {
