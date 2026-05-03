@@ -41,9 +41,19 @@ export default function Sidebar() {
 
     // 2. Check role-based access
     if (!user) return false;
-    if (user.role === "SUPER_ADMIN") return true;
     
-    return item.roles.includes(user.role);
+    const userRole = user.role.toUpperCase();
+    if (userRole === "SUPER_ADMIN" || userRole === "ADMIN" || userRole === "BOT ADMIN") return true;
+    
+    // Check for matches in both enum format and human format
+    const matches = item.roles.some(r => {
+      const targetRole = r.toUpperCase();
+      return userRole === targetRole || 
+             userRole === targetRole.replace('BOT_', '') ||
+             userRole.replace(' ', '_') === targetRole;
+    });
+
+    return matches;
   });
 
   return (
