@@ -49,10 +49,11 @@ export interface RevTransaction {
 let cachedRevenueData: RevTransaction[] | null = null;
 let fetchRevenuePromise: Promise<RevTransaction[]> | null = null;
 
-export async function getRevenueData(): Promise<RevTransaction[]> {
-  if (cachedRevenueData) return cachedRevenueData;
-  if (!fetchRevenuePromise) {
-    fetchRevenuePromise = fetch(SHEET_URL).then(async res => {
+export async function getRevenueData(forceRefresh = false): Promise<RevTransaction[]> {
+  if (cachedRevenueData && !forceRefresh) return cachedRevenueData;
+  if (!fetchRevenuePromise || forceRefresh) {
+    const bustUrl = `${SHEET_URL}&t=${Date.now()}`;
+    fetchRevenuePromise = fetch(bustUrl).then(async res => {
       const text = await res.text();
       const lines = text.split('\n').filter(l => l.trim() !== '');
       
@@ -66,7 +67,7 @@ export async function getRevenueData(): Promise<RevTransaction[]> {
       
       const qIdx = headers.indexOf('Sumbangan Umum');
       const rIdx = headers.indexOf('Tabung Cahaya HQ');
-      const sIdx = headers.indexOf('Fund Raising');
+      const sIdx = headers.indexOf('Fundraising'); // Fixed: removed space to match Google Sheet header
       const tIdx = headers.indexOf('Ansar Initiative');
       const uIdx = headers.indexOf('Korporat');
       const vIdx = headers.indexOf('IKRAM');
@@ -130,10 +131,11 @@ const TARGET_SHEET_URL = "https://docs.google.com/spreadsheets/d/1MRJibLnS07vXai
 let cachedRevenueTargets: Record<string, number> | null = null;
 let fetchTargetsPromise: Promise<Record<string, number>> | null = null;
 
-export async function getRevenueTargets(): Promise<Record<string, number>> {
-  if (cachedRevenueTargets) return cachedRevenueTargets;
-  if (!fetchTargetsPromise) {
-    fetchTargetsPromise = fetch(TARGET_SHEET_URL).then(async res => {
+export async function getRevenueTargets(forceRefresh = false): Promise<Record<string, number>> {
+  if (cachedRevenueTargets && !forceRefresh) return cachedRevenueTargets;
+  if (!fetchTargetsPromise || forceRefresh) {
+    const bustUrl = `${TARGET_SHEET_URL}&t=${Date.now()}`;
+    fetchTargetsPromise = fetch(bustUrl).then(async res => {
       const text = await res.text();
       const lines = text.split('\n').filter(l => l.trim() !== '');
       const targets: Record<string, number> = {};
@@ -175,7 +177,7 @@ export function RevenueDataWrapper({ children }: { children: (data: { transactio
   const [data, setData] = useState<{ transactions: RevTransaction[], targets: Record<string, number> } | null>(null);
 
   useEffect(() => {
-    Promise.all([getRevenueData(), getRevenueTargets()]).then(([transactions, targets]) => {
+    Promise.all([getRevenueData(true), getRevenueTargets(true)]).then(([transactions, targets]) => {
       setData({ transactions, targets });
     });
   }, []);

@@ -135,10 +135,11 @@ export function FinanceChartsContainer() {
 let cachedData: any = null;
 let fetchPromise: Promise<any> | null = null;
 
-async function getSheetData() {
-  if (cachedData) return cachedData;
-  if (!fetchPromise) {
-    fetchPromise = fetch(SHEET_URL).then(async res => {
+async function getSheetData(forceRefresh = false) {
+  if (cachedData && !forceRefresh) return cachedData;
+  if (!fetchPromise || forceRefresh) {
+    const bustUrl = `${SHEET_URL}&t=${Date.now()}`;
+    fetchPromise = fetch(bustUrl).then(async res => {
       const text = await res.text();
       const lines = text.split('\n').filter(l => l.trim() !== '');
       
