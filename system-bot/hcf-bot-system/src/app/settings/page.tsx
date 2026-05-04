@@ -61,7 +61,7 @@ export default function SettingsPage() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [editingMember, setEditingMember] = useState<any>(null);
   const [isAddingMember, setIsAddingMember] = useState(false);
-  const [newMember, setNewMember] = useState({ name: '', email: '', role: 'Board Member' });
+  const [newMember, setNewMember] = useState({ name: '', email: '', role: 'BOT_MEMBER', password: '' });
 
   // Admin access check
   const isAdmin = user && [
@@ -377,16 +377,56 @@ export default function SettingsPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-navy-600 uppercase">Role</label>
-                  <select defaultValue={editingMember?.role || "Board Member"} onChange={(e) => isAddingMember ? setNewMember({...newMember, role: e.target.value}) : updateMember(editingMember.id, {role: e.target.value})} className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none">
-                    <option>Board Member</option>
-                    <option>Chairperson</option>
-                    <option>BOT Admin</option>
-                    <option>Observer</option>
+                  <select defaultValue={editingMember?.role || "BOT_MEMBER"} onChange={(e) => isAddingMember ? setNewMember({...newMember, role: e.target.value}) : updateMember(editingMember.id, {role: e.target.value})} className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none">
+                    {availableRoles.map(role => (
+                      <option key={role} value={role}>{role.replace('_', ' ')}</option>
+                    ))}
                   </select>
                 </div>
+                {isAddingMember && (
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-navy-600 uppercase">Temporary Password</label>
+                    <input type="password" placeholder="Enter temporary password" onChange={(e) => setNewMember({...newMember, password: e.target.value})} className="w-full bg-background border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none" />
+                  </div>
+                )}
                 <button 
-                  onClick={() => {
-                    if (isAddingMember) addMember(newMember);
+                  onClick={async () => {
+                    if (isAddingMember) {
+                      if (!newMember.password) {
+                        alert("Please enter a temporary password.");
+                        return;
+                      }
+                      
+                      try {
+                        const nameParts = newMember.name.split(' ');
+                        const firstName = nameParts[0];
+                        const lastName = nameParts.slice(1).join(' ');
+                        
+                        const res = await fetch('/api/auth/register', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            email: newMember.email,
+                            password: newMember.password,
+                            firstName: firstName || 'User',
+                            lastName: lastName || '',
+                            role: newMember.role,
+                            bypassAuthorizedCheck: true
+                          })
+                        });
+                        
+                        if (res.ok) {
+                          addMember(newMember);
+                        } else {
+                          const data = await res.json();
+                          alert("Error creating user: " + data.error);
+                          return;
+                        }
+                      } catch (err) {
+                        alert("Failed to create user.");
+                        return;
+                      }
+                    }
                     setIsAddingMember(false); setEditingMember(null);
                     setShowSuccess(true); setTimeout(() => setShowSuccess(false), 3000);
                   }}
