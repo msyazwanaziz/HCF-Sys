@@ -47,6 +47,12 @@ export async function POST(request: Request) {
 
     // Simple password check for now (should use bcrypt in production)
     if (user && user.passwordHash === password) {
+      // Update last login
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { lastLoginAt: new Date() }
+      });
+
       return NextResponse.json({
         user: {
           id: user.id,

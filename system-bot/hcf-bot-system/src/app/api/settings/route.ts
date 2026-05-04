@@ -15,8 +15,27 @@ export async function GET() {
           id: "global",
           theme: "system",
           masterKey: "hcf2026",
+          authorizedMembers: [],
         },
       });
+    }
+
+    // Fetch actual users to get their real lastLoginAt values
+    const users = await prisma.user.findMany({
+      select: {
+        email: true,
+        lastLoginAt: true
+      }
+    });
+
+    const userMap = new Map(users.map(u => [u.email, u.lastLoginAt]));
+
+    // Enrich authorizedMembers with actual DB login data
+    if (settings.authorizedMembers && Array.isArray(settings.authorizedMembers)) {
+      settings.authorizedMembers = (settings.authorizedMembers as any[]).map(member => ({
+        ...member,
+        lastLoginAt: userMap.get(member.email) || null
+      }));
     }
 
     return NextResponse.json(settings);

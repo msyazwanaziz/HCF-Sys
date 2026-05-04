@@ -19,6 +19,7 @@ interface AuthorizedMember {
   email: string;
   role: string;
   lastActive: string;
+  lastLoginAt?: string | null;
 }
 
 interface SettingsContextType {
@@ -121,9 +122,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       setAuthorizedMembers(JSON.parse(storedMembers));
     } else {
       setAuthorizedMembers([
-        { id: '1', name: 'Datuk Seri Amin', email: 'amin@hcf.org.my', role: 'Chairperson', lastActive: '2 hours ago' },
-        { id: '2', name: 'Dr. Fauzi', email: 'fauzi@hcf.org.my', role: 'Board Member', lastActive: '1 day ago' },
-        { id: '3', name: 'System Admin', email: 'admin@hcf.org.my', role: 'BOT Admin', lastActive: 'Now' },
+        { id: '1', name: 'Datuk Seri Amin', email: 'amin@hcf.org.my', role: 'BOT_CHAIRPERSON', lastActive: '2 hours ago', lastLoginAt: new Date(Date.now() - 7200000).toISOString() },
+        { id: '2', name: 'Dr. Fauzi', email: 'fauzi@hcf.org.my', role: 'BOT_MEMBER', lastActive: '1 day ago', lastLoginAt: new Date(Date.now() - 86400000).toISOString() },
+        { id: '3', name: 'System Admin', email: 'admin@hcf.org.my', role: 'ADMIN', lastActive: 'Now', lastLoginAt: new Date().toISOString() },
       ]);
     }
 

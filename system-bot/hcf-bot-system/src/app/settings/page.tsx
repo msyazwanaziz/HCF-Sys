@@ -298,7 +298,20 @@ export default function SettingsPage() {
                         </div>
                         <div>
                           <p className="text-sm font-bold text-foreground">{member.name}</p>
-                          <p className="text-xs text-navy-500">{member.email} • {member.role}</p>
+                          <p className="text-xs text-navy-500 mb-1">{member.email} • {member.role.replace('_', ' ')}</p>
+                          {member.lastLoginAt ? (
+                            <p className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-0.5 rounded-full inline-block">
+                              Last login: {new Date(member.lastLoginAt).toLocaleString('en-MY', { 
+                                day: '2-digit', 
+                                month: 'short', 
+                                year: 'numeric', 
+                                hour: '2-digit', 
+                                minute: '2-digit' 
+                              })}
+                            </p>
+                          ) : (
+                            <p className="text-[10px] font-medium text-navy-400 italic">Never logged in</p>
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
