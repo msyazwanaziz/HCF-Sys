@@ -133,7 +133,7 @@ export default function SettingsPage() {
         </div>
       )}
 
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="flex flex-col lg:flex-row gap-8 w-full">
         {/* Settings Navigation Sidebar */}
         <div className="w-full lg:w-64 shrink-0 space-y-1">
           <button 
@@ -175,9 +175,9 @@ export default function SettingsPage() {
         </div>
 
         {/* Main Settings Content */}
-        <div className="flex-1 min-w-0 space-y-6">
+        <div className="flex-1 min-w-0 w-full space-y-6">
           {activeTab === "modules" && (
-            <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="w-full bg-surface rounded-2xl border border-border shadow-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="p-6 border-b border-border bg-background/50">
                 <h2 className="text-lg font-bold text-foreground">Active Modules</h2>
                 <p className="text-sm text-navy-500 mt-1">
@@ -223,7 +223,7 @@ export default function SettingsPage() {
           )}
 
           {activeTab === "permissions" && (
-            <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="w-full bg-surface rounded-2xl border border-border shadow-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="p-6 border-b border-border bg-background/50">
                 <h2 className="text-lg font-bold text-foreground">Role-Based Access Management</h2>
                 <p className="text-sm text-navy-500 mt-1">
@@ -231,7 +231,7 @@ export default function SettingsPage() {
                 </p>
               </div>
               
-              <div className="overflow-auto max-h-[600px] border-t border-border">
+              <div className="w-full overflow-auto max-h-[600px] border-t border-border">
                 <table className="w-full text-left border-collapse">
                   <thead className="sticky top-0 z-20">
                     <tr className="bg-navy-50/95 dark:bg-navy-900/95 backdrop-blur-sm text-navy-600 dark:text-navy-300 text-xs uppercase tracking-wider font-bold border-b border-border">
@@ -273,9 +273,9 @@ export default function SettingsPage() {
           )}
 
           {activeTab === "security" && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="w-full space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
               {/* Hybrid Login / Staff Access */}
-              <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
+              <div className="w-full bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
                 <div className="p-6 border-b border-border bg-background/50 flex items-center justify-between">
                   <div>
                     <h2 className="text-lg font-bold text-foreground">Staff & Board Access</h2>
@@ -324,7 +324,7 @@ export default function SettingsPage() {
               </div>
 
               {/* Access Key Management */}
-              <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
+              <div className="w-full bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
                 <div className="p-6 border-b border-border bg-background/50">
                   <h2 className="text-lg font-bold text-foreground">Master Access Key</h2>
                   <p className="text-sm text-navy-500 mt-1">Configure the master access key used for executive authorization.</p>
@@ -346,7 +346,7 @@ export default function SettingsPage() {
           )}
 
           {activeTab === "appearance" && (
-            <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300">
+            <div className="w-full bg-surface rounded-2xl border border-border shadow-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="p-6 border-b border-border bg-background/50">
                 <h2 className="text-lg font-bold text-foreground">Theme Settings</h2>
                 <p className="text-sm text-navy-500 mt-1">Customize the appearance of the dashboard.</p>
