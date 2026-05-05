@@ -33,9 +33,9 @@ export default function AppClientWrapper({ children }: { children: React.ReactNo
   return (
     <>
       <Sidebar />
-      <div className="flex-1 lg:pl-72 flex flex-col min-h-screen">
+      <div className="flex-1 lg:pl-72 flex flex-col min-h-screen min-w-0">
         <Header />
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 min-w-0 overflow-x-hidden">
           {children}
         </main>
       </div>
