@@ -175,7 +175,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Main Settings Content */}
-        <div className="flex-1 space-y-6">
+        <div className="flex-1 min-w-0 space-y-6">
           {activeTab === "modules" && (
             <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="p-6 border-b border-border bg-background/50">
@@ -231,20 +231,20 @@ export default function SettingsPage() {
                 </p>
               </div>
               
-              <div className="overflow-x-auto">
+              <div className="overflow-auto max-h-[600px] border-t border-border">
                 <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-navy-50 dark:bg-navy-900/50 text-navy-600 dark:text-navy-300 text-xs uppercase tracking-wider font-bold border-b border-border">
-                      <th className="px-6 py-4">Role</th>
+                  <thead className="sticky top-0 z-20">
+                    <tr className="bg-navy-50/95 dark:bg-navy-900/95 backdrop-blur-sm text-navy-600 dark:text-navy-300 text-xs uppercase tracking-wider font-bold border-b border-border">
+                      <th className="sticky top-0 left-0 z-30 bg-navy-50 dark:bg-navy-900 px-6 py-4 shadow-[1px_0_0_0_rgba(0,0,0,0.1)] dark:shadow-[1px_0_0_0_rgba(255,255,255,0.1)]">Role</th>
                       {moduleInfo.map(mod => (
-                        <th key={mod.id} className="px-4 py-4 text-center min-w-[100px]">{mod.name}</th>
+                        <th key={mod.id} className="px-4 py-4 text-center min-w-[120px]">{mod.name}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border text-sm">
                     {availableRoles.map(role => (
-                      <tr key={role} className="hover:bg-surface-hover transition-colors">
-                        <td className="px-6 py-4 font-bold text-foreground whitespace-nowrap">
+                      <tr key={role} className="hover:bg-surface-hover transition-colors group">
+                        <td className="sticky left-0 z-10 bg-surface px-6 py-4 font-bold text-foreground whitespace-nowrap shadow-[1px_0_0_0_rgba(0,0,0,0.1)] dark:shadow-[1px_0_0_0_rgba(255,255,255,0.1)] group-hover:bg-surface-hover transition-colors">
                           {role.replace('_', ' ')}
                         </td>
                         {moduleInfo.map(mod => {
