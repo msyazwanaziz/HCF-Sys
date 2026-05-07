@@ -137,6 +137,10 @@ function renderTable() {
         const statusClass = item.status === 'synced' ? 'status-synced' : 'status-pending';
         const statusText = item.status === 'synced' ? 'Synced' : 'Pending';
         
+        let bankClass = 'tag-maybank';
+        if (item.bank && item.bank.toLowerCase().includes('cimb')) bankClass = 'tag-cimb';
+        if (item.bank && item.bank.toLowerCase().includes('bimb')) bankClass = 'tag-bimb';
+        
         let displayBank = (item.bank && item.bank.length > 25) ? item.bank.substring(0, 25) + '...' : (item.bank || 'Unknown');
         let displayCat = (item.fundCat1 && item.fundCat1.length > 25) ? item.fundCat1.substring(0, 25) + '...' : (item.fundCat1 || 'Unknown');
         let displayState = (item.negeri && item.negeri.length > 20) ? item.negeri.substring(0, 20) + '...' : (item.negeri || 'Unknown');
@@ -148,33 +152,33 @@ function renderTable() {
         const isOverridden = item.name !== item.receiptName && item.receiptName !== undefined;
         
         const receiptBadge = hasReceipt 
-            ? `<span style="display: block; margin-top: 4px; padding: 0.1rem 0.4rem; background: rgba(34, 197, 94, 0.1); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 4px; font-size: 0.7rem; width: max-content;"><i class="ph ph-check-circle"></i> Receipt Issued</span>` 
+            ? `<div style="margin-top: 8px; display: flex;"><span style="padding: 4px 10px; background: rgba(52, 211, 153, 0.1); color: var(--accent-success); border: 1px solid rgba(52, 211, 153, 0.2); border-radius: var(--radius-xs); font-size: 0.7rem; font-weight: 700;"><i class="ph-bold ph-check"></i> RECEIPT READY</span></div>` 
             : '';
-        const actionColor = hasReceipt ? '#4ade80' : 'var(--accent-primary)';
+        const actionColor = hasReceipt ? 'var(--accent-success)' : 'var(--accent-primary)';
 
         tr.innerHTML = `
             <td>${item.date || '-'}</td>
-            <td><strong style="color: var(--text-primary);">${item.reference || '-'}</strong></td>
-            <td style="color: var(--text-secondary); font-size: 0.9rem;">${displayBankName}</td>
+            <td><strong style="color: var(--accent-primary);">${item.reference || '-'}</strong></td>
+            <td style="color: var(--text-secondary); font-size: 0.85rem;">${displayBankName}</td>
             <td>
-                <div style="display: flex; align-items: center; gap: 0.4rem;">
-                    <span style="font-weight: 500; ${isOverridden ? 'color: var(--accent-primary);' : ''}">${displayReceiptName}</span>
-                    <button onclick="editReceiptName('${item.id}', '${rawReceiptName.replace(/'/g, "\\'")}')" style="background: none; border: none; cursor: pointer; color: var(--text-secondary); padding: 0;" title="Edit Donor Name">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-weight: 600; ${isOverridden ? 'color: var(--accent-secondary);' : ''}">${displayReceiptName}</span>
+                    <button onclick="editReceiptName('${item.id}', '${rawReceiptName.replace(/'/g, "\\'")}')" style="background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 0; font-size: 1rem;" title="Edit Donor Name">
                         <i class="ph ph-pencil-simple"></i>
                     </button>
                 </div>
             </td>
-            <td style="color: var(--text-secondary); font-size: 0.9rem;">${displayTransRef}</td>
-            <td><span class="bank-tag" style="background: rgba(1, 112, 185, 0.1); color: #38bdf8; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.85rem;">${displayBank}</span></td>
-            <td>${displayCat}</td>
-            <td>${displayState}</td>
-            <td style="font-weight: 500;">${formatCurrency(item.amount)}</td>
+            <td style="color: var(--text-muted); font-family: monospace; font-size: 0.8rem;">${displayTransRef}</td>
+            <td><span class="bank-tag ${bankClass}">${displayBank}</span></td>
+            <td><span style="font-size: 0.85rem; color: var(--text-secondary);">${displayCat}</span></td>
+            <td><span style="font-size: 0.85rem; color: var(--text-secondary);">${displayState}</span></td>
+            <td style="font-weight: 700; color: #fff;">${formatCurrency(item.amount)}</td>
             <td>
-                <span class="status-badge ${statusClass}" style="padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.8rem;">${statusText}</span>
+                <span class="status-badge ${statusClass}">${statusText}</span>
                 ${receiptBadge}
             </td>
             <td style="text-align: center;">
-                <button onclick="window.open('receipt.html?id=${encodeURIComponent(item.id)}', '_blank')" style="background: none; border: none; cursor: pointer; color: ${actionColor}; padding: 0.2rem;" title="${hasReceipt ? 'View Receipt' : 'Print Receipt'}">
+                <button onclick="window.open('receipt.html?id=${encodeURIComponent(item.id)}', '_blank')" style="background: var(--bg-surface); border: 1px solid var(--border-color-light); border-radius: var(--radius-sm); cursor: pointer; color: ${actionColor}; padding: 0.5rem; transition: var(--transition-base);" title="${hasReceipt ? 'View Receipt' : 'Print Receipt'}">
                     <i class="ph ph-printer" style="font-size: 1.2rem;"></i>
                 </button>
             </td>

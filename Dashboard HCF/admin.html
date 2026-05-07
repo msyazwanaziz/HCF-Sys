@@ -33,17 +33,17 @@
         <!-- Topbar -->
         <header class="topbar">
             <div>
-                <span style="color: var(--text-secondary); font-size: 0.9rem;">Hidayah Centre Foundation</span>
+                <span style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 500;">Hidayah Centre Foundation</span>
             </div>
             <div class="user-profile">
-                <div class="google-sheets-sync" style="margin: 0; padding: 5px 10px; background: transparent; border: none;">
+                <div class="google-sheets-sync" style="margin: 0;">
                     <i class="ph ph-arrows-clockwise" id="sync-icon"></i>
                     <span id="sync-status">Connected</span>
                 </div>
-                <div class="avatar" id="user-avatar" style="display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--accent-secondary);">
+                <div class="avatar" id="user-avatar">
                     A
                 </div>
-                <span id="user-role" style="font-size: 0.9rem; font-weight: 500;">Admin</span>
+                <span id="user-role" style="font-size: 0.9rem; font-weight: 600; color: var(--text-primary);">Admin</span>
             </div>
         </header>
 
@@ -58,48 +58,48 @@
                     </div>
                 </div>
 
-                <div class="admin-form">
+                <div class="admin-form" style="background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2.5rem; box-shadow: var(--shadow-lg); backdrop-filter: blur(16px);">
                     <form id="inflow-form">
                         <div class="form-group">
-                            <label for="bank">Bank / Component</label>
+                            <label style="color: var(--text-secondary); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.75rem;">Bank / Component</label>
                             <div style="position: relative;">
-                                <select id="bank" class="form-control" required style="appearance: none;">
+                                <select id="bank" class="form-control" required style="appearance: none; background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); padding: 0.85rem 1.25rem;">
                                     <option value="" disabled selected>Select Bank Account</option>
                                     <option value="maybank">Maybank (Primary)</option>
                                     <option value="cimb">CIMB (Secondary)</option>
                                     <option value="bimb">BIMB (Zakat/Special)</option>
                                 </select>
-                                <i class="ph ph-caret-down" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-secondary);"></i>
+                                <i class="ph ph-caret-down" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-muted);"></i>
                             </div>
                         </div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
                             <div class="form-group">
-                                <label for="amount">Amount (RM)</label>
-                                <input type="number" id="amount" class="form-control" step="0.01" min="0" placeholder="0.00" required>
+                                <label style="color: var(--text-secondary); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.75rem;">Amount (RM)</label>
+                                <input type="number" id="amount" class="form-control" step="0.01" min="0" placeholder="0.00" required style="background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); padding: 0.85rem 1.25rem;">
                             </div>
                             <div class="form-group">
-                                <label for="date">Transaction Date</label>
-                                <input type="date" id="date" class="form-control" required>
+                                <label style="color: var(--text-secondary); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.75rem;">Transaction Date</label>
+                                <input type="date" id="date" class="form-control" required style="background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); padding: 0.85rem 1.25rem; color-scheme: dark;">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="reference">Reference ID / Receipt No.</label>
-                            <input type="text" id="reference" class="form-control" placeholder="e.g. TR-99824" required>
+                            <label style="color: var(--text-secondary); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.75rem;">Reference ID / Receipt No.</label>
+                            <input type="text" id="reference" class="form-control" placeholder="e.g. TR-99824" required style="background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); padding: 0.85rem 1.25rem;">
                         </div>
 
                         <div class="form-group">
-                            <label for="notes">Notes / Donor info (Optional)</label>
-                            <input type="text" id="notes" class="form-control" placeholder="Hamba Allah">
+                            <label style="color: var(--text-secondary); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.75rem;">Notes / Donor info (Optional)</label>
+                            <input type="text" id="notes" class="form-control" placeholder="Hamba Allah" style="background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-color); padding: 0.85rem 1.25rem;">
                         </div>
 
-                        <div class="google-sheets-sync" style="justify-content: center; margin-bottom: 1.5rem;">
+                        <div class="google-sheets-sync" style="justify-content: center; margin: 1.5rem 0 2rem 0; background: rgba(56, 189, 248, 0.05); color: var(--accent-primary); border-color: rgba(56, 189, 248, 0.1);">
                             <i class="ph ph-google-logo"></i> Records will be automatically synced to Google Sheets
                         </div>
 
                         <div style="text-align: right;">
-                            <button type="submit" class="btn btn-primary" id="submit-btn">
+                            <button type="submit" class="btn btn-primary" id="submit-btn" style="width: 100%; padding: 1rem;">
                                 <i class="ph-bold ph-plus-circle"></i> Submit Record
                             </button>
                         </div>

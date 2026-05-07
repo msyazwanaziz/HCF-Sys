@@ -167,28 +167,34 @@ function renderTable(data) {
         const statusClass = item.status === 'synced' ? 'status-synced' : 'status-pending';
         const statusText = item.status === 'synced' ? 'Synced' : 'Pending';
         
+        let bankClass = 'tag-maybank';
+        if (item.bank.toLowerCase().includes('cimb')) bankClass = 'tag-cimb';
+        if (item.bank.toLowerCase().includes('bimb')) bankClass = 'tag-bimb';
+        
         let displayBank = item.bank.length > 20 ? item.bank.substring(0, 20) + '...' : item.bank;
 
         tr.innerHTML = `
             <td>${item.date}</td>
-            <td><strong>${item.reference}</strong></td>
-            <td><span class="bank-tag" style="background: rgba(1, 112, 185, 0.1); color: #0170B9;">${displayBank}</span></td>
-            <td style="font-weight: 500;">${formatCurrency(item.amount)}</td>
+            <td><strong style="color: var(--accent-primary)">${item.reference}</strong></td>
+            <td><span class="bank-tag ${bankClass}">${displayBank}</span></td>
+            <td style="font-weight: 700; color: #fff;">${formatCurrency(item.amount)}</td>
             <td><span class="status-badge ${statusClass}">${statusText}</span></td>
         `;
         tbody.appendChild(tr);
     });
 
     if (displayData.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-secondary);">No data found for the selected filters.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding: 3rem;color:var(--text-secondary);">No data found for the selected filters.</td></tr>';
     }
 }
 
 function renderCharts(data) {
-    const chartColorSecondary = '#94a3b8'; // Adjusted for dark theme
+    const chartColorSecondary = '#94a3b8'; 
     const gridColor = 'rgba(255, 255, 255, 0.05)';
+    const accentPrimary = '#38bdf8';
+    const accentSecondary = '#818cf8';
 
-    // 1. Trend Chart Data (Group by date or month)
+    // 1. Trend Chart Data
     const trendPeriod = document.getElementById('trend-period').value;
     const trendMap = {};
     const chronological = [...data].sort((a,b) => new Date(a.date) - new Date(b.date));
@@ -200,7 +206,6 @@ function renderCharts(data) {
             const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
             key = `${monthNames[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
         }
-        
         if (!trendMap[key]) trendMap[key] = 0;
         trendMap[key] += Number(item.amount);
     });
@@ -208,32 +213,26 @@ function renderCharts(data) {
     const trendLabels = Object.keys(trendMap);
     const trendValues = Object.values(trendMap);
 
-    if (trendChartInstance) {
-        trendChartInstance.destroy();
-    }
+    if (trendChartInstance) trendChartInstance.destroy();
 
     const ctxTrend = document.getElementById('trendChart').getContext('2d');
-    
-    let gradient = ctxTrend.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(1, 112, 185, 0.5)'); // Brand blue
-    gradient.addColorStop(1, 'rgba(1, 112, 185, 0)');
+    let gradient = ctxTrend.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, 'rgba(56, 189, 248, 0.2)');
+    gradient.addColorStop(1, 'rgba(56, 189, 248, 0)');
 
     trendChartInstance = new Chart(ctxTrend, {
         type: 'line',
         data: {
-            labels: trendPeriod === 'monthly' ? trendLabels : trendLabels.map(l => {
-                if(l.length > 5) return l.substring(5);
-                return l;
-            }), 
+            labels: trendPeriod === 'monthly' ? trendLabels : trendLabels.map(l => l.substring(5)), 
             datasets: [{
-                label: trendPeriod === 'monthly' ? 'Monthly Inflow (RM)' : 'Daily Inflow (RM)',
+                label: 'Inflow (RM)',
                 data: trendValues,
-                borderColor: '#0170B9',
+                borderColor: accentPrimary,
                 backgroundColor: gradient,
-                borderWidth: 2,
-                pointBackgroundColor: '#0170B9',
+                borderWidth: 3,
+                pointBackgroundColor: accentPrimary,
                 pointBorderColor: '#fff',
-                pointRadius: 4,
+                pointHoverRadius: 6,
                 fill: true,
                 tension: 0.4
             }]
@@ -241,42 +240,52 @@ function renderCharts(data) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: { 
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    padding: 12,
+                    borderColor: 'rgba(255,255,255,0.1)',
+                    borderWidth: 1,
+                    displayColors: false
+                }
+            },
             scales: {
-                x: { grid: { color: gridColor, drawBorder: false }, ticks: { color: chartColorSecondary } },
-                y: { grid: { color: gridColor, drawBorder: false }, ticks: { color: chartColorSecondary } }
+                x: { grid: { display: false }, ticks: { color: chartColorSecondary, font: { size: 11 } } },
+                y: { grid: { color: gridColor }, ticks: { color: chartColorSecondary, font: { size: 11 } } }
             }
         }
     });
 
-    // 2. Fund Category 1 Pie Chart
+    // 2. Fund Category 1 Doughnut
     const fundCat1Totals = {};
     data.forEach(item => {
-        let key = item.fundCat1;
-        if (!key || key === 'Unknown') key = 'Uncategorized';
+        let key = item.fundCat1 || 'Uncategorized';
         fundCat1Totals[key] = (fundCat1Totals[key] || 0) + Number(item.amount);
     });
     
     if (fundCat1ChartInstance) fundCat1ChartInstance.destroy();
     
-    const ctxFundCat1 = document.getElementById('fundCat1Chart').getContext('2d');
-    fundCat1ChartInstance = new Chart(ctxFundCat1, {
+    fundCat1ChartInstance = new Chart(document.getElementById('fundCat1Chart'), {
         type: 'doughnut',
         data: {
             labels: Object.keys(fundCat1Totals),
             datasets: [{
                 data: Object.values(fundCat1Totals),
-                backgroundColor: ['#0170B9', '#38bdf8', '#0ea5e9', '#0284c7', '#94a3b8'],
-                borderWidth: 0,
-                hoverOffset: 10
+                backgroundColor: [accentPrimary, accentSecondary, '#fb7185', '#34d399', '#fbbf24'],
+                borderWidth: 4,
+                borderColor: '#0f172a',
+                hoverOffset: 15
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '70%',
+            cutout: '75%',
             plugins: {
-                legend: { position: 'bottom', labels: { color: '#f8fafc', padding: 10 } }
+                legend: { position: 'bottom', labels: { color: chartColorSecondary, font: { size: 11 }, padding: 20, usePointStyle: true } }
             }
         }
     });
@@ -284,29 +293,26 @@ function renderCharts(data) {
     // 3. Negeri/Jabatan Bar Chart (Horizontal)
     const negeriTotals = {};
     data.forEach(item => {
-        let key = item.negeri;
-        if (!key || key === 'Unknown') key = 'Other';
+        let key = item.negeri || 'Other';
         negeriTotals[key] = (negeriTotals[key] || 0) + Number(item.amount);
     });
-    const sortedNegeri = Object.entries(negeriTotals).sort((a,b) => b[1] - a[1]);
+    const sortedNegeri = Object.entries(negeriTotals).sort((a,b) => b[1] - a[1]).slice(0, 10);
     
     if (negeriChartInstance) negeriChartInstance.destroy();
-    
     const ctxNegeri = document.getElementById('negeriChart').getContext('2d');
-    // Need a solid blue for bars
     let barGradient = ctxNegeri.createLinearGradient(0, 0, 400, 0);
-    barGradient.addColorStop(0, '#0284c7');
-    barGradient.addColorStop(1, '#38bdf8');
+    barGradient.addColorStop(0, accentPrimary);
+    barGradient.addColorStop(1, accentSecondary);
 
     negeriChartInstance = new Chart(ctxNegeri, {
         type: 'bar',
         data: {
             labels: sortedNegeri.map(i => i[0]),
             datasets: [{
-                label: 'Inflow Amount (RM)',
                 data: sortedNegeri.map(i => i[1]),
                 backgroundColor: barGradient,
-                borderRadius: 4
+                borderRadius: 6,
+                barThickness: 12
             }]
         },
         options: {
@@ -324,26 +330,22 @@ function renderCharts(data) {
     // 4. Fund Category 2 Bar Chart
     const fundCat2Totals = {};
     data.forEach(item => {
-        let key = item.fundCat2;
-        if (!key || key === 'Unknown') key = 'Uncategorized';
-        // Trim long names for chart readability
-        key = key.length > 25 ? key.substring(0, 25) + '...' : key;
+        let key = item.fundCat2 || 'Uncategorized';
+        key = key.length > 20 ? key.substring(0, 20) + '...' : key;
         fundCat2Totals[key] = (fundCat2Totals[key] || 0) + Number(item.amount);
     });
-    const sortedCat2 = Object.entries(fundCat2Totals).sort((a,b) => b[1] - a[1]).slice(0, 8); // Top 8
+    const sortedCat2 = Object.entries(fundCat2Totals).sort((a,b) => b[1] - a[1]).slice(0, 8);
     
     if (fundCat2ChartInstance) fundCat2ChartInstance.destroy();
-    
-    const ctxCat2 = document.getElementById('fundCat2Chart').getContext('2d');
-    fundCat2ChartInstance = new Chart(ctxCat2, {
+    fundCat2ChartInstance = new Chart(document.getElementById('fundCat2Chart'), {
         type: 'bar',
         data: {
             labels: sortedCat2.map(i => i[0]),
             datasets: [{
-                label: 'Inflow by Subcategory (RM)',
                 data: sortedCat2.map(i => i[1]),
-                backgroundColor: '#0170B9',
-                borderRadius: 4
+                backgroundColor: 'rgba(129, 140, 248, 0.8)',
+                borderRadius: 6,
+                barThickness: 20
             }]
         },
         options: {
@@ -351,7 +353,7 @@ function renderCharts(data) {
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-                x: { grid: { display: false }, ticks: { color: chartColorSecondary, maxRotation: 45, minRotation: 45 } },
+                x: { grid: { display: false }, ticks: { color: chartColorSecondary, font: { size: 10 }, maxRotation: 45, minRotation: 45 } },
                 y: { grid: { color: gridColor }, ticks: { color: chartColorSecondary } }
             }
         }
@@ -360,28 +362,26 @@ function renderCharts(data) {
     // 5. Sumber (Source) Bar Chart
     const sumberTotals = {};
     data.forEach(item => {
-        let key = item.sumber;
-        if (!key || key === 'Unknown') key = 'Uncategorized';
+        let key = item.sumber || 'Other';
         sumberTotals[key] = (sumberTotals[key] || 0) + Number(item.amount);
     });
     const sortedSumber = Object.entries(sumberTotals).sort((a,b) => b[1] - a[1]);
     
     if (sumberChartInstance) sumberChartInstance.destroy();
-    
     const ctxSumber = document.getElementById('sumberChart').getContext('2d');
-    let sumberGradient = ctxSumber.createLinearGradient(0, 0, 400, 0);
-    sumberGradient.addColorStop(0, '#f43f5e'); // neon pinkish red
-    sumberGradient.addColorStop(1, '#8b5cf6'); // deep purple
+    let sGradient = ctxSumber.createLinearGradient(0, 0, 400, 0);
+    sGradient.addColorStop(0, '#fb7185');
+    sGradient.addColorStop(1, '#818cf8');
     
     sumberChartInstance = new Chart(ctxSumber, {
         type: 'bar',
         data: {
             labels: sortedSumber.map(i => i[0]),
             datasets: [{
-                label: 'Inflow Amount (RM)',
                 data: sortedSumber.map(i => i[1]),
-                backgroundColor: sumberGradient,
-                borderRadius: 4
+                backgroundColor: sGradient,
+                borderRadius: 6,
+                barThickness: 12
             }]
         },
         options: {
