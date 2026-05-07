@@ -274,28 +274,49 @@ export function SpecialCategoryChart({ data }: { data: any[] }) {
 export function FundSourceDoughnutChart({ data }: { data: any[] }) {
   if (!data || data.length === 0) return null;
 
+  const total = data.reduce((acc, entry) => acc + entry.value, 0);
+
   return (
-    <div className="h-[300px] w-full animate-in fade-in duration-700">
+    <div className="h-[450px] w-full animate-in fade-in duration-700">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
             data={data}
             cx="50%"
-            cy="50%"
+            cy="35%"
             innerRadius={60}
             outerRadius={90}
             paddingAngle={5}
             dataKey="value"
+            stroke="none"
           >
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
           <Tooltip 
-            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-            formatter={(val: any) => [`RM ${Number(val).toLocaleString()}`, undefined]}
+            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', backgroundColor: 'rgba(255, 255, 255, 0.95)' }}
+            formatter={(val: any) => [`RM ${Number(val).toLocaleString()} (${((Number(val)/total)*100).toFixed(1)}%)`, undefined]}
           />
-          <Legend iconType="circle" />
+          <Legend 
+            layout="vertical" 
+            align="center" 
+            verticalAlign="bottom" 
+            iconType="circle"
+            formatter={(value, entry: any) => {
+              const { payload } = entry;
+              const percent = ((payload.value / total) * 100).toFixed(1);
+              return (
+                <span className="text-navy-600 dark:text-navy-300 font-bold text-xs">
+                  {value.toUpperCase()} <span className="text-emerald-500 ml-2">{percent}%</span>
+                </span>
+              );
+            }}
+            wrapperStyle={{
+              paddingTop: '20px',
+              bottom: 0
+            }}
+          />
         </PieChart>
       </ResponsiveContainer>
     </div>
