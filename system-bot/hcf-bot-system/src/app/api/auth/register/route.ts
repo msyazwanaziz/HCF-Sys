@@ -12,8 +12,29 @@ export async function POST(request: Request) {
       where: { email },
     });
 
-    if (existingUser) {
+    if (existingUser && !bypassAuthorizedCheck) {
       return NextResponse.json({ error: "User already exists" }, { status: 400 });
+    }
+
+    if (existingUser && bypassAuthorizedCheck) {
+      // If user exists and we're bypassing (admin adding member), just update them
+      const updatedUser = await prisma.user.update({
+        where: { email },
+        data: {
+          firstName: firstName || existingUser.firstName,
+          lastName: lastName || existingUser.lastName,
+          role: role || existingUser.role,
+        }
+      });
+      return NextResponse.json({
+        user: {
+          id: updatedUser.id,
+          name: `${updatedUser.firstName} ${updatedUser.lastName}`,
+          email: updatedUser.email,
+          role: updatedUser.role,
+        },
+        message: "User updated and re-authorized"
+      });
     }
 
     // Check if email is authorized (optional but good for security)

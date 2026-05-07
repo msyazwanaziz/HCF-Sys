@@ -32,7 +32,7 @@ interface SettingsContextType {
   authorizedMembers: AuthorizedMember[];
   updateMember: (id: string, updates: Partial<AuthorizedMember>) => void;
   addMember: (member: Omit<AuthorizedMember, 'id' | 'lastActive'>) => void;
-  removeMember: (id: string) => void;
+  removeMember: (id: string) => Promise<void>;
   masterKey: string;
   setMasterKey: (key: string) => void;
 }
@@ -186,15 +186,36 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   };
 
   const addMember = (member: Omit<AuthorizedMember, 'id' | 'lastActive'>) => {
-    const newMember: AuthorizedMember = {
-      ...member,
-      id: Math.random().toString(36).substr(2, 9),
-      lastActive: 'Never'
-    };
-    setAuthorizedMembers(prev => [...prev, newMember]);
+    setAuthorizedMembers(prev => {
+      // Don't add if email already exists in the authorized list
+      if (prev.some(m => m.email.toLowerCase() === member.email.toLowerCase())) {
+        return prev;
+      }
+      
+      const newMember: AuthorizedMember = {
+        ...member,
+        id: Math.random().toString(36).substr(2, 9),
+        lastActive: 'Never'
+      };
+      return [...prev, newMember];
+    });
   };
 
-  const removeMember = (id: string) => {
+  const removeMember = async (id: string) => {
+    const memberToDelete = authorizedMembers.find(m => m.id === id);
+    if (memberToDelete) {
+      try {
+        // Attempt to delete from database
+        await fetch('/api/auth/user', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: memberToDelete.email })
+        });
+      } catch (err) {
+        console.error("Failed to delete user from DB", err);
+      }
+    }
+    
     setAuthorizedMembers(prev => prev.filter(m => m.id !== id));
   };
 
