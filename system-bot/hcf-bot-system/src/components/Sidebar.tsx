@@ -56,16 +56,16 @@ export default function Sidebar() {
   });
 
   return (
-    <div className="hidden lg:flex lg:flex-col lg:w-72 lg:fixed lg:inset-y-0 bg-surface dark:bg-navy-950 border-r border-border dark:border-navy-800">
+    <div className="hidden lg:flex lg:flex-col lg:w-72 lg:fixed lg:inset-y-0 bg-navy-950 border-r border-navy-800">
       <div className="flex-1 flex flex-col min-h-0">
-        <div className="flex items-center h-20 px-6 bg-surface dark:bg-navy-950 border-b border-border dark:border-navy-800">
+        <div className="flex items-center h-20 px-6 bg-navy-950 border-b border-navy-800">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg">
               <span className="text-white font-bold text-lg leading-none">H</span>
             </div>
             <div>
-              <h1 className="text-foreground dark:text-white font-semibold text-sm tracking-wide">HCF GOVERNANCE</h1>
-              <p className="text-navy-500 dark:text-navy-400 text-xs">Board of Trustees</p>
+              <h1 className="text-white font-semibold text-sm tracking-wide">HCF GOVERNANCE</h1>
+              <p className="text-navy-400 text-xs">Board of Trustees</p>
             </div>
           </div>
         </div>
@@ -80,13 +80,13 @@ export default function Sidebar() {
                 href={item.href}
                 className={`group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
                   isActive 
-                    ? "bg-emerald-50 dark:bg-navy-800 text-emerald-600 dark:text-white shadow-sm" 
-                    : "text-navy-600 dark:text-navy-300 hover:bg-surface-hover dark:hover:bg-navy-800/50 hover:text-emerald-600 dark:hover:text-white"
+                    ? "bg-navy-800 text-white shadow-sm" 
+                    : "text-navy-300 hover:bg-navy-800/50 hover:text-white"
                 }`}
               >
                 <Icon 
                   className={`flex-shrink-0 mr-3 h-5 w-5 transition-colors duration-200 ${
-                    isActive ? "text-emerald-500" : "text-navy-400 dark:text-navy-400 group-hover:text-emerald-500"
+                    isActive ? "text-emerald-400" : "text-navy-400 group-hover:text-emerald-400"
                   }`} 
                 />
                 {item.name}
@@ -95,27 +95,25 @@ export default function Sidebar() {
           })}
         </div>
 
-        <div className="p-4 border-t border-border dark:border-navy-800">
+        <div className="p-4 border-t border-navy-800">
           {(user?.role.toUpperCase() === "SUPER_ADMIN" || 
             user?.role.toUpperCase() === "ADMIN" || 
             user?.role.toUpperCase() === "BOT ADMIN" || 
             user?.role.toUpperCase() === "CHAIRPERSON") && (
             <Link href="/settings" className={`group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
-              pathname === "/settings" 
-                ? "bg-emerald-50 dark:bg-navy-800 text-emerald-600 dark:text-white shadow-sm" 
-                : "text-navy-600 dark:text-navy-300 hover:bg-surface-hover dark:hover:bg-navy-800/50 hover:text-emerald-600 dark:hover:text-white"
+              pathname === "/settings" ? "bg-navy-800 text-white shadow-sm" : "text-navy-300 hover:bg-navy-800/50 hover:text-white"
             }`}>
               <Settings className={`flex-shrink-0 mr-3 h-5 w-5 transition-colors duration-200 ${
-                pathname === "/settings" ? "text-emerald-500" : "text-navy-400 dark:text-navy-400 group-hover:text-emerald-500"
+                pathname === "/settings" ? "text-emerald-400" : "text-navy-400 group-hover:text-emerald-400"
               }`} />
               Settings
             </Link>
           )}
           <button 
             onClick={logout}
-            className="w-full mt-1 group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-navy-600 dark:text-navy-300 hover:bg-rose-50 dark:hover:bg-red-500/10 hover:text-rose-600 dark:hover:text-red-400 transition-all duration-200"
+            className="w-full mt-1 group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-navy-300 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200"
           >
-            <LogOut className="flex-shrink-0 mr-3 h-5 w-5 text-navy-400 dark:text-navy-400 group-hover:text-rose-500 dark:group-hover:text-red-400" />
+            <LogOut className="flex-shrink-0 mr-3 h-5 w-5 text-navy-400 group-hover:text-red-400" />
             Logout
           </button>
         </div>
