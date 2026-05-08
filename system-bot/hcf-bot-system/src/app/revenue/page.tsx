@@ -156,7 +156,7 @@ export default function RevenueDashboard() {
           })
           .sort((a, b) => b.value - a.value);
 
-        const topCat1 = cat1Data[0] || { name: 'N/A', value: 0 };
+        const topCat1 = cat1Data[0] || { name: 'N/A', value: 0, target: 0 };
         const topCat2 = cat2Data[0] || { name: 'N/A', value: 0 };
         const specialSum = group1Data.reduce((acc: number, cur: any) => acc + cur.value, 0) + group2Data.reduce((acc: number, cur: any) => acc + cur.value, 0);
 
@@ -272,7 +272,7 @@ export default function RevenueDashboard() {
                 trend={topCat1.name} 
                 trendUp={true} 
                 icon={<PieChart className="w-6 h-6" />}
-                subtitle={`Target: ${formatValue(cat1Target)}`}
+                subtitle={`Target: ${formatValue(topCat1.target)}`}
               />
               <KPICard 
                 title="Special Partners" 
