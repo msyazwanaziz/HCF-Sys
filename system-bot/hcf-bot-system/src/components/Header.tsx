@@ -97,7 +97,7 @@ export default function Header() {
               <span className="text-sm font-semibold text-foreground">{user?.name || "Guest"}</span>
               <span className="text-xs text-navy-400 font-medium capitalize">{user?.role?.toLowerCase()?.replace('_', ' ') || "Observer"}</span>
             </div>
-            <div className="w-10 h-10 rounded-full bg-navy-800 border-2 border-surface shadow-sm overflow-hidden flex items-center justify-center text-white font-bold group-hover:ring-2 group-hover:ring-emerald-500 group-hover:ring-offset-2 transition-all">
+            <div className="w-10 h-10 rounded-full bg-navy-100 dark:bg-navy-800 border-2 border-surface shadow-sm overflow-hidden flex items-center justify-center text-navy-800 dark:text-white font-bold group-hover:ring-2 group-hover:ring-emerald-500 group-hover:ring-offset-2 transition-all">
               {user ? getInitials(user.name) : "U"}
             </div>
           </div>
