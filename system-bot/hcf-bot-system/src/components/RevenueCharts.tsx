@@ -274,14 +274,15 @@ export function SpecialCategoryChart({ data }: { data: any[] }) {
 export function FundSourceDoughnutChart({ data }: { data: any[] }) {
   if (!data || data.length === 0) return null;
 
-  const total = data.reduce((acc, entry) => acc + entry.value, 0);
+  const sortedData = [...data].sort((a, b) => b.value - a.value);
+  const total = sortedData.reduce((acc, entry) => acc + entry.value, 0);
 
   return (
     <div className="h-[450px] w-full animate-in fade-in duration-700">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
-            data={data}
+            data={sortedData}
             cx="50%"
             cy="35%"
             innerRadius={60}
@@ -290,7 +291,7 @@ export function FundSourceDoughnutChart({ data }: { data: any[] }) {
             dataKey="value"
             stroke="none"
           >
-            {data.map((entry, index) => (
+            {sortedData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
