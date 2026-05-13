@@ -42,6 +42,7 @@ const moduleInfo: ModuleConfig[] = [
   { id: "performance", name: "Strategic Performance", description: "Annual targets, department scorecards, and OKRs.", icon: Target, required: false },
   { id: "finance", name: "Financial Oversight", description: "Income, expenses, and budget variance tracking.", icon: PieChart, required: false },
   { id: "revenue", name: "Live Financial Dashboard", description: "Live real-time revenue and inflow summaries from Google Sheets.", icon: PieChart, required: false },
+  { id: "analysis", name: "Financial Analysis Dashboard", description: "Advanced financial analysis with bank and branch filtering.", icon: BarChart3, required: false },
   { id: "risk", name: "Risk & Compliance", description: "Risk register and internal audit issues.", icon: ShieldAlert, required: false },
   { id: "vault", name: "Document Vault", description: "Secure storage for board papers and contracts.", icon: FolderLock, required: false },
 ];

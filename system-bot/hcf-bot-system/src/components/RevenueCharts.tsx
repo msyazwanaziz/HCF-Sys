@@ -44,6 +44,8 @@ export interface RevTransaction {
   kerajaan: boolean;
   infaqAbadi: boolean;
   cat1_1: string;
+  bankName: string;
+  branch: string;
 }
 
 let cachedRevenueData: RevTransaction[] | null = null;
@@ -64,6 +66,8 @@ export async function getRevenueData(forceRefresh = false): Promise<RevTransacti
       const cat1Idx = headers.indexOf('Fund Category 1');
       const cat2Idx = headers.indexOf('Fund Category 2');
       const cat1_1Idx = headers.indexOf('Fund Category 1-1');
+      const bankIdx = headers.indexOf('Bank Name');
+      const branchIdx = headers.indexOf('NEGERI /JABATAN');
       
       const qIdx = headers.indexOf('Sumbangan Umum');
       const rIdx = headers.indexOf('Tabung Cahaya HQ');
@@ -112,6 +116,8 @@ export async function getRevenueData(forceRefresh = false): Promise<RevTransacti
             kerajaan: xIdx > -1 && !!row[xIdx],
             infaqAbadi: yIdx > -1 && !!row[yIdx],
             cat1_1: cat1_1Idx > -1 ? (row[cat1_1Idx] || 'Uncategorized') : 'Uncategorized',
+            bankName: bankIdx > -1 ? (row[bankIdx] || 'Unknown') : 'Unknown',
+            branch: branchIdx > -1 ? (row[branchIdx] || 'Unknown') : 'Unknown',
           });
         }
       }

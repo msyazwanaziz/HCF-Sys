@@ -25,6 +25,7 @@ const allNavigation = [
   { id: "performance", name: "Strategic Performance", href: "/performance", icon: Target },
   { id: "finance", name: "Financial Oversight", href: "/finance", icon: PieChart },
   { id: "revenue", name: "Live Financial Dashboard", href: "/revenue", icon: PieChart },
+  { id: "analysis", name: "Financial Analysis Dashboard", href: "/analysis", icon: BarChart3 },
   { id: "risk", name: "Risk & Compliance", href: "/risk", icon: ShieldAlert },
   { id: "vault", name: "Document Vault", href: "/vault", icon: FolderLock },
 ];

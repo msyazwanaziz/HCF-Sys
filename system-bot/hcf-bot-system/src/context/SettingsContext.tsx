@@ -11,7 +11,8 @@ type ModuleKey =
   | "finance"
   | "risk"
   | "vault"
-  | "revenue";
+  | "revenue"
+  | "analysis";
 
 interface AuthorizedMember {
   id: string;
@@ -47,16 +48,17 @@ const defaultModules: Record<ModuleKey, boolean> = {
   risk: true,
   vault: true,
   revenue: true,
+  analysis: true,
 };
 
 const defaultRolePermissions: Record<string, ModuleKey[]> = {
-  "SUPER_ADMIN": ["dashboard", "governance", "meetings", "approvals", "performance", "finance", "revenue", "risk", "vault"],
-  "BOT_CHAIRPERSON": ["dashboard", "governance", "meetings", "approvals", "performance", "finance", "revenue", "risk", "vault"],
+  "SUPER_ADMIN": ["dashboard", "governance", "meetings", "approvals", "performance", "finance", "revenue", "analysis", "risk", "vault"],
+  "BOT_CHAIRPERSON": ["dashboard", "governance", "meetings", "approvals", "performance", "finance", "revenue", "analysis", "risk", "vault"],
   "BOT_MEMBER": ["dashboard", "governance", "meetings", "performance", "risk", "vault"],
-  "CEO": ["dashboard", "approvals", "performance", "finance", "revenue", "risk"],
-  "SENIOR_MANAGEMENT": ["dashboard", "performance", "finance", "revenue", "risk"],
+  "CEO": ["dashboard", "approvals", "performance", "finance", "revenue", "analysis", "risk"],
+  "SENIOR_MANAGEMENT": ["dashboard", "performance", "finance", "revenue", "analysis", "risk"],
   "COMPANY_SECRETARY": ["dashboard", "governance", "meetings", "vault"],
-  "ADMIN": ["dashboard", "governance", "meetings", "approvals", "performance", "finance", "revenue", "risk", "vault"],
+  "ADMIN": ["dashboard", "governance", "meetings", "approvals", "performance", "finance", "revenue", "analysis", "risk", "vault"],
   "USER": ["dashboard"],
 };
 
