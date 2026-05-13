@@ -11,6 +11,7 @@ import {
   CheckSquare, 
   Target, 
   PieChart, 
+  BarChart3,
   ShieldAlert, 
   FolderLock,
   Save,
