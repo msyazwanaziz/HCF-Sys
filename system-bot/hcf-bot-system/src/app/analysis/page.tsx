@@ -400,14 +400,14 @@ export default function AnalysisDashboard() {
               </div>
 
               {/* Fund Source Distribution */}
-              <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
                   <div className="mb-6">
                     <h2 className="text-lg font-bold text-foreground">Inflow vs Category 1 Fund</h2>
-                    <p className="text-sm text-navy-500">Revenue distribution by primary fund classification</p>
+                    <p className="text-sm text-navy-500">Distribution by primary fund classification</p>
                   </div>
-                  <div className="flex-1">
-                    <HybridTableChart data={cat1Data} showChart={false} />
+                  <div className="flex-1 flex items-center justify-center">
+                    <FundSourceDoughnutChart data={cat1Data} />
                   </div>
                 </div>
                 <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
