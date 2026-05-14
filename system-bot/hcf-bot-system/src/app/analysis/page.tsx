@@ -22,7 +22,8 @@ import {
   CheckCircle2,
   TrendingUp,
   Settings2,
-  Loader2
+  Loader2,
+  TrendingDown
 } from "lucide-react";
 
 export default function AnalysisDashboard() {
@@ -75,6 +76,9 @@ export default function AnalysisDashboard() {
         const trendMap: Record<string, number> = {};
         const cat1_1Map: Record<string, number> = {};
         const cat2Map: Record<string, number> = {};
+        const bankMap: Record<string, number> = {};
+        const branchMap: Record<string, number> = {};
+
         const group1Cats = {
           'Sumbangan Umum': 0,
           'Tabung Cahaya HQ': 0,
@@ -99,6 +103,10 @@ export default function AnalysisDashboard() {
           // Cat 1-1 & 2
           if (tx.cat1_1) cat1_1Map[tx.cat1_1] = (cat1_1Map[tx.cat1_1] || 0) + tx.income;
           if (tx.cat2) cat2Map[tx.cat2] = (cat2Map[tx.cat2] || 0) + tx.income;
+          
+          // Bank & Branch
+          if (tx.bankName && tx.bankName !== 'Unknown') bankMap[tx.bankName] = (bankMap[tx.bankName] || 0) + tx.income;
+          if (tx.branch && tx.branch !== 'Unknown') branchMap[tx.branch] = (branchMap[tx.branch] || 0) + tx.income;
 
           // Group 1
           if (tx.sumbanganUmum) group1Cats['Sumbangan Umum'] += tx.income;
@@ -166,19 +174,22 @@ export default function AnalysisDashboard() {
           })
           .sort((a, b) => b.value - a.value);
 
+        // Branch data for chart
+        const branchData = Object.keys(branchMap)
+          .map(name => ({ name, value: Math.round(branchMap[name]) }))
+          .sort((a, b) => b.value - a.value);
+
+        const sortedBanks = Object.entries(bankMap).sort((a, b) => b[1] - a[1]);
+        const topBank = sortedBanks[0] || ['N/A', 0];
         const topCat1 = cat1Data[0] || { name: 'N/A', value: 0, target: 0 };
         const topCat2 = cat2Data[0] || { name: 'N/A', value: 0 };
-        const specialSum = group1Data.reduce((acc: number, cur: any) => acc + cur.value, 0) + group2Data.reduce((acc: number, cur: any) => acc + cur.value, 0);
-
+        
         // Targets for scorecards
         const overallTarget = targets['Total Fund'] || targets['OVERALL'] || 8017439;
         
         // Total Actual based on filters
         const totalActual = totalInflow;
         const achievementPct = overallTarget > 0 ? Math.round((totalActual / overallTarget) * 100) : 0;
-        
-        const cat1Target = cat1Data.reduce((acc, cur) => acc + cur.target, 0);
-        const specialTarget = group1Data.reduce((acc, cur) => acc + cur.target, 0) + group2Data.reduce((acc, cur) => acc + cur.target, 0);
 
         const handleExport = () => {
           setIsExporting(true);
@@ -225,7 +236,7 @@ export default function AnalysisDashboard() {
                   <span className="text-sm font-bold text-foreground mr-2">Core Filters:</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <label className="text-xs font-medium text-navy-500">Fund Source</label>
+                  <label className="text-xs font-medium text-navy-500">Fund Source (Cat 2)</label>
                   <select 
                     className="bg-background border border-border text-sm rounded-lg px-3 py-1.5 text-navy-600 outline-none focus:ring-2 focus:ring-emerald-500/20 min-w-[200px]"
                     value={selectedCat2}
@@ -293,104 +304,96 @@ export default function AnalysisDashboard() {
               </div>
             </div>
 
+            {/* Scorecard Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <KPICard 
-                title="Filtered Inflow" 
+                title="Total Inflow" 
                 value={formatValue(totalActual)} 
-                trend={`${achievementPct}% of Total Target`} 
+                trend={`${achievementPct}% of Target`} 
                 trendUp={achievementPct >= 100} 
-                icon={<Wallet className="w-6 h-6" />}
+                icon={<Wallet className="w-6 h-6 text-emerald-500" />}
                 subtitle={
                   <div className="flex flex-col">
-                    <span>Overall Target: {formatValue(overallTarget)}</span>
-                    <span className="text-[10px] text-navy-400 mt-1">Filtered: RM {totalActual.toLocaleString()}</span>
+                    <span className="text-navy-400">Target: {formatValue(overallTarget)}</span>
                   </div>
                 }
               />
               <KPICard 
-                title="Bank performance" 
-                value={selectedBank !== 'All' ? formatValue(totalActual) : "Select Bank"} 
-                trend={selectedBank !== 'All' ? selectedBank : "Awaiting Filter"} 
+                title="Top Bank" 
+                value={topBank[0]} 
+                trend={formatValue(topBank[1] as number)} 
                 trendUp={true} 
-                icon={<PieChart className="w-6 h-6" />}
-                subtitle={selectedBank !== 'All' ? `Analysis for ${selectedBank}` : "Global view"}
+                icon={<Building2 className="w-6 h-6 text-blue-500" />}
+                subtitle="Primary contributor bank"
               />
               <KPICard 
-                title="Branch Analysis" 
-                value={selectedBranch !== 'All' ? formatValue(totalActual) : "Select Branch"} 
-                trend={selectedBranch !== 'All' ? selectedBranch : "Awaiting Filter"} 
+                title="Top Category 1 Fund" 
+                value={topCat1.name} 
+                trend={formatValue(topCat1.value)} 
                 trendUp={true} 
-                icon={<Building2 className="w-6 h-6" />}
-                subtitle={selectedBranch !== 'All' ? `Analysis for ${selectedBranch}` : "Global view"}
+                icon={<BarChart3 className="w-6 h-6 text-amber-500" />}
+                subtitle="Leading fund category 1"
               />
               <KPICard 
-                title="Analysis Status" 
-                value={totalActual > 0 ? "Active" : "No Data"} 
-                trend="Live Recalculation" 
-                trendUp={totalActual > 0} 
-                icon={<TrendingUp className="w-6 h-6" />}
-                subtitle="Real-time filtered analysis"
+                title="Top Category 2 Fund" 
+                value={topCat2.name} 
+                trend={formatValue(topCat2.value)} 
+                trendUp={true} 
+                icon={<PieChart className="w-6 h-6 text-purple-500" />}
+                subtitle="Leading fund category 2"
               />
             </div>
 
+            {/* Charts Section */}
             <div className="space-y-6">
-              {/* Trend Full Width */}
+              {/* Inflow vs Branch */}
               <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-lg font-bold text-foreground">Filtered Inflow Trend</h2>
-                    <p className="text-sm text-navy-500">Revenue performance based on selected filters</p>
-                  </div>
-                  <div className="flex items-center bg-navy-50 dark:bg-navy-900 rounded-lg p-1 border border-border">
-                    <button 
-                      onClick={() => setTrendView('monthly')}
-                      className={`px-3 py-1 text-[10px] font-medium rounded-md transition-colors ${trendView === 'monthly' ? 'bg-white dark:bg-navy-800 text-foreground shadow-sm' : 'text-navy-500 hover:text-foreground'}`}
-                    >
-                      Monthly
-                    </button>
-                    <button 
-                      onClick={() => setTrendView('daily')}
-                      className={`px-3 py-1 text-[10px] font-medium rounded-md transition-colors ${trendView === 'daily' ? 'bg-white dark:bg-navy-800 text-foreground shadow-sm' : 'text-navy-500 hover:text-foreground'}`}
-                    >
-                      Daily
-                    </button>
-                  </div>
+                <div className="mb-6">
+                  <h2 className="text-lg font-bold text-foreground">Inflow vs Branch (Negeri/Jabatan)</h2>
+                  <p className="text-sm text-navy-500">Revenue distribution by state or department</p>
                 </div>
                 <div className="flex-1">
-                  <InflowTrendChart data={trendChartData} />
+                  <Category1Chart data={branchData} />
                 </div>
               </div>
 
-              {/* Fund Source Side by Side */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Fund Source Distribution */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
                   <div className="mb-6">
-                    <h2 className="text-lg font-bold text-foreground">Fund Distribution</h2>
-                    <p className="text-sm text-navy-500">Categorical breakdown (Filtered)</p>
+                    <h2 className="text-lg font-bold text-foreground">Inflow vs Category 1 Fund</h2>
+                    <p className="text-sm text-navy-500">Distribution by primary fund classification</p>
                   </div>
                   <div className="flex-1 flex items-center justify-center">
                     <FundSourceDoughnutChart data={cat1Data} />
                   </div>
                 </div>
-                <div className="lg:col-span-2 bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
+                <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
                   <div className="mb-6">
-                    <h2 className="text-lg font-bold text-foreground">Filtered Performance Ledger</h2>
-                    <p className="text-sm text-navy-500">Detailed mapping of filtered allocations</p>
+                    <h2 className="text-lg font-bold text-foreground">Inflow vs Category 2 Fund</h2>
+                    <p className="text-sm text-navy-500">Distribution by secondary fund sources</p>
                   </div>
-                  <div className="flex-1">
-                    <HybridTableChart data={cat1Data} showChart={false} />
+                  <div className="flex-1 flex items-center justify-center">
+                    <FundSourceDoughnutChart data={cat2Data} />
                   </div>
                 </div>
               </div>
             </div>
 
+            {/* Performance Table */}
             <div className="grid grid-cols-1 gap-6">
               <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
-                <div className="mb-6">
-                  <h2 className="text-lg font-bold text-foreground">Strategic Analysis Breakdown</h2>
-                  <p className="text-sm text-navy-500">Target vs Actual Performance (Filtered)</p>
+                <div className="mb-6 flex justify-between items-start">
+                  <div>
+                    <h2 className="text-lg font-bold text-foreground">Category 1 Fund vs Target</h2>
+                    <p className="text-sm text-navy-500">Detailed actual vs target performance analysis</p>
+                  </div>
+                  <div className="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                    Live Analysis Ledger
+                  </div>
                 </div>
-                <HybridTableChart data={group1Data} />
+                <HybridTableChart data={cat1Data} />
               </div>
             </div>
           </div>
