@@ -385,10 +385,10 @@ export function HybridTableChart({ data, showChart = true }: { data: any[], show
         </div>
       )}
 
-      <div className="overflow-x-auto border border-border rounded-xl bg-background/50 overflow-hidden shadow-sm">
+      <div className="max-h-[380px] overflow-y-auto border border-border rounded-xl bg-background/50 shadow-sm relative">
         <table className="w-full text-left text-sm border-collapse">
-          <thead>
-            <tr className="bg-navy-50 dark:bg-navy-900/50 text-navy-600 dark:text-navy-300 border-b border-border">
+          <thead className="sticky top-0 z-10">
+            <tr className="bg-navy-50 dark:bg-navy-900 text-navy-600 dark:text-navy-300 border-b border-border shadow-sm">
               <th className="px-6 py-4 font-semibold">Category Description</th>
               {hasTargets ? (
                 <>
