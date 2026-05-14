@@ -392,6 +392,21 @@ export default function AnalysisDashboard() {
                 </div>
               </div>
 
+              {/* Category 1 Performance (MOVED) */}
+              <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
+                <div className="mb-6 flex justify-between items-start">
+                  <div>
+                    <h2 className="text-lg font-bold text-foreground">Category 1 Fund vs Target</h2>
+                    <p className="text-sm text-navy-500">Detailed actual vs target performance analysis</p>
+                  </div>
+                  <div className="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                    Live Analysis Ledger
+                  </div>
+                </div>
+                <HybridTableChart data={cat1Data} />
+              </div>
+
               {/* Inflow vs Branch */}
               <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
                 <div className="mb-6">
@@ -426,22 +441,6 @@ export default function AnalysisDashboard() {
               </div>
             </div>
 
-            {/* Performance Table */}
-            <div className="grid grid-cols-1 gap-6">
-              <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
-                <div className="mb-6 flex justify-between items-start">
-                  <div>
-                    <h2 className="text-lg font-bold text-foreground">Category 1 Fund vs Target</h2>
-                    <p className="text-sm text-navy-500">Detailed actual vs target performance analysis</p>
-                  </div>
-                  <div className="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5">
-                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                    Live Analysis Ledger
-                  </div>
-                </div>
-                <HybridTableChart data={cat1Data} />
-              </div>
-            </div>
           </div>
         );
       }}

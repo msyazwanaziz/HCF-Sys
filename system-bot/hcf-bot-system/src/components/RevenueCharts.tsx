@@ -333,6 +333,7 @@ export function FundSourceDoughnutChart({ data }: { data: any[] }) {
 export function HybridTableChart({ data, showChart = true }: { data: any[], showChart?: boolean }) {
   const hasTargets = data.some(item => (item.target || 0) > 0);
   const totalValue = data.reduce((acc, cur) => acc + (cur.value || 0), 0);
+  const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899'];
 
   const formatVal = (val: number) => {
     return `RM ${val.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
@@ -341,18 +342,22 @@ export function HybridTableChart({ data, showChart = true }: { data: any[], show
   return (
     <div className="space-y-6 animate-in fade-in duration-700">
       {showChart && (
-        <div className="h-[150px] w-full">
+        <div className="h-[200px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart layout="vertical" data={data} margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" opacity={0.5} />
-              <XAxis type="number" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 10}} tickFormatter={(val) => val >= 1000000 ? `${(val/1000000).toFixed(1)}M` : `${val/1000}k`} />
-              <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 10}} width={100} />
+            <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" opacity={0.5} />
+              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 10}} />
+              <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 10}} tickFormatter={(val) => val >= 1000000 ? `${(val/1000000).toFixed(1)}M` : `${val/1000}k`} />
               <Tooltip 
                 contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '12px' }}
                 formatter={(val: any) => [`RM ${Number(val).toLocaleString()}`, undefined]}
               />
-              <Bar dataKey="value" name="Actual" fill="#10b981" radius={[0, 2, 2, 0]} barSize={20} />
-              {hasTargets && <Bar dataKey="target" name="Target" fill="#e2e8f0" radius={[0, 2, 2, 0]} barSize={20} />}
+              <Bar dataKey="value" name="Actual" radius={[2, 2, 0, 0]} barSize={32}>
+                {data.map((entry, index) => (
+                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Bar>
+              {hasTargets && <Bar dataKey="target" name="Target" fill="#e2e8f0" radius={[2, 2, 0, 0]} barSize={32} />}
             </BarChart>
           </ResponsiveContainer>
         </div>
