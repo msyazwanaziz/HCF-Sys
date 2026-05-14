@@ -179,6 +179,10 @@ export default function AnalysisDashboard() {
           .map(name => ({ name, value: Math.round(branchMap[name]) }))
           .sort((a, b) => b.value - a.value);
 
+        const bankTableData = Object.keys(bankMap)
+          .map(name => ({ name, value: Math.round(bankMap[name]) }))
+          .sort((a, b) => b.value - a.value);
+
         const sortedBanks = Object.entries(bankMap).sort((a, b) => b[1] - a[1]);
         const topBank = sortedBanks[0] || ['N/A', 0];
         const topCat1 = cat1Data[0] || { name: 'N/A', value: 0, target: 0 };
@@ -403,11 +407,11 @@ export default function AnalysisDashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
                   <div className="mb-6">
-                    <h2 className="text-lg font-bold text-foreground">Inflow vs Category 1 Fund</h2>
-                    <p className="text-sm text-navy-500">Distribution by primary fund classification</p>
+                    <h2 className="text-lg font-bold text-foreground">Inflow vs Bank</h2>
+                    <p className="text-sm text-navy-500">Revenue distribution by bank performance</p>
                   </div>
-                  <div className="flex-1 flex items-center justify-center">
-                    <FundSourceDoughnutChart data={cat1Data} />
+                  <div className="flex-1">
+                    <HybridTableChart data={bankTableData} showChart={false} />
                   </div>
                 </div>
                 <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
