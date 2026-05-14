@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 
 export default function AnalysisDashboard() {
-  const [selectedCat2, setSelectedCat2] = useState('All');
+  const [selectedCat1, setSelectedCat1] = useState('All');
   const [selectedMonth, setSelectedMonth] = useState('All');
   const [selectedBank, setSelectedBank] = useState('All');
   const [selectedBranch, setSelectedBranch] = useState('All');
@@ -49,8 +49,8 @@ export default function AnalysisDashboard() {
         const targets = data.targets;
 
         // Extract unique options for slicers
-        const cats = new Set(rawData.map((tx: RevTransaction) => tx.cat2));
-        const uniqueCat2 = Array.from(cats).filter(c => c !== 'Uncategorized').sort();
+        const cats1 = new Set(rawData.map((tx: RevTransaction) => tx.cat1_1));
+        const uniqueCat1 = Array.from(cats1).filter(c => c && c !== 'Unknown').sort();
 
         const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const months = new Set(rawData.map((tx: RevTransaction) => tx.month));
@@ -64,7 +64,7 @@ export default function AnalysisDashboard() {
 
         // Filter data
         const filteredData = rawData.filter((tx: RevTransaction) => {
-          if (selectedCat2 !== 'All' && tx.cat2 !== selectedCat2) return false;
+          if (selectedCat1 !== 'All' && tx.cat1_1 !== selectedCat1) return false;
           if (selectedMonth !== 'All' && tx.month !== selectedMonth) return false;
           if (selectedBank !== 'All' && tx.bankName !== selectedBank) return false;
           if (selectedBranch !== 'All' && tx.branch !== selectedBranch) return false;
@@ -240,14 +240,14 @@ export default function AnalysisDashboard() {
                   <span className="text-sm font-bold text-foreground mr-2">Core Filters:</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <label className="text-xs font-medium text-navy-500">Fund Source (Cat 2)</label>
+                  <label className="text-xs font-medium text-navy-500">Category 1 Fund</label>
                   <select 
                     className="bg-background border border-border text-sm rounded-lg px-3 py-1.5 text-navy-600 outline-none focus:ring-2 focus:ring-emerald-500/20 min-w-[200px]"
-                    value={selectedCat2}
-                    onChange={(e) => setSelectedCat2(e.target.value)}
+                    value={selectedCat1}
+                    onChange={(e) => setSelectedCat1(e.target.value)}
                   >
-                    <option value="All">All Sources</option>
-                    {uniqueCat2.map(c => <option key={c} value={c}>{c}</option>)}
+                    <option value="All">All Categories</option>
+                    {uniqueCat1.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
                 <div className="flex items-center gap-2">
