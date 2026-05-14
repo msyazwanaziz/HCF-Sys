@@ -320,32 +320,74 @@ export default function AnalysisDashboard() {
               />
               <KPICard 
                 title="Top Bank" 
-                value={topBank[0]} 
-                trend={formatValue(topBank[1] as number)} 
+                value={formatValue(topBank[1] as number)} 
+                trend="Highest" 
                 trendUp={true} 
                 icon={<Building2 className="w-6 h-6 text-blue-500" />}
-                subtitle="Primary contributor bank"
+                subtitle={
+                  <div className="flex flex-col">
+                    <span className="text-foreground font-bold">{topBank[0]}</span>
+                    <span className="text-navy-400">Primary contributor bank</span>
+                  </div>
+                }
               />
               <KPICard 
                 title="Top Category 1 Fund" 
-                value={topCat1.name} 
-                trend={formatValue(topCat1.value)} 
+                value={formatValue(topCat1.value)} 
+                trend="Highest" 
                 trendUp={true} 
                 icon={<BarChart3 className="w-6 h-6 text-amber-500" />}
-                subtitle="Leading fund category 1"
+                subtitle={
+                  <div className="flex flex-col">
+                    <span className="text-foreground font-bold">{topCat1.name}</span>
+                    <span className="text-navy-400">Leading fund category 1</span>
+                  </div>
+                }
               />
               <KPICard 
                 title="Top Category 2 Fund" 
-                value={topCat2.name} 
-                trend={formatValue(topCat2.value)} 
+                value={formatValue(topCat2.value)} 
+                trend="Highest" 
                 trendUp={true} 
                 icon={<PieChart className="w-6 h-6 text-purple-500" />}
-                subtitle="Leading fund category 2"
+                subtitle={
+                  <div className="flex flex-col">
+                    <span className="text-foreground font-bold">{topCat2.name}</span>
+                    <span className="text-navy-400">Leading fund category 2</span>
+                  </div>
+                }
               />
             </div>
 
             {/* Charts Section */}
             <div className="space-y-6">
+              {/* Inflow Trend Chart */}
+              <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-lg font-bold text-foreground">Inflow Trend</h2>
+                    <p className="text-sm text-navy-500">Historical performance trend based on filters</p>
+                  </div>
+                  <div className="flex items-center bg-navy-50 dark:bg-navy-900 rounded-lg p-1 border border-border">
+                    <button 
+                      onClick={() => setTrendView('monthly')}
+                      className={`px-3 py-1 text-[10px] font-medium rounded-md transition-colors ${trendView === 'monthly' ? 'bg-white dark:bg-navy-800 text-foreground shadow-sm' : 'text-navy-500 hover:text-foreground'}`}
+                    >
+                      Monthly
+                    </button>
+                    <button 
+                      onClick={() => setTrendView('daily')}
+                      className={`px-3 py-1 text-[10px] font-medium rounded-md transition-colors ${trendView === 'daily' ? 'bg-white dark:bg-navy-800 text-foreground shadow-sm' : 'text-navy-500 hover:text-foreground'}`}
+                    >
+                      Daily
+                    </button>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <InflowTrendChart data={trendChartData} />
+                </div>
+              </div>
+
               {/* Inflow vs Branch */}
               <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
                 <div className="mb-6">
@@ -358,23 +400,23 @@ export default function AnalysisDashboard() {
               </div>
 
               {/* Fund Source Distribution */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6">
                 <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
                   <div className="mb-6">
                     <h2 className="text-lg font-bold text-foreground">Inflow vs Category 1 Fund</h2>
-                    <p className="text-sm text-navy-500">Distribution by primary fund classification</p>
+                    <p className="text-sm text-navy-500">Revenue distribution by primary fund classification</p>
                   </div>
-                  <div className="flex-1 flex items-center justify-center">
-                    <FundSourceDoughnutChart data={cat1Data} />
+                  <div className="flex-1">
+                    <HybridTableChart data={cat1Data} showChart={false} />
                   </div>
                 </div>
                 <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
                   <div className="mb-6">
                     <h2 className="text-lg font-bold text-foreground">Inflow vs Category 2 Fund</h2>
-                    <p className="text-sm text-navy-500">Distribution by secondary fund sources</p>
+                    <p className="text-sm text-navy-500">Revenue distribution by secondary fund sources</p>
                   </div>
-                  <div className="flex-1 flex items-center justify-center">
-                    <FundSourceDoughnutChart data={cat2Data} />
+                  <div className="flex-1">
+                    <HybridTableChart data={cat2Data} showChart={false} />
                   </div>
                 </div>
               </div>

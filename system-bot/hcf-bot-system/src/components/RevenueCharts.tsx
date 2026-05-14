@@ -331,6 +331,9 @@ export function FundSourceDoughnutChart({ data }: { data: any[] }) {
 }
 
 export function HybridTableChart({ data, showChart = true }: { data: any[], showChart?: boolean }) {
+  const hasTargets = data.some(item => (item.target || 0) > 0);
+  const totalValue = data.reduce((acc, cur) => acc + (cur.value || 0), 0);
+
   const formatVal = (val: number) => {
     return `RM ${val.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
   };
@@ -349,7 +352,7 @@ export function HybridTableChart({ data, showChart = true }: { data: any[], show
                 formatter={(val: any) => [`RM ${Number(val).toLocaleString()}`, undefined]}
               />
               <Bar dataKey="value" name="Actual" fill="#10b981" radius={[2, 2, 0, 0]} barSize={32} />
-              <Bar dataKey="target" name="Target" fill="#e2e8f0" radius={[2, 2, 0, 0]} barSize={32} />
+              {hasTargets && <Bar dataKey="target" name="Target" fill="#e2e8f0" radius={[2, 2, 0, 0]} barSize={32} />}
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -360,37 +363,66 @@ export function HybridTableChart({ data, showChart = true }: { data: any[], show
           <thead>
             <tr className="bg-navy-50 dark:bg-navy-900/50 text-navy-600 dark:text-navy-300 border-b border-border">
               <th className="px-6 py-4 font-semibold">Category Description</th>
-              <th className="px-6 py-4 font-semibold text-right">Target Allocation</th>
-              <th className="px-6 py-4 font-semibold text-right">Actual Inflow</th>
-              <th className="px-6 py-4 font-semibold text-right">Variance</th>
-              <th className="px-6 py-4 font-semibold text-right w-48">Achievement Progress</th>
+              {hasTargets ? (
+                <>
+                  <th className="px-6 py-4 font-semibold text-right">Target Allocation</th>
+                  <th className="px-6 py-4 font-semibold text-right">Actual Inflow</th>
+                  <th className="px-6 py-4 font-semibold text-right">Variance</th>
+                  <th className="px-6 py-4 font-semibold text-right w-48">Achievement Progress</th>
+                </>
+              ) : (
+                <>
+                  <th className="px-6 py-4 font-semibold text-right">Actual Inflow</th>
+                  <th className="px-6 py-4 font-semibold text-right w-48">Distribution %</th>
+                </>
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {data.map((item, idx) => {
-              const variance = item.value - item.target;
-              const pct = item.target > 0 ? Math.round((item.value / item.target) * 100) : 0;
+              const variance = item.value - (item.target || 0);
+              const pct = (item.target || 0) > 0 ? Math.round((item.value / item.target) * 100) : 0;
+              const distPct = totalValue > 0 ? ((item.value / totalValue) * 100).toFixed(1) : "0.0";
               const isPositive = variance >= 0;
               
               return (
                 <tr key={idx} className="hover:bg-surface-hover/50 transition-colors">
                   <td className="px-6 py-4 font-bold text-foreground">{item.name}</td>
-                  <td className="px-6 py-4 text-right text-navy-600 dark:text-navy-400 tabular-nums">{formatVal(item.target)}</td>
-                  <td className="px-6 py-4 text-right font-bold text-foreground tabular-nums">{formatVal(item.value)}</td>
-                  <td className={`px-6 py-4 text-right font-bold tabular-nums ${isPositive ? 'text-emerald-600' : 'text-rose-500'}`}>
-                    {isPositive ? '+' : ''}{formatVal(variance)}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex-1 bg-navy-100 dark:bg-navy-800 rounded-full h-2 overflow-hidden shadow-inner">
-                        <div 
-                          className={`h-full rounded-full transition-all duration-1000 ${pct >= 100 ? 'bg-emerald-500' : pct >= 70 ? 'bg-amber-500' : 'bg-rose-500'}`}
-                          style={{ width: `${Math.min(pct, 100)}%` }}
-                        ></div>
-                      </div>
-                      <span className="font-bold text-navy-700 dark:text-navy-300 w-10 text-right">{pct}%</span>
-                    </div>
-                  </td>
+                  {hasTargets ? (
+                    <>
+                      <td className="px-6 py-4 text-right text-navy-600 dark:text-navy-400 tabular-nums">{formatVal(item.target || 0)}</td>
+                      <td className="px-6 py-4 text-right font-bold text-foreground tabular-nums">{formatVal(item.value)}</td>
+                      <td className={`px-6 py-4 text-right font-bold tabular-nums ${isPositive ? 'text-emerald-600' : 'text-rose-500'}`}>
+                        {isPositive ? '+' : ''}{formatVal(variance)}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1 bg-navy-100 dark:bg-navy-800 rounded-full h-2 overflow-hidden shadow-inner">
+                            <div 
+                              className={`h-full rounded-full transition-all duration-1000 ${pct >= 100 ? 'bg-emerald-500' : pct >= 70 ? 'bg-amber-500' : 'bg-rose-500'}`}
+                              style={{ width: `${Math.min(pct, 100)}%` }}
+                            ></div>
+                          </div>
+                          <span className="font-bold text-navy-700 dark:text-navy-300 w-10 text-right">{pct}%</span>
+                        </div>
+                      </td>
+                    </>
+                  ) : (
+                    <>
+                      <td className="px-6 py-4 text-right font-bold text-foreground tabular-nums">{formatVal(item.value)}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1 bg-navy-100 dark:bg-navy-800 rounded-full h-2 overflow-hidden shadow-inner">
+                            <div 
+                              className="h-full rounded-full transition-all duration-1000 bg-blue-500"
+                              style={{ width: `${distPct}%` }}
+                            ></div>
+                          </div>
+                          <span className="font-bold text-navy-700 dark:text-navy-300 w-12 text-right">{distPct}%</span>
+                        </div>
+                      </td>
+                    </>
+                  )}
                 </tr>
               );
             })}
