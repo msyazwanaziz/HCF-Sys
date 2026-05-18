@@ -344,43 +344,49 @@ export function HybridTableChart({ data, showChart = true }: { data: any[], show
   return (
     <div className="space-y-6 animate-in fade-in duration-700">
       {showChart && (
-        <div className="h-[250px] w-full">
+        <div className="h-[320px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={sortedData}
-                cx="35%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={80}
-                paddingAngle={5}
-                dataKey="value"
-                stroke="none"
-              >
-                {sortedData.map((entry, index) => (
-                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
+            <BarChart data={sortedData} margin={{ top: 20, right: 10, left: 10, bottom: 30 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" className="dark:stroke-navy-800" />
+              <XAxis 
+                dataKey="name" 
+                axisLine={false} 
+                tickLine={false} 
+                tick={{ fill: '#64748b', fontSize: 10, fontWeight: 500 }} 
+                dy={10} 
+                interval={0}
+                angle={-15}
+                textAnchor="end"
+              />
+              <YAxis 
+                axisLine={false} 
+                tickLine={false} 
+                tick={{ fill: '#64748b', fontSize: 10 }} 
+                tickFormatter={(val) => `RM ${(val / 1000).toFixed(0)}k`} 
+              />
               <Tooltip 
-                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', backgroundColor: 'rgba(255, 255, 255, 0.95)' }}
-                formatter={(val: any) => [`RM ${Number(val).toLocaleString()} (${((Number(val)/totalValue)*100).toFixed(1)}%)`, undefined]}
+                cursor={{ fill: 'rgba(148, 163, 184, 0.1)' }} 
+                contentStyle={{ 
+                  borderRadius: '12px', 
+                  border: 'none', 
+                  boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', 
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)' 
+                }} 
+                formatter={(value: any) => [`RM ${Number(value).toLocaleString()}`]}
               />
               <Legend 
-                layout="vertical" 
-                align="right" 
-                verticalAlign="middle" 
-                iconType="circle"
-                formatter={(value, entry: any) => {
-                  const { payload } = entry;
-                  const percent = totalValue > 0 ? ((payload.value / totalValue) * 100).toFixed(1) : 0;
-                  return (
-                    <span className="text-navy-600 dark:text-navy-300 font-bold text-xs uppercase">
-                      {value} <span className="text-emerald-500 ml-2">{percent}%</span>
-                    </span>
-                  );
-                }}
+                iconType="circle" 
+                wrapperStyle={{ paddingTop: '20px', fontSize: '11px', fontWeight: 500 }} 
               />
-            </PieChart>
+              <Bar dataKey="value" name="Actual Inflow" radius={[4, 4, 0, 0]} barSize={20}>
+                {sortedData.map((entry, index) => (
+                  <Cell key={`cell-actual-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Bar>
+              {hasTargets && (
+                <Bar dataKey="target" name="Target Allocation" radius={[4, 4, 0, 0]} barSize={20} fill="var(--chart-target)" />
+              )}
+            </BarChart>
           </ResponsiveContainer>
         </div>
       )}
