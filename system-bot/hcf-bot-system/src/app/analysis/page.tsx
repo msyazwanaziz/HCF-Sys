@@ -9,7 +9,8 @@ import {
   Category1Chart, 
   SpecialCategoryChart,
   HybridTableChart,
-  FundSourceDoughnutChart
+  FundSourceDoughnutChart,
+  MiniInflowTrendChart
 } from "@/components/RevenueCharts";
 import { 
   Target, 
@@ -182,6 +183,26 @@ export default function AnalysisDashboard() {
         const bankTableData = Object.keys(bankMap)
           .map(name => ({ name, value: Math.round(bankMap[name]) }))
           .sort((a, b) => b.value - a.value);
+
+        const getMiniTrend = (fundName: string) => {
+          const trend: Record<string, number> = {};
+          const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          
+          uniqueMonths.forEach(m => {
+            trend[m] = 0;
+          });
+
+          filteredData.forEach((tx: RevTransaction) => {
+            if (tx.cat1_1?.toUpperCase() === fundName.toUpperCase()) {
+              trend[tx.month] = (trend[tx.month] || 0) + tx.income;
+            }
+          });
+
+          return Object.keys(trend).map(month => ({
+            name: month,
+            income: Math.round(trend[month])
+          })).sort((a, b) => monthOrder.indexOf(a.name) - monthOrder.indexOf(b.name));
+        };
 
         const sortedBanks = Object.entries(bankMap).sort((a, b) => b[1] - a[1]);
         const topBank = sortedBanks[0] || ['N/A', 0];
@@ -405,6 +426,57 @@ export default function AnalysisDashboard() {
                   </div>
                 </div>
                 <HybridTableChart data={cat1Data} />
+              </div>
+
+              {/* Mini Inflow Trends Row */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in duration-700">
+                <div className="bg-surface rounded-2xl p-5 border border-border shadow-sm flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                      <h3 className="text-sm font-bold text-foreground">Unrestricted Fund</h3>
+                    </div>
+                    <p className="text-2xl font-black text-foreground tabular-nums tracking-tight">
+                      {formatValue(cat1Data.find(item => item.name.toUpperCase() === 'UNRESTRICTED FUND')?.value || 0)}
+                    </p>
+                    <p className="text-[11px] text-navy-500 mt-0.5 mb-4">Unrestricted performance trend</p>
+                  </div>
+                  <div className="flex-1">
+                    <MiniInflowTrendChart data={getMiniTrend('UNRESTRICTED FUND')} strokeColor="#10b981" />
+                  </div>
+                </div>
+
+                <div className="bg-surface rounded-2xl p-5 border border-border shadow-sm flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                      <h3 className="text-sm font-bold text-foreground">Restricted Fund</h3>
+                    </div>
+                    <p className="text-2xl font-black text-foreground tabular-nums tracking-tight">
+                      {formatValue(cat1Data.find(item => item.name.toUpperCase() === 'RESTRICTED FUND')?.value || 0)}
+                    </p>
+                    <p className="text-[11px] text-navy-500 mt-0.5 mb-4">Restricted performance trend</p>
+                  </div>
+                  <div className="flex-1">
+                    <MiniInflowTrendChart data={getMiniTrend('RESTRICTED FUND')} strokeColor="#f59e0b" />
+                  </div>
+                </div>
+
+                <div className="bg-surface rounded-2xl p-5 border border-border shadow-sm flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                      <h3 className="text-sm font-bold text-foreground">Special Restricted Fund</h3>
+                    </div>
+                    <p className="text-2xl font-black text-foreground tabular-nums tracking-tight">
+                      {formatValue(cat1Data.find(item => item.name.toUpperCase() === 'SPECIAL RESTRICTED FUND')?.value || 0)}
+                    </p>
+                    <p className="text-[11px] text-navy-500 mt-0.5 mb-4">Special restricted performance trend</p>
+                  </div>
+                  <div className="flex-1">
+                    <MiniInflowTrendChart data={getMiniTrend('SPECIAL RESTRICTED FUND')} strokeColor="#3b82f6" />
+                  </div>
+                </div>
               </div>
 
               {/* Inflow vs Branch */}
