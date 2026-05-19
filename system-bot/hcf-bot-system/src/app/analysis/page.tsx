@@ -79,6 +79,12 @@ export default function AnalysisDashboard() {
         const cat2Map: Record<string, number> = {};
         const bankMap: Record<string, number> = {};
         const branchMap: Record<string, number> = {};
+        const cat2ByCat1: Record<string, Record<string, number>> = {
+          'UNRESTRICTED FUND': {},
+          'RESTRICTED FUND': {},
+          'SPECIAL RESTRICTED FUND': {},
+          'TABUNG CAHAYA': {}
+        };
 
         const group1Cats = {
           'Sumbangan Umum': 0,
@@ -104,6 +110,13 @@ export default function AnalysisDashboard() {
           // Cat 1-1 & 2
           if (tx.cat1_1) cat1_1Map[tx.cat1_1] = (cat1_1Map[tx.cat1_1] || 0) + tx.income;
           if (tx.cat2) cat2Map[tx.cat2] = (cat2Map[tx.cat2] || 0) + tx.income;
+          
+          if (tx.cat1_1 && tx.cat2 && tx.cat2 !== 'Unknown' && tx.cat2 !== 'Uncategorized') {
+            const c1Upper = tx.cat1_1.toUpperCase();
+            if (cat2ByCat1[c1Upper]) {
+              cat2ByCat1[c1Upper][tx.cat2] = (cat2ByCat1[c1Upper][tx.cat2] || 0) + tx.income;
+            }
+          }
           
           // Bank & Branch
           if (tx.bankName && tx.bankName !== 'Unknown') bankMap[tx.bankName] = (bankMap[tx.bankName] || 0) + tx.income;
@@ -203,6 +216,18 @@ export default function AnalysisDashboard() {
         const bankTableData = Object.keys(bankMap)
           .map(name => ({ name, value: Math.round(bankMap[name]) }))
           .sort((a, b) => b.value - a.value);
+
+        const getCat2DataForCat1 = (cat1Name: string) => {
+          const map = cat2ByCat1[cat1Name.toUpperCase()] || {};
+          return Object.keys(map)
+            .map(name => ({
+              name,
+              value: Math.round(map[name]),
+              target: targets[name] || targets[name.toUpperCase()] || 0
+            }))
+            .filter(item => item.value > 0)
+            .sort((a, b) => b.value - a.value);
+        };
 
         const getMiniTrend = (fundName: string) => {
           const trend: Record<string, number> = {};
@@ -511,24 +536,57 @@ export default function AnalysisDashboard() {
                 </div>
               </div>
 
-              {/* Fund Source Distribution */}
+              {/* Category Breakdown Tables Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
-                  <div className="mb-6">
-                    <h2 className="text-lg font-bold text-foreground">Inflow vs Bank</h2>
-                    <p className="text-sm text-navy-500">Revenue distribution by bank performance</p>
+                  <div className="mb-6 flex justify-between items-start">
+                    <div>
+                      <h2 className="text-lg font-bold text-foreground">Unrestricted Fund Breakdown</h2>
+                      <p className="text-sm text-navy-500">Sub-category revenue performance</p>
+                    </div>
+                    <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse mt-1" />
                   </div>
                   <div className="flex-1">
-                    <HybridTableChart data={bankTableData} showChart={false} />
+                    <HybridTableChart data={getCat2DataForCat1('UNRESTRICTED FUND')} showChart={false} />
                   </div>
                 </div>
+
                 <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
-                  <div className="mb-6">
-                    <h2 className="text-lg font-bold text-foreground">Inflow vs Category 2 Fund</h2>
-                    <p className="text-sm text-navy-500">Revenue distribution by secondary fund sources</p>
+                  <div className="mb-6 flex justify-between items-start">
+                    <div>
+                      <h2 className="text-lg font-bold text-foreground">Restricted Fund Breakdown</h2>
+                      <p className="text-sm text-navy-500">Sub-category revenue performance</p>
+                    </div>
+                    <span className="w-3 h-3 rounded-full bg-amber-500 animate-pulse mt-1" />
                   </div>
                   <div className="flex-1">
-                    <HybridTableChart data={cat2Data} showChart={false} />
+                    <HybridTableChart data={getCat2DataForCat1('RESTRICTED FUND')} showChart={false} />
+                  </div>
+                </div>
+
+                <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
+                  <div className="mb-6 flex justify-between items-start">
+                    <div>
+                      <h2 className="text-lg font-bold text-foreground">Special Restricted Fund Breakdown</h2>
+                      <p className="text-sm text-navy-500">Sub-category revenue performance</p>
+                    </div>
+                    <span className="w-3 h-3 rounded-full bg-blue-500 animate-pulse mt-1" />
+                  </div>
+                  <div className="flex-1">
+                    <HybridTableChart data={getCat2DataForCat1('SPECIAL RESTRICTED FUND')} showChart={false} />
+                  </div>
+                </div>
+
+                <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm flex flex-col">
+                  <div className="mb-6 flex justify-between items-start">
+                    <div>
+                      <h2 className="text-lg font-bold text-foreground">Tabung Cahaya Breakdown</h2>
+                      <p className="text-sm text-navy-500">Sub-category revenue performance</p>
+                    </div>
+                    <span className="w-3 h-3 rounded-full bg-red-500 animate-pulse mt-1" />
+                  </div>
+                  <div className="flex-1">
+                    <HybridTableChart data={getCat2DataForCat1('TABUNG CAHAYA')} showChart={false} />
                   </div>
                 </div>
               </div>
