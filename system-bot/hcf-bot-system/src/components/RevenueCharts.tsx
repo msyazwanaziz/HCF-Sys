@@ -147,25 +147,56 @@ export async function getRevenueTargets(forceRefresh = false): Promise<Record<st
       const targets: Record<string, number> = {};
       
       let prevVal = 0;
+      let parsingBranches = false;
       const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const sheetMonthHeaders = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 
       for (let i = 1; i < lines.length; i++) {
         const row = parseCSVLine(lines[i]);
-        if (row.length >= 2 && row[0] && row[1]) {
-           const label = row[0].trim();
-           const valStr = row[1].replace(/,/g, '').replace(/"/g, '');
-           const val = parseFloat(valStr);
-           
-           if (!isNaN(val)) {
-             if (monthNames.includes(label)) {
-                // Monthly targets
-                targets[label] = Math.round(val - prevVal);
-                targets[`${label}_cum`] = Math.round(val);
-                prevVal = val;
-             } else {
-                targets[label] = Math.round(val);
-             }
-           }
+        if (row.length < 2 || !row[0]) continue;
+
+        const label = row[0].trim();
+        
+        if (label.startsWith('Branch (Negeri')) {
+          parsingBranches = true;
+          continue;
+        }
+
+        if (parsingBranches) {
+          // Parse branch row
+          const overallStr = row[1]?.replace(/,/g, '').replace(/"/g, '') || '0';
+          const overallVal = parseFloat(overallStr);
+          if (!isNaN(overallVal) && overallVal > 0) {
+            targets[label.toUpperCase()] = Math.round(overallVal);
+          }
+          
+          // Parse monthly cumulative targets for this branch
+          sheetMonthHeaders.forEach((monthHeader, idx) => {
+            const colIndex = 3 + idx;
+            if (row[colIndex]) {
+              const valStr = row[colIndex].replace(/,/g, '').replace(/"/g, '');
+              const val = parseFloat(valStr);
+              if (!isNaN(val)) {
+                const standardizedMonth = monthNames[idx];
+                targets[`${label.toUpperCase()}_${standardizedMonth}`] = Math.round(val);
+              }
+            }
+          });
+        } else {
+          // Parse standard key-values (original logic)
+          const valStr = row[1]?.replace(/,/g, '').replace(/"/g, '') || '0';
+          const val = parseFloat(valStr);
+          
+          if (!isNaN(val)) {
+            if (monthNames.includes(label)) {
+              targets[label] = Math.round(val - prevVal);
+              targets[`${label}_cum`] = Math.round(val);
+              prevVal = val;
+            } else {
+              targets[label] = Math.round(val);
+              targets[label.toUpperCase()] = Math.round(val);
+            }
+          }
         }
       }
       cachedRevenueTargets = targets;

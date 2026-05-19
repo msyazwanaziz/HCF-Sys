@@ -177,7 +177,27 @@ export default function AnalysisDashboard() {
 
         // Branch data for chart
         const branchData = Object.keys(branchMap)
-          .map(name => ({ name, value: Math.round(branchMap[name]) }))
+          .map(name => {
+            const nameUpper = name.toUpperCase();
+            let branchTarget = 0;
+            if (selectedMonth !== 'All') {
+              branchTarget = targets[`${nameUpper}_${selectedMonth}`] || 
+                             targets[`WP ${nameUpper}_${selectedMonth}`] || 
+                             targets[`WILAYAH ${nameUpper}_${selectedMonth}`] || 
+                             0;
+            } else {
+              branchTarget = targets[nameUpper] || 
+                             targets[`WP ${nameUpper}`] || 
+                             targets[`WILAYAH ${nameUpper}`] || 
+                             0;
+            }
+
+            return { 
+              name, 
+              value: Math.round(branchMap[name]),
+              target: branchTarget
+            };
+          })
           .sort((a, b) => b.value - a.value);
 
         const bankTableData = Object.keys(bankMap)
