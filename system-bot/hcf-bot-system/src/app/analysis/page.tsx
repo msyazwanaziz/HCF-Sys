@@ -208,6 +208,7 @@ export default function AnalysisDashboard() {
         const topBank = sortedBanks[0] || ['N/A', 0];
         const topCat1 = cat1Data[0] || { name: 'N/A', value: 0, target: 0 };
         const topCat2 = cat2Data[0] || { name: 'N/A', value: 0 };
+        const topBranch = branchData[0] || { name: 'N/A', value: 0 };
         
         // Targets for scorecards
         const overallTarget = targets['Total Fund'] || targets['OVERALL'] || 8017439;
@@ -344,15 +345,15 @@ export default function AnalysisDashboard() {
                 }
               />
               <KPICard 
-                title="Top Bank" 
-                value={formatValue(topBank[1] as number)} 
+                title="Top Branch" 
+                value={formatValue(topBranch.value)} 
                 trend="Highest" 
                 trendUp={true} 
                 icon={<Building2 className="w-6 h-6 text-blue-500" />}
                 subtitle={
                   <div className="flex flex-col">
-                    <span className="text-foreground font-bold">{topBank[0]}</span>
-                    <span className="text-navy-400">Primary contributor bank</span>
+                    <span className="text-foreground font-bold">{topBranch.name}</span>
+                    <span className="text-navy-400">Primary contributor branch</span>
                   </div>
                 }
               />
@@ -486,7 +487,7 @@ export default function AnalysisDashboard() {
                   <p className="text-sm text-navy-500">Revenue distribution by state or department</p>
                 </div>
                 <div className="flex-1">
-                  <Category1Chart data={branchData} />
+                  <HybridTableChart data={branchData} showChart={false} />
                 </div>
               </div>
 
