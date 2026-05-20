@@ -6,124 +6,12 @@ import {
   PieChart, Pie, Cell
 } from 'recharts';
 
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/1MRJibLnS07vXaiJ_r_hoU2UMDzK6-gbRM2YZw4zqYds/export?format=csv&gid=2146182837";
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#ec4899', '#14b8a6', '#f97316'];
 
-function parseCSVLine(line: string) {
-  const result = [];
-  let inQuotes = false;
-  let currentVal = '';
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-    if (char === '"') {
-      inQuotes = !inQuotes;
-    } else if (char === ',' && !inQuotes) {
-      result.push(currentVal.trim());
-      currentVal = '';
-    } else {
-      currentVal += char;
-    }
-  }
-  result.push(currentVal.trim());
-  return result;
-}
-
 export function FinanceChartsContainer() {
-  const [incomeExpenseData, setIncomeExpenseData] = useState<{ month: string, income: number, expense: number }[]>([]);
-  const [fundSourcesData, setFundSourcesData] = useState<{ name: string, value: number }[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await fetch(SHEET_URL);
-        const text = await res.text();
-        const lines = text.split('\n').filter(l => l.trim() !== '');
-        
-        const headers = parseCSVLine(lines[0]);
-        const dateIdx = headers.indexOf('Date');
-        const creditIdx = headers.indexOf('Credit');
-        const debitIdx = headers.indexOf('Debit');
-        const fundCatIdx = headers.indexOf('Fund Category');
-
-        const monthlyData: Record<string, { income: number, expense: number }> = {};
-        const sourcesData: Record<string, number> = {};
-
-        // Parse rows
-        for (let i = 1; i < lines.length; i++) {
-          const row = parseCSVLine(lines[i]);
-          if (row.length < Math.max(dateIdx, creditIdx, debitIdx, fundCatIdx)) continue;
-
-          const dateStr = row[dateIdx];
-          if (!dateStr || !dateStr.includes('/')) continue;
-          
-          // Parse amount (remove commas and quotes)
-          const creditStr = row[creditIdx]?.replace(/,/g, '') || '0';
-          const debitStr = row[debitIdx]?.replace(/,/g, '') || '0';
-          const creditVal = parseFloat(creditStr);
-          const debitVal = parseFloat(debitStr);
-          const income = isNaN(creditVal) ? 0 : creditVal;
-          const expense = isNaN(debitVal) ? 0 : debitVal;
-
-          // Group by Month-Year (e.g., 01/01/2026 -> Jan)
-          const parts = dateStr.split('/');
-          if (parts.length === 3) {
-            const monthNum = parseInt(parts[1], 10);
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const month = monthNames[monthNum - 1] || 'Unknown';
-
-            if (!monthlyData[month]) monthlyData[month] = { income: 0, expense: 0 };
-            monthlyData[month].income += income;
-            monthlyData[month].expense += expense;
-          }
-
-          // Group Fund Sources (only income > 0)
-          if (income > 0) {
-            let cat = row[fundCatIdx] || 'Others';
-            if (cat.length > 20) cat = cat.substring(0, 20) + '...';
-            if (!sourcesData[cat]) sourcesData[cat] = 0;
-            sourcesData[cat] += income;
-          }
-        }
-
-        // Format for Recharts
-        const formattedMonthly = Object.keys(monthlyData).map(month => ({
-          month,
-          income: Math.round(monthlyData[month].income),
-          expense: Math.round(monthlyData[month].expense)
-        }));
-
-        // Sort months roughly (assuming data is sequential or just sort by a predefined array)
-        const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        formattedMonthly.sort((a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month));
-
-        // Get top 6 fund sources
-        const formattedSources = Object.keys(sourcesData)
-          .map(name => ({ name, value: Math.round(sourcesData[name]) }))
-          .sort((a, b) => b.value - a.value)
-          .slice(0, 6);
-
-        setIncomeExpenseData(formattedMonthly);
-        setFundSourcesData(formattedSources);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching sheet data:", err);
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return <div className="h-full w-full flex items-center justify-center text-navy-400">Loading live data from Google Sheets...</div>;
-  }
-
   return (
     <>
-      {/* Expose data via context or just render charts directly. 
-          To avoid breaking the page structure, we will just export the charts as components that use this data. 
-          Actually, since page.tsx imports IncomeExpenseChart and FundSourcesChart separately, 
-          it's better to fetch in a parent or fetch in each. We'll export the individual charts and fetch in them. */}
+      {/* Expose data via context or just render charts directly. */}
     </>
   );
 }
@@ -138,80 +26,10 @@ let fetchPromise: Promise<any> | null = null;
 async function getSheetData(forceRefresh = false) {
   if (cachedData && !forceRefresh) return cachedData;
   if (!fetchPromise || forceRefresh) {
-    const bustUrl = `${SHEET_URL}&t=${Date.now()}`;
-    fetchPromise = fetch(bustUrl).then(async res => {
-      const text = await res.text();
-      const lines = text.split('\n').filter(l => l.trim() !== '');
-      
-      const headers = parseCSVLine(lines[0]);
-      const dateIdx = headers.indexOf('Date');
-      const creditIdx = headers.indexOf('Credit');
-      const debitIdx = headers.indexOf('Debit');
-      const fundCatIdx = headers.indexOf('Fund Category');
-
-      const monthlyData: Record<string, { income: number, expense: number }> = {};
-      const sourcesData: Record<string, number> = {};
-      let totalRestricted = 0;
-      let totalUnrestricted = 0;
-
-      for (let i = 1; i < lines.length; i++) {
-        const row = parseCSVLine(lines[i]);
-        if (row.length < Math.max(dateIdx, creditIdx, debitIdx, fundCatIdx)) continue;
-
-        const dateStr = row[dateIdx];
-        if (!dateStr || !dateStr.includes('/')) continue;
-        
-        const creditStr = row[creditIdx]?.replace(/,/g, '') || '0';
-        const debitStr = row[debitIdx]?.replace(/,/g, '') || '0';
-        const income = parseFloat(creditStr) || 0;
-        const expense = parseFloat(debitStr) || 0;
-
-        const parts = dateStr.split('/');
-        if (parts.length === 3) {
-          const monthNum = parseInt(parts[1], 10);
-          const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-          const month = monthNames[monthNum - 1] || 'Unknown';
-
-          if (!monthlyData[month]) monthlyData[month] = { income: 0, expense: 0 };
-          monthlyData[month].income += income;
-          monthlyData[month].expense += expense;
-        }
-
-        if (income > 0) {
-          let cat = row[fundCatIdx] || 'Others';
-          if (cat.length > 20) cat = cat.substring(0, 20) + '...';
-          if (!sourcesData[cat]) sourcesData[cat] = 0;
-          sourcesData[cat] += income;
-          
-          // Try to guess restricted vs unrestricted based on Fund Category 1 if it exists
-          const cat1Idx = headers.indexOf('Fund Category 1');
-          if (cat1Idx > -1) {
-             const cat1 = row[cat1Idx] || '';
-             if (cat1.toUpperCase().includes('UNRESTRICTED')) {
-                totalUnrestricted += income;
-             } else if (cat1.toUpperCase().includes('RESTRICTED') || cat1.toUpperCase().includes('ZAKAT')) {
-                totalRestricted += income;
-             } else {
-                totalUnrestricted += income;
-             }
-          }
-        }
-      }
-
-      const formattedMonthly = Object.keys(monthlyData).map(month => ({
-        month,
-        income: Math.round(monthlyData[month].income),
-        expense: Math.round(monthlyData[month].expense)
-      }));
-      const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      formattedMonthly.sort((a, b) => monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month));
-
-      const formattedSources = Object.keys(sourcesData)
-        .map(name => ({ name, value: Math.round(sourcesData[name]) }))
-        .sort((a, b) => b.value - a.value)
-        .slice(0, 6);
-
-      cachedData = { incomeExpense: formattedMonthly, fundSources: formattedSources, restricted: totalRestricted, unrestricted: totalUnrestricted };
+    const fetchUrl = forceRefresh ? '/api/analytics/sheets?forceRefresh=true' : '/api/analytics/sheets';
+    fetchPromise = fetch(fetchUrl).then(async res => {
+      const data = await res.json();
+      cachedData = data.financeData;
       return cachedData;
     }).catch(err => {
       console.error("Finance Data Fetch Error:", err);

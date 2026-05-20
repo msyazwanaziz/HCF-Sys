@@ -6,27 +6,7 @@ import {
   PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
 
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/1MRJibLnS07vXaiJ_r_hoU2UMDzK6-gbRM2YZw4zqYds/export?format=csv&gid=2146182837";
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#ec4899', '#14b8a6', '#f97316'];
-
-function parseCSVLine(line: string) {
-  const result = [];
-  let inQuotes = false;
-  let currentVal = '';
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-    if (char === '"') {
-      inQuotes = !inQuotes;
-    } else if (char === ',' && !inQuotes) {
-      result.push(currentVal.trim());
-      currentVal = '';
-    } else {
-      currentVal += char;
-    }
-  }
-  result.push(currentVal.trim());
-  return result;
-}
 
 export interface RevTransaction {
   dateStr: string;
@@ -54,160 +34,38 @@ let fetchRevenuePromise: Promise<RevTransaction[]> | null = null;
 export async function getRevenueData(forceRefresh = false): Promise<RevTransaction[]> {
   if (cachedRevenueData && !forceRefresh) return cachedRevenueData;
   if (!fetchRevenuePromise || forceRefresh) {
-    const bustUrl = `${SHEET_URL}&t=${Date.now()}`;
-    fetchRevenuePromise = fetch(bustUrl).then(async res => {
-      const text = await res.text();
-      const lines = text.split('\n').filter(l => l.trim() !== '');
-      
-      const headers = parseCSVLine(lines[0]);
-      
-      const dateIdx = headers.indexOf('Date');
-      const creditIdx = headers.indexOf('Credit');
-      const cat1Idx = headers.indexOf('Fund Category 1');
-      const cat2Idx = headers.indexOf('Fund Category 2');
-      const cat1_1Idx = headers.indexOf('Fund Category 1-1');
-      const bankIdx = headers.indexOf('Bank Name');
-      const branchIdx = headers.indexOf('NEGERI /JABATAN');
-      
-      const qIdx = headers.indexOf('Sumbangan Umum');
-      const rIdx = headers.indexOf('Tabung Cahaya HQ');
-      const sIdx = headers.indexOf('Fundraising'); // Fixed: removed space to match Google Sheet header
-      const tIdx = headers.indexOf('Ansar Initiative');
-      const uIdx = headers.indexOf('Korporat');
-      const vIdx = headers.indexOf('IKRAM');
-      const wIdx = headers.indexOf('A. Agama');
-      const xIdx = headers.indexOf('A. Kerajaan');
-      const yIdx = headers.indexOf('Tabung Infaq Abadi');
-
-      const transactions: RevTransaction[] = [];
-
-      for (let i = 1; i < lines.length; i++) {
-        const row = parseCSVLine(lines[i]);
-        if (row.length < Math.max(dateIdx, creditIdx)) continue;
-
-        const dateStr = row[dateIdx];
-        if (!dateStr || !dateStr.includes('/')) continue;
-        
-        const creditStr = row[creditIdx]?.replace(/,/g, '') || '0';
-        const income = parseFloat(creditStr) || 0;
-
-        if (income > 0) {
-          const parts = dateStr.split('/');
-          let month = 'Unknown';
-          if (parts.length === 3) {
-            const monthNum = parseInt(parts[1], 10);
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            month = monthNames[monthNum - 1] || 'Unknown';
-          }
-
-          transactions.push({
-            dateStr,
-            month,
-            cat1: cat1Idx > -1 ? (row[cat1Idx] || 'Uncategorized') : 'Uncategorized',
-            cat2: cat2Idx > -1 ? (row[cat2Idx] || 'Uncategorized') : 'Uncategorized',
-            income,
-            sumbanganUmum: qIdx > -1 && !!row[qIdx],
-            tabungCahayaHQ: rIdx > -1 && !!row[rIdx],
-            fundRaising: sIdx > -1 && !!row[sIdx],
-            ansarInitiative: tIdx > -1 && !!row[tIdx],
-            korporat: uIdx > -1 && !!row[uIdx],
-            ikram: vIdx > -1 && !!row[vIdx],
-            agama: wIdx > -1 && !!row[wIdx],
-            kerajaan: xIdx > -1 && !!row[xIdx],
-            infaqAbadi: yIdx > -1 && !!row[yIdx],
-            cat1_1: cat1_1Idx > -1 ? (row[cat1_1Idx] || 'Uncategorized') : 'Uncategorized',
-            bankName: bankIdx > -1 ? (row[bankIdx] || 'Unknown') : 'Unknown',
-            branch: branchIdx > -1 ? (row[branchIdx] || 'Unknown') : 'Unknown',
-          });
-        }
-      }
-
-      cachedRevenueData = transactions;
-      return transactions;
+    const fetchUrl = forceRefresh ? '/api/analytics/sheets?forceRefresh=true' : '/api/analytics/sheets';
+    fetchRevenuePromise = fetch(fetchUrl).then(async res => {
+      const data = await res.json();
+      cachedRevenueData = data.revenueData.transactions;
+      return cachedRevenueData || [];
     }).catch(err => {
       console.error("Revenue Data Fetch Error:", err);
-      fetchRevenuePromise = null; // Allow retry
+      fetchRevenuePromise = null;
       return [];
     });
   }
-  return fetchRevenuePromise;
+  return fetchRevenuePromise || Promise.resolve([]);
 }
 
-const TARGET_SHEET_URL = "https://docs.google.com/spreadsheets/d/1MRJibLnS07vXaiJ_r_hoU2UMDzK6-gbRM2YZw4zqYds/export?format=csv&gid=1005422743";
 let cachedRevenueTargets: Record<string, number> | null = null;
 let fetchTargetsPromise: Promise<Record<string, number>> | null = null;
 
 export async function getRevenueTargets(forceRefresh = false): Promise<Record<string, number>> {
   if (cachedRevenueTargets && !forceRefresh) return cachedRevenueTargets;
   if (!fetchTargetsPromise || forceRefresh) {
-    const bustUrl = `${TARGET_SHEET_URL}&t=${Date.now()}`;
-    fetchTargetsPromise = fetch(bustUrl).then(async res => {
-      const text = await res.text();
-      const lines = text.split('\n').filter(l => l.trim() !== '');
-      const targets: Record<string, number> = {};
-      
-      let prevVal = 0;
-      let parsingBranches = false;
-      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const sheetMonthHeaders = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
-
-      for (let i = 1; i < lines.length; i++) {
-        const row = parseCSVLine(lines[i]);
-        if (row.length < 2 || !row[0]) continue;
-
-        const label = row[0].trim();
-        
-        if (label.startsWith('Branch (Negeri')) {
-          parsingBranches = true;
-          continue;
-        }
-
-        if (parsingBranches) {
-          // Parse branch row
-          const overallStr = row[1]?.replace(/,/g, '').replace(/"/g, '') || '0';
-          const overallVal = parseFloat(overallStr);
-          if (!isNaN(overallVal) && overallVal > 0) {
-            targets[label.toUpperCase()] = Math.round(overallVal);
-          }
-          
-          // Parse monthly cumulative targets for this branch
-          sheetMonthHeaders.forEach((monthHeader, idx) => {
-            const colIndex = 3 + idx;
-            if (row[colIndex]) {
-              const valStr = row[colIndex].replace(/,/g, '').replace(/"/g, '');
-              const val = parseFloat(valStr);
-              if (!isNaN(val)) {
-                const standardizedMonth = monthNames[idx];
-                targets[`${label.toUpperCase()}_${standardizedMonth}`] = Math.round(val);
-              }
-            }
-          });
-        } else {
-          // Parse standard key-values (original logic)
-          const valStr = row[1]?.replace(/,/g, '').replace(/"/g, '') || '0';
-          const val = parseFloat(valStr);
-          
-          if (!isNaN(val)) {
-            if (monthNames.includes(label)) {
-              targets[label] = Math.round(val - prevVal);
-              targets[`${label}_cum`] = Math.round(val);
-              prevVal = val;
-            } else {
-              targets[label] = Math.round(val);
-              targets[label.toUpperCase()] = Math.round(val);
-            }
-          }
-        }
-      }
-      cachedRevenueTargets = targets;
-      return targets;
+    const fetchUrl = forceRefresh ? '/api/analytics/sheets?forceRefresh=true' : '/api/analytics/sheets';
+    fetchTargetsPromise = fetch(fetchUrl).then(async res => {
+      const data = await res.json();
+      cachedRevenueTargets = data.revenueData.targets;
+      return cachedRevenueTargets || {};
     }).catch(err => {
       console.error("Revenue Targets Fetch Error:", err);
       fetchTargetsPromise = null;
       return {};
     });
   }
-  return fetchTargetsPromise;
+  return fetchTargetsPromise || Promise.resolve({});
 }
 
 export function RevenueDataWrapper({ children }: { children: (data: { transactions: RevTransaction[], targets: Record<string, number> }) => React.ReactNode }) {
