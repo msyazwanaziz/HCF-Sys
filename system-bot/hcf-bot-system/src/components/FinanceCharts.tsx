@@ -24,14 +24,41 @@ const financeEventTarget = typeof window !== 'undefined' ? new EventTarget() : n
 
 let cachedData: any = null;
 let fetchPromise: Promise<any> | null = null;
+let hasLoadedFromStorage = false;
 
 async function getSheetData(forceRefresh = false) {
+  if (typeof window !== 'undefined' && !hasLoadedFromStorage && !forceRefresh) {
+    try {
+      const stored = localStorage.getItem('hcf-finance-cache');
+      if (stored) {
+        cachedData = JSON.parse(stored);
+        
+        // Background refresh
+        fetch('/api/analytics/sheets').then(async res => {
+          const data = await res.json();
+          cachedData = data.financeData;
+          localStorage.setItem('hcf-finance-cache', JSON.stringify(cachedData));
+          if (financeEventTarget) financeEventTarget.dispatchEvent(new Event('refreshed'));
+        }).catch(err => console.error(err));
+        
+        hasLoadedFromStorage = true;
+        return cachedData;
+      }
+    } catch(e) {}
+    hasLoadedFromStorage = true;
+  }
+
   if (cachedData && !forceRefresh) return cachedData;
   if (!fetchPromise || forceRefresh) {
     const fetchUrl = forceRefresh ? '/api/analytics/sheets?forceRefresh=true' : '/api/analytics/sheets';
     fetchPromise = fetch(fetchUrl).then(async res => {
       const data = await res.json();
       cachedData = data.financeData;
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('hcf-finance-cache', JSON.stringify(cachedData));
+        } catch(e) {}
+      }
       if (financeEventTarget) financeEventTarget.dispatchEvent(new Event('refreshed'));
       return cachedData;
     }).catch(err => {

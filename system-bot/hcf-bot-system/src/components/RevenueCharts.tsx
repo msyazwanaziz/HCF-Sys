@@ -72,21 +72,44 @@ export function RevenueDataWrapper({ children }: { children: (data: { transactio
   const [data, setData] = useState<{ transactions: RevTransaction[], targets: Record<string, number> } | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const loadData = (force = false) => {
-    if (force) setIsRefreshing(true);
-    Promise.all([getRevenueData(force), getRevenueTargets(force)]).then(([transactions, targets]) => {
-      setData({ transactions, targets });
-      if (force) setIsRefreshing(false);
+  useEffect(() => {
+    // First try to load from localStorage to skip the loading screen
+    let hasCachedData = false;
+    try {
+      const cached = localStorage.getItem('hcf-revenue-cache');
+      if (cached) {
+        setData(JSON.parse(cached));
+        hasCachedData = true;
+      }
+    } catch(e) {}
+
+    // Then trigger a background refresh to ensure data is fresh
+    if (!hasCachedData) setIsRefreshing(true);
+    Promise.all([getRevenueData(false), getRevenueTargets(false)]).then(([transactions, targets]) => {
+      const newData = { transactions, targets };
+      setData(newData);
+      try {
+        localStorage.setItem('hcf-revenue-cache', JSON.stringify(newData));
+      } catch(e) {}
+      setIsRefreshing(false);
+    });
+  }, []);
+
+  const handleManualRefresh = () => {
+    setIsRefreshing(true);
+    Promise.all([getRevenueData(true), getRevenueTargets(true)]).then(([transactions, targets]) => {
+      const newData = { transactions, targets };
+      setData(newData);
+      try {
+        localStorage.setItem('hcf-revenue-cache', JSON.stringify(newData));
+      } catch(e) {}
+      setIsRefreshing(false);
     });
   };
 
-  useEffect(() => {
-    loadData(false);
-  }, []);
-
   if (!data) return <div className="h-full w-full flex items-center justify-center p-12 text-navy-400">Loading live sheet data & targets...</div>;
 
-  return <>{children(data, isRefreshing, () => loadData(true))}</>;
+  return <>{children(data, isRefreshing, handleManualRefresh)}</>;
 }
 
 export function InflowTrendChart({ data }: { data: any[] }) {
