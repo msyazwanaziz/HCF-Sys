@@ -1,7 +1,7 @@
 "use client";
 
 import KPICard from "@/components/KPICard";
-import { IncomeExpenseChart, FundSourcesChart, RestrictedFundsStatus } from "@/components/FinanceCharts";
+import { IncomeExpenseChart, FundSourcesChart, RestrictedFundsStatus, FinanceRefreshButton } from "@/components/FinanceCharts";
 import { 
   Wallet, 
   TrendingDown, 
@@ -21,6 +21,7 @@ export default function FinancePage() {
           <p className="text-navy-500 mt-1">Comprehensive view of income, expenses, and fund allocations.</p>
         </div>
         <div className="flex items-center gap-3">
+          <FinanceRefreshButton />
           <button className="px-4 py-2 bg-surface border border-border rounded-lg text-sm font-medium text-navy-600 hover:bg-surface-hover transition-colors shadow-sm flex items-center gap-2">
             <Filter className="w-4 h-4" />
             Filter Period

@@ -20,6 +20,8 @@ export function FinanceChartsContainer() {
 // For demonstration, we'll just fetch once in a shared module cache or let them double fetch. 
 // Let's create a global promise to share the fetch.
 
+const financeEventTarget = typeof window !== 'undefined' ? new EventTarget() : null;
+
 let cachedData: any = null;
 let fetchPromise: Promise<any> | null = null;
 
@@ -30,6 +32,7 @@ async function getSheetData(forceRefresh = false) {
     fetchPromise = fetch(fetchUrl).then(async res => {
       const data = await res.json();
       cachedData = data.financeData;
+      if (financeEventTarget) financeEventTarget.dispatchEvent(new Event('refreshed'));
       return cachedData;
     }).catch(err => {
       console.error("Finance Data Fetch Error:", err);
@@ -44,7 +47,11 @@ export function IncomeExpenseChart() {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    getSheetData().then(res => setData(res.incomeExpense));
+    const load = () => getSheetData().then(res => setData(res.incomeExpense));
+    load();
+    const handler = () => load();
+    if (financeEventTarget) financeEventTarget.addEventListener('refreshed', handler);
+    return () => { if (financeEventTarget) financeEventTarget.removeEventListener('refreshed', handler); };
   }, []);
 
   if (!data.length) return <div className="h-[350px] flex items-center justify-center text-sm text-navy-400">Loading Google Sheet data...</div>;
@@ -74,7 +81,11 @@ export function FundSourcesChart() {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    getSheetData().then(res => setData(res.fundSources));
+    const load = () => getSheetData().then(res => setData(res.fundSources));
+    load();
+    const handler = () => load();
+    if (financeEventTarget) financeEventTarget.addEventListener('refreshed', handler);
+    return () => { if (financeEventTarget) financeEventTarget.removeEventListener('refreshed', handler); };
   }, []);
 
   if (!data.length) return <div className="h-[300px] flex items-center justify-center text-sm text-navy-400">Loading...</div>;
@@ -119,7 +130,11 @@ export function RestrictedFundsStatus() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    getSheetData().then(res => setData(res));
+    const load = () => getSheetData().then(res => setData(res));
+    load();
+    const handler = () => load();
+    if (financeEventTarget) financeEventTarget.addEventListener('refreshed', handler);
+    return () => { if (financeEventTarget) financeEventTarget.removeEventListener('refreshed', handler); };
   }, []);
 
   if (!data) return <div className="h-16 animate-pulse bg-navy-50 dark:bg-navy-800 rounded-lg mt-4"></div>;
@@ -147,5 +162,26 @@ export function RestrictedFundsStatus() {
         <div className="text-[10px] text-navy-400 mt-1">RM {data.unrestricted.toLocaleString()}</div>
       </div>
     </div>
+  );
+}
+
+export function FinanceRefreshButton() {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await getSheetData(true);
+    setIsRefreshing(false);
+  };
+
+  return (
+    <button 
+      onClick={handleRefresh} 
+      disabled={isRefreshing}
+      className="px-4 py-2 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-600 border border-emerald-600/20 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+    >
+      <svg className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+      {isRefreshing ? 'Refreshing...' : 'Refresh Live Data'}
+    </button>
   );
 }
