@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import KPICard from "@/components/KPICard";
 import { 
   RevenueDataWrapper, 
@@ -32,6 +34,7 @@ export default function RevenueDashboard() {
   const [unit, setUnit] = useState<'k' | 'm'>('k');
   const [isExporting, setIsExporting] = useState(false);
   const [exportSuccess, setExportSuccess] = useState(false);
+  const dashboardRef = useRef<HTMLDivElement>(null);
 
   const formatValue = (val: number) => {
     if (unit === 'm') return `RM ${(val / 1000000).toFixed(2)}M`;
@@ -168,17 +171,31 @@ export default function RevenueDashboard() {
         const cat1Target = cat1Data.reduce((acc, cur) => acc + cur.target, 0);
         const specialTarget = group1Data.reduce((acc, cur) => acc + cur.target, 0) + group2Data.reduce((acc, cur) => acc + cur.target, 0);
 
-        const handleExport = () => {
+        const handleExport = async () => {
+          if (!dashboardRef.current) return;
           setIsExporting(true);
-          setTimeout(() => {
-            setIsExporting(false);
+          try {
+            const canvas = await html2canvas(dashboardRef.current, { scale: 2, useCORS: true });
+            const imgData = canvas.toDataURL('image/png');
+            
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save('revenue-analysis-dashboard.pdf');
+            
             setExportSuccess(true);
             setTimeout(() => setExportSuccess(false), 3000);
-          }, 1500);
+          } catch (err) {
+            console.error('Failed to export PDF', err);
+          } finally {
+            setIsExporting(false);
+          }
         };
 
         return (
-          <div className="space-y-8 relative">
+          <div className="space-y-8 relative" ref={dashboardRef}>
             {exportSuccess && (
               <div className="fixed top-8 right-8 z-[200] bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-2xl animate-in slide-in-from-right-8 duration-500 flex items-center gap-3">
                 <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
