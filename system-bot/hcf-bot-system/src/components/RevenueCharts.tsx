@@ -68,7 +68,7 @@ export async function getRevenueTargets(forceRefresh = false): Promise<Record<st
   return fetchTargetsPromise || Promise.resolve({});
 }
 
-export function RevenueDataWrapper({ children }: { children: (data: { transactions: RevTransaction[], targets: Record<string, number> }) => React.ReactNode }) {
+export function RevenueDataWrapper({ children }: { children: (data: { transactions: RevTransaction[], targets: Record<string, number> }, isRefreshing: boolean, refresh: () => void) => React.ReactNode }) {
   const [data, setData] = useState<{ transactions: RevTransaction[], targets: Record<string, number> } | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -86,21 +86,7 @@ export function RevenueDataWrapper({ children }: { children: (data: { transactio
 
   if (!data) return <div className="h-full w-full flex items-center justify-center p-12 text-navy-400">Loading live sheet data & targets...</div>;
 
-  return (
-    <div className="relative">
-      <div className="absolute -top-14 right-0 z-10">
-        <button 
-          onClick={() => loadData(true)} 
-          disabled={isRefreshing}
-          className="flex items-center gap-2 px-3 py-1.5 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-600 rounded-lg text-sm font-medium transition-colors border border-emerald-600/20"
-        >
-          <svg className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-          {isRefreshing ? 'Refreshing...' : 'Refresh Data'}
-        </button>
-      </div>
-      {children(data)}
-    </div>
-  );
+  return <>{children(data, isRefreshing, () => loadData(true))}</>;
 }
 
 export function InflowTrendChart({ data }: { data: any[] }) {

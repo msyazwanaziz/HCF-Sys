@@ -45,7 +45,7 @@ export default function AnalysisDashboard() {
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-700 slide-in-from-bottom-2">
       <RevenueDataWrapper>
-      {(data) => {
+      {(data, isRefreshing, handleRefresh) => {
         const rawData = data.transactions;
         const targets = data.targets;
 
@@ -288,6 +288,14 @@ export default function AnalysisDashboard() {
                 <p className="text-navy-500 mt-1">Advanced financial analysis with bank and branch filtering.</p>
               </div>
               <div className="flex items-center gap-3">
+                <button 
+                  onClick={handleRefresh} 
+                  disabled={isRefreshing}
+                  className="px-4 py-2 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-600 border border-emerald-600/20 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm"
+                >
+                  <svg className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                  {isRefreshing ? 'Refreshing...' : 'Refresh Data'}
+                </button>
                 <button 
                   onClick={handleExport}
                   disabled={isExporting}
