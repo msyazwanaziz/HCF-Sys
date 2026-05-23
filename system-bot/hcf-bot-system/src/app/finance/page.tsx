@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useRef } from 'react';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import KPICard from "@/components/KPICard";
 import { IncomeExpenseChart, FundSourcesChart, RestrictedFundsStatus, FinanceRefreshButton } from "@/components/FinanceCharts";
 import { 
@@ -24,6 +22,9 @@ export default function FinancePage() {
     if (!dashboardRef.current) return;
     setIsExporting(true);
     try {
+      const html2canvas = (await import('html2canvas')).default;
+      const { jsPDF } = await import('jspdf');
+
       const canvas = await html2canvas(dashboardRef.current, { scale: 2, useCORS: true });
       const imgData = canvas.toDataURL('image/png');
       
