@@ -14,7 +14,7 @@ import {
   FundSourceDoughnutChart,
   MiniInflowTrendChart
 } from "@/components/RevenueCharts";
-import { CategoryWidgetGrid } from "@/components/CategoryWidgetGrid";
+
 import { 
   Target, 
   Wallet, 
@@ -497,7 +497,7 @@ export default function AnalysisDashboard() {
                     Live Analysis Ledger
                   </div>
                 </div>
-                <CategoryWidgetGrid data={cat1Data} />
+                <HybridTableChart data={cat1Data} />
               </div>
 
               {/* Mini Inflow Trends Row */}
@@ -558,7 +558,7 @@ export default function AnalysisDashboard() {
                   <p className="text-sm text-navy-500">Revenue distribution by state or department</p>
                 </div>
                 <div className="flex-1">
-                  <CategoryWidgetGrid data={branchData} showChart={false} />
+                  <HybridTableChart data={branchData} showChart={false} />
                 </div>
               </div>
 
@@ -573,7 +573,7 @@ export default function AnalysisDashboard() {
                     <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse mt-1" />
                   </div>
                   <div className="flex-1">
-                    <CategoryWidgetGrid data={getCat2DataForCat1('UNRESTRICTED FUND')} showChart={false} />
+                    <HybridTableChart data={getCat2DataForCat1('UNRESTRICTED FUND')} showChart={false} />
                   </div>
                 </div>
 
@@ -586,7 +586,7 @@ export default function AnalysisDashboard() {
                     <span className="w-3 h-3 rounded-full bg-amber-500 animate-pulse mt-1" />
                   </div>
                   <div className="flex-1">
-                    <CategoryWidgetGrid data={getCat2DataForCat1('RESTRICTED FUND')} showChart={false} />
+                    <HybridTableChart data={getCat2DataForCat1('RESTRICTED FUND')} showChart={false} />
                   </div>
                 </div>
 
@@ -599,7 +599,7 @@ export default function AnalysisDashboard() {
                     <span className="w-3 h-3 rounded-full bg-blue-500 animate-pulse mt-1" />
                   </div>
                   <div className="flex-1">
-                    <CategoryWidgetGrid data={getCat2DataForCat1('SPECIAL RESTRICTED FUND')} showChart={false} />
+                    <HybridTableChart data={getCat2DataForCat1('SPECIAL RESTRICTED FUND')} showChart={false} />
                   </div>
                 </div>
 
@@ -612,7 +612,7 @@ export default function AnalysisDashboard() {
                     <span className="w-3 h-3 rounded-full bg-red-500 animate-pulse mt-1" />
                   </div>
                   <div className="flex-1">
-                    <CategoryWidgetGrid data={getCat2DataForCat1('TABUNG CAHAYA')} showChart={false} />
+                    <HybridTableChart data={getCat2DataForCat1('TABUNG CAHAYA')} showChart={false} />
                   </div>
                 </div>
               </div>

@@ -363,7 +363,7 @@ export default function RevenueDashboard() {
                     <p className="text-sm text-navy-500">Detailed mapping of Restricted & Unrestricted allocations</p>
                   </div>
                   <div className="flex-1">
-                    <CategoryWidgetGrid data={cat1Data} showChart={false} />
+                    <HybridTableChart data={cat1Data} showChart={false} />
                   </div>
                 </div>
               </div>
