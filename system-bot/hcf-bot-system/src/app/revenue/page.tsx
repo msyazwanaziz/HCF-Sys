@@ -13,6 +13,7 @@ import {
   HybridTableChart,
   FundSourceDoughnutChart
 } from "@/components/RevenueCharts";
+import { CategoryWidgetGrid } from "@/components/CategoryWidgetGrid";
 import { 
   Target, 
   Wallet, 
@@ -362,7 +363,7 @@ export default function RevenueDashboard() {
                     <p className="text-sm text-navy-500">Detailed mapping of Restricted & Unrestricted allocations</p>
                   </div>
                   <div className="flex-1">
-                    <HybridTableChart data={cat1Data} showChart={false} />
+                    <CategoryWidgetGrid data={cat1Data} showChart={false} />
                   </div>
                 </div>
               </div>
@@ -374,14 +375,14 @@ export default function RevenueDashboard() {
                   <h2 className="text-lg font-bold text-foreground">Sumbangan & Tabung (Col Q-T, Y)</h2>
                   <p className="text-sm text-navy-500">Target vs Actual Performance Breakdown</p>
                 </div>
-                <HybridTableChart data={group1Data} />
+                <CategoryWidgetGrid data={group1Data} showChart={false} />
               </div>
               <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
                 <div className="mb-6">
                   <h2 className="text-lg font-bold text-foreground">Agencies & Corporate (Col U-X)</h2>
                   <p className="text-sm text-navy-500">Target vs Actual Performance Breakdown</p>
                 </div>
-                <HybridTableChart data={group2Data} />
+                <CategoryWidgetGrid data={group2Data} showChart={false} />
               </div>
             </div>
           </div>
