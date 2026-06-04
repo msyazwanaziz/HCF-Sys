@@ -174,7 +174,7 @@ export default function RevenueDashboard() {
 
         // Targets for scorecards
         const overallTarget = targets['Total Fund'] || targets['OVERALL'] || 8017439;
-        const totalActual = rawData.reduce((acc, tx) => acc + tx.income, 0);
+        const totalActual = totalInflow;
         const achievementPct = overallTarget > 0 ? Math.round((totalActual / overallTarget) * 100) : 0;
         
         const cat1Target = cat1Data.reduce((acc, cur) => acc + cur.target, 0);
