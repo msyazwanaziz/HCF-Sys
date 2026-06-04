@@ -64,6 +64,7 @@ export async function GET(request: Request) {
     const cat1_1Idx = headers.indexOf('Fund Category 1-1');
     const bankIdx = headers.indexOf('Bank Name');
     const branchIdx = headers.indexOf('NEGERI /JABATAN');
+    const zoneIdx = headers.indexOf('Zone/Division');
     
     const qIdx = headers.indexOf('Sumbangan Umum');
     const rIdx = headers.indexOf('Tabung Cahaya HQ');
@@ -142,6 +143,7 @@ export async function GET(request: Request) {
           cat1_1: cat1_1Idx > -1 ? (row[cat1_1Idx] || 'Uncategorized') : 'Uncategorized',
           bankName: bankIdx > -1 ? (row[bankIdx] || 'Unknown') : 'Unknown',
           branch: branchIdx > -1 ? (row[branchIdx] || 'Unknown') : 'Unknown',
+          zone: zoneIdx > -1 ? (row[zoneIdx] || 'Unknown') : 'Unknown',
         });
       }
     }

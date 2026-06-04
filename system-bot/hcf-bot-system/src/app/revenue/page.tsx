@@ -30,6 +30,7 @@ export default function RevenueDashboard() {
   const [selectedCat2, setSelectedCat2] = useState('All');
   const [selectedMonth, setSelectedMonth] = useState('All');
   const [selectedBranch, setSelectedBranch] = useState('All');
+  const [selectedZone, setSelectedZone] = useState('All');
   const [trendView, setTrendView] = useState<'monthly' | 'daily'>('monthly');
   const [unit, setUnit] = useState<'k' | 'm'>('k');
   const [isExporting, setIsExporting] = useState(false);
@@ -59,11 +60,15 @@ export default function RevenueDashboard() {
         const branches = new Set(rawData.map((tx: RevTransaction) => tx.branch));
         const uniqueBranches = Array.from(branches).filter(b => b !== 'Unknown').sort();
 
+        const zones = new Set(rawData.map((tx: RevTransaction) => tx.zone));
+        const uniqueZones = Array.from(zones).filter(z => z && z !== 'Unknown' && z.trim() !== '').sort();
+
         // Filter data
         const filteredData = rawData.filter((tx: RevTransaction) => {
           if (selectedCat2 !== 'All' && tx.cat2 !== selectedCat2) return false;
           if (selectedMonth !== 'All' && tx.month !== selectedMonth) return false;
           if (selectedBranch !== 'All' && tx.branch !== selectedBranch) return false;
+          if (selectedZone !== 'All' && tx.zone !== selectedZone) return false;
           return true;
         });
 
@@ -275,6 +280,17 @@ export default function RevenueDashboard() {
                   >
                     <option value="All">All Branches</option>
                     {uniqueBranches.map(b => <option key={b} value={b}>{b}</option>)}
+                  </select>
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-xs font-medium text-navy-500">Zone/Division</label>
+                  <select 
+                    className="bg-background border border-border text-sm rounded-lg px-3 py-1.5 text-navy-600 outline-none focus:ring-2 focus:ring-emerald-500/20 min-w-[160px]"
+                    value={selectedZone}
+                    onChange={(e) => setSelectedZone(e.target.value)}
+                  >
+                    <option value="All">All Zones</option>
+                    {uniqueZones.map(z => <option key={z} value={z}>{z}</option>)}
                   </select>
                 </div>
               </div>

@@ -26,6 +26,7 @@ export interface RevTransaction {
   cat1_1: string;
   bankName: string;
   branch: string;
+  zone: string;
 }
 
 let cachedRevenueData: RevTransaction[] | null = null;
